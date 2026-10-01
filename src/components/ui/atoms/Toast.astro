@@ -54,4 +54,4 @@
 </style>
 
 <!-- Toast is used only after user action, so it should not block the first render. -->
-<script is:inline src="/js/toast.js" defer></script>
+<script is:inline src={`${import.meta.env.BASE_URL}js/toast.js`} defer></script>

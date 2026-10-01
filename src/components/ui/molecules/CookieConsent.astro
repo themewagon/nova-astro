@@ -66,4 +66,4 @@ const essentialHover = cookieData.essentialHover || cookieData.essentialLabel ||
 </div>
 
 <!-- The banner is not needed for the first render, so its support loads after HTML parsing.-->
-<script is:inline src="/js/cookie-consent.js" defer></script>
+<script is:inline src={`${import.meta.env.BASE_URL}js/cookie-consent.js`} defer></script>

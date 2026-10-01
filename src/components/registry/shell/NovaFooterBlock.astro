@@ -2,6 +2,7 @@
 import Text from "@components/ui/atoms/Text.astro";
 import Button from "@components/ui/atoms/Button.astro";
 import { getNovaCopy, getNovaNavigationPath, type NovaLocale } from "@utils/nova-i18n";
+import { withSiteBase } from "@utils/site-path";
 
 interface Props {
   locale?: NovaLocale;
@@ -12,10 +13,11 @@ const id = locale === "pl" ? "kontakt" : "contact";
 const copy = getNovaCopy(locale).footer;
 const footerLinks = copy.footerLinks.map((link) => ({ ...link, href: getNovaNavigationPath(link.href, locale) }));
 const legalLinks = copy.legalLinks.map((link) => ({ ...link, href: getNovaNavigationPath(link.href, locale) }));
+const backgroundImage = withSiteBase('/assets/images/t001-nova/t001-nova-cta-mountains@1920.webp');
 
 ---
 
-<footer id={id} style="background-image: url('/assets/images/t001-nova/t001-nova-cta-mountains@1920.webp')" class="relative overflow-hidden rounded-t-[var(--rounded-lg)] bg-brand-dark bg-cover bg-center bg-no-repeat text-brand-light">
+<footer id={id} style={`background-image: url('${backgroundImage}')`} class="relative overflow-hidden rounded-t-[var(--rounded-lg)] bg-brand-dark bg-cover bg-center bg-no-repeat text-brand-light">
   <div class="absolute inset-0 bg-brand-dark/60" aria-hidden="true"></div>
   <div class="ui-container relative z-10 mx-auto grid w-[min(100%-2rem,80rem)] gap-10 py-16 pb-8 sm:py-20">
     <div class="mx-auto max-w-5xl text-center">
@@ -40,7 +42,9 @@ const legalLinks = copy.legalLinks.map((link) => ({ ...link, href: getNovaNaviga
       </nav>
     </div>
     <div class="flex flex-col items-center gap-4 border-t border-brand-light/25 pt-8 text-center text-brand-light/75 sm:flex-row sm:items-center sm:justify-between sm:text-left">
-      <Text tag="span" variant="feature-body-sm">{copy.copyright}</Text>
+      <Text tag="span" variant="feature-body-sm">
+        {copy.copyright} &bull; Distributed by <a target="_blank" href="https://themewagon.com" rel="noreferrer" class="text-brand-light transition-colors hover:text-brand-accent">ThemeWagon</a>
+      </Text>
       <Text tag="span" variant="feature-body-sm" class="sm:text-right">{copy.attributionPrefix}<a href={copy.attributionLinkHref} target="_blank" rel="noreferrer" class="text-brand-light transition-colors hover:text-brand-accent">{copy.attributionLinkLabel}</a></Text>
     </div>
   </div>

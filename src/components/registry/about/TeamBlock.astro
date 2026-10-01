@@ -7,6 +7,7 @@ import SmartImage from "@components/ui/atoms/SmartImage.astro";
 import Button from "@components/ui/atoms/Button.astro";
 import jsonData from "@data/sections/nova-team.json";
 import { ACTIVE_TEMPLATE } from "@config/template";
+import { withSiteBase } from "@utils/site-path";
 
 interface TeamAvatar { src: string; alt: string; }
 interface Props { title?: string; description?: string; image?: string; imageAlt?: string; checks?: string[]; teamLabel?: string; teamCount?: string; teamAriaLabel?: string; teamAvatars?: TeamAvatar[]; buttonLabel?: string; buttonHref?: string; class?: string; }
@@ -37,7 +38,7 @@ const teamAvatars = props.teamAvatars ?? fallback?.teamAvatars ?? [];
         <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-3 sm:gap-4">
           <div class="relative z-10 flex shrink-0 items-center -space-x-2.5 pr-1 sm:-space-x-3" aria-label={teamAriaLabel}>
               {teamAvatars.map((avatar, index) => (
-                <img src={avatar.src} alt={avatar.alt} width="48" height="48" loading="lazy" class="relative size-10 rounded-full border-2 border-surface object-cover sm:size-12" style={`z-index: ${teamAvatars.length - index};`} />
+                <img src={withSiteBase(avatar.src)} alt={avatar.alt} width="48" height="48" loading="lazy" class="relative size-10 rounded-full border-2 border-surface object-cover sm:size-12" style={`z-index: ${teamAvatars.length - index};`} />
               ))}
           </div>
           <div class="relative z-20 flex min-w-0 flex-1 items-baseline gap-2 sm:flex-none sm:gap-3 sm:whitespace-nowrap">

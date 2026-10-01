@@ -4,26 +4,26 @@ import { formatInternalLink, isExternal } from './url';
 describe('URL Utilities', () => {
   describe('formatInternalLink', () => {
     it('should append trailing slash to internal links', () => {
-      expect(formatInternalLink('kontakt')).toBe('/kontakt/');
-      expect(formatInternalLink('/uslugi')).toBe('/uslugi/');
+      expect(formatInternalLink('kontakt')).toBe('/nova-astro/kontakt/');
+      expect(formatInternalLink('/uslugi')).toBe('/nova-astro/uslugi/');
     });
 
     it('should not duplicate trailing slash if already exists', () => {
-      expect(formatInternalLink('/realizacje/')).toBe('/realizacje/');
+      expect(formatInternalLink('/realizacje/')).toBe('/nova-astro/realizacje/');
     });
 
     it('should handle home page correctly', () => {
-      expect(formatInternalLink('/')).toBe('/');
-      expect(formatInternalLink('')).toBe('/');
+      expect(formatInternalLink('/')).toBe('/nova-astro/');
+      expect(formatInternalLink('')).toBe('/nova-astro/');
     });
 
     it('should preserve anchors with trailing slash on base path', () => {
-      expect(formatInternalLink('uslugi#kontakt')).toBe('/uslugi/#kontakt');
-      expect(formatInternalLink('/o-nas/#zespol')).toBe('/o-nas/#zespol');
+      expect(formatInternalLink('uslugi#kontakt')).toBe('/nova-astro/uslugi/#kontakt');
+      expect(formatInternalLink('/o-nas/#zespol')).toBe('/nova-astro/o-nas/#zespol');
     });
 
     it('should preserve query parameters', () => {
-      expect(formatInternalLink('/szukaj?q=test')).toBe('/szukaj/?q=test');
+      expect(formatInternalLink('/szukaj?q=test')).toBe('/nova-astro/szukaj/?q=test');
     });
 
     it('should ignore external links', () => {
@@ -37,7 +37,7 @@ describe('URL Utilities', () => {
     });
 
     it('should fix multiple slashes', () => {
-      expect(formatInternalLink('///uslugi//')).toBe('/uslugi/');
+      expect(formatInternalLink('///uslugi//')).toBe('/nova-astro/uslugi/');
     });
   });
 

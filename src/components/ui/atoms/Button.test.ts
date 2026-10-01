@@ -29,8 +29,8 @@ const sizeClasses: Record<ButtonSize, string> = {
 describe('Button — logika propsów', () => {
   describe('formatInternalLink (uzywany przez Button)', () => {
     it('dodaje slash do linkow wewnetrznych', () => {
-      expect(formatInternalLink('kontakt')).toBe('/kontakt/');
-      expect(formatInternalLink('/uslugi')).toBe('/uslugi/');
+      expect(formatInternalLink('kontakt')).toBe('/nova-astro/kontakt/');
+      expect(formatInternalLink('/uslugi')).toBe('/nova-astro/uslugi/');
     });
 
     it('zachowuje linki zewnetrzne', () => {
@@ -40,9 +40,9 @@ describe('Button — logika propsów', () => {
     });
 
     it('zwraca / dla pustego href', () => {
-      expect(formatInternalLink('')).toBe('/');
-      expect(formatInternalLink(null as unknown as string)).toBe('/');
-      expect(formatInternalLink(undefined as unknown as string)).toBe('/');
+      expect(formatInternalLink('')).toBe('/nova-astro/');
+      expect(formatInternalLink(null as unknown as string)).toBe('/nova-astro/');
+      expect(formatInternalLink(undefined as unknown as string)).toBe('/nova-astro/');
     });
 
     it('zachowuje kotwice', () => {
@@ -50,7 +50,7 @@ describe('Button — logika propsów', () => {
     });
 
     it('zachowuje query params', () => {
-      expect(formatInternalLink('/szukaj?q=test')).toBe('/szukaj/?q=test');
+      expect(formatInternalLink('/szukaj?q=test')).toBe('/nova-astro/szukaj/?q=test');
     });
   });
 

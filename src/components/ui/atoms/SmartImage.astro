@@ -2,6 +2,7 @@
 import { Image, Picture } from 'astro:assets';
 import fs from 'node:fs';
 import path from 'node:path';
+import { withSiteBase } from '@utils/site-path';
 
 interface Props {
   src?: any;
@@ -148,13 +149,14 @@ const publicVariants = derivativeBase
 const availableWebp = publicVariants.filter((variant) => variant.webp);
 const availableAvif = publicVariants.filter((variant) => variant.avif);
 const publicSrcSet = availableWebp.length > 0
-  ? availableWebp.map((variant) => `${variant.webp} ${variant.width}w`).join(', ')
+  ? availableWebp.map((variant) => `${withSiteBase(variant.webp!)} ${variant.width}w`).join(', ')
   : undefined;
 const avifSrcSet = availableAvif.length > 0
-  ? availableAvif.map((variant) => `${variant.avif} ${variant.width}w`).join(', ')
+  ? availableAvif.map((variant) => `${withSiteBase(variant.avif!)} ${variant.width}w`).join(', ')
   : undefined;
 const optimizedFallback = availableWebp.find((variant) => variant.width === 800)?.webp;
-const imageSrc = optimizedFallback || src;
+const fallbackSource = optimizedFallback || src;
+const imageSrc = typeof fallbackSource === 'string' ? withSiteBase(fallbackSource) : fallbackSource;
 const imageSizes = sizes || `(max-width: ${displayWidth}px) 100vw, ${displayWidth}px`;
 const resolvedFormat = resolvedImage && 'format' in resolvedImage ? resolvedImage.format : undefined;
 const isVector = resolvedFormat === 'svg';

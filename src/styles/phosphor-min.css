@@ -10,7 +10,7 @@
  */
 @font-face {
   font-family: 'Phosphor';
-  src: url('/fonts/phosphor.woff2') format('woff2');
+  src: url('/nova-astro/fonts/phosphor.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: block;

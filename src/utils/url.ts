@@ -1,6 +1,7 @@
 /**
  * Narzedzia do obslugi adresow URL w Astro zgodnie ze standardami projektu.
  */
+import { withSiteBase } from './site-path';
 
 /**
  * Formatuje link wewnetrzny tak, aby zawsze konczyl sie slashem (SEO)
@@ -8,7 +9,7 @@
  * Pomija linki zewnetrzne, mailto:, tel: oraz kotwice bez sciezki.
  */
 export function formatInternalLink(href: string | null | undefined): string {
-  if (!href) return '/';
+  if (!href) return withSiteBase('/');
   
   // Ignoruj linki zewnetrzne i specjalne
   if (
@@ -43,7 +44,7 @@ export function formatInternalLink(href: string | null | undefined): string {
   // Obsluga strony glownej (zeby nie bylo //)
   if (formattedBase === '//') formattedBase = '/';
 
-  return formattedBase + suffix;
+  return withSiteBase(formattedBase + suffix);
 }
 
 /**

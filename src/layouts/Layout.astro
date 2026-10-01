@@ -23,6 +23,7 @@ import FooterPromoBlock from '@components/registry/shell/FooterPromoBlock.astro'
 import NovaFooterBlock from '@components/registry/shell/NovaFooterBlock.astro';
 import NovaDemoBanner from '@components/ui/molecules/NovaDemoBanner.astro';
 import type { NovaLocale } from '@utils/nova-i18n';
+import { withSiteBase } from '@utils/site-path';
 
 
 interface Props {
@@ -95,21 +96,10 @@ const theme = themeProp || urlTheme || (ACTIVE_TEMPLATE as string);
 
 // Why: siteUrl comes from company.json (SSOT of company data), Astro.site
 // (site.config.mjs) overrides it if set in build config.
-const publicSiteUrl = process.env.PUBLIC_SITE_URL || Astro.site || company.siteUrl;
-const configuredSitePath = new URL(publicSiteUrl).pathname;
-const basePath = process.env.PUBLIC_BASE_PATH
-	|| (configuredSitePath !== '/' ? configuredSitePath : import.meta.env.BASE_URL);
-const normalizedBasePath = basePath === '/'
-	? ''
-	: `/${basePath.replace(/^\/+|\/+$/g, '')}`;
-const assetBasePath = process.env.PUBLIC_BASE_PATH
-	|| (import.meta.env.DEV ? import.meta.env.BASE_URL : basePath);
-const normalizedAssetBasePath = assetBasePath === '/'
-	? ''
-	: `/${assetBasePath.replace(/^\/+|\/+$/g, '')}`;
-const publicAsset = (assetPath: string) => `${normalizedAssetBasePath}/${assetPath.replace(/^\/+/, '')}`;
+const publicSiteUrl = Astro.site || company.siteUrl;
+const publicAsset = withSiteBase;
 const siteOrigin = new URL(publicSiteUrl).origin;
-const canonicalPath = `${normalizedBasePath}${Astro.url.pathname === '/' ? '/' : Astro.url.pathname}`;
+const canonicalPath = withSiteBase(Astro.url.pathname);
 const canonicalURL = new URL(canonicalPath, siteOrigin).href;
 
 // Why: og:image must be absolute URL (protocol + host) because Facebook,
@@ -239,7 +229,7 @@ const mainPaddingStyle = fullBleedTop
 			// Why: project data can provide a custom favicon
 			// (company.branding.favicon). Fallback to default favicon set.
 			company.branding.favicon ? (
-				<link rel="icon" type="image/png" href={company.branding.favicon} />
+				<link rel="icon" type="image/png" href={publicAsset(company.branding.favicon)} />
 			) : (
 				<>
 					<link rel="icon" type="image/svg+xml" href={publicAsset('/favicon.svg')} />
@@ -338,7 +328,7 @@ const mainPaddingStyle = fullBleedTop
 		<slot name="scripts" />
 
 		{/* The motion engine owns all reveal timing and reinitializes after View Transitions. */}
-		{clientRuntime && <script is:inline data-astro-rerun src="/js/motion.js" defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src={publicAsset('/js/motion.js')} defer></script>}
 		<!-- Fix page "sliding": global scroll-behavior:smooth (core.css) causes
 		     View Transition to ANIMATE scroll to top instead of jumping after
 		     inserting new page. We disable smooth only during transition and
@@ -351,17 +341,17 @@ const mainPaddingStyle = fullBleedTop
 				document.documentElement.style.scrollBehavior = '';
 			});
 		</script>}
-		{clientRuntime && <script is:inline data-astro-rerun src="/js/navbar.js" defer></script>}
-		{clientRuntime && <script is:inline data-astro-rerun src="/js/form-handler.js" defer></script>}
-		{clientRuntime && <script is:inline data-astro-rerun src="/js/accordion.js" defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src={publicAsset('/js/navbar.js')} defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src={publicAsset('/js/form-handler.js')} defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src={publicAsset('/js/accordion.js')} defer></script>}
 		<!-- Lenis aktywny, inicjalizacja w public/js/lenis.js z guardem data-astro-rerun -->
-		{clientRuntime && enableLenis && <script is:inline src="/js/lenis-lib.min.js" defer></script>}
-		{clientRuntime && enableLenis && <script is:inline src="/js/lenis.js" defer></script>}
+		{clientRuntime && enableLenis && <script is:inline src={publicAsset('/js/lenis-lib.min.js')} defer></script>}
+		{clientRuntime && enableLenis && <script is:inline src={publicAsset('/js/lenis.js')} defer></script>}
 
 		{clientRuntime && <script is:inline data-astro-rerun define:vars={{ analyticsConfig }}>window.__ANALYTICS__ = analyticsConfig;</script>}
 		<!-- Analytics must not delay first render, defer keeps cookie consent compatibility. -->
-		{clientRuntime && <script is:inline data-astro-rerun src="/js/analytics.js" defer></script>}
-		{clientRuntime && <script is:inline data-astro-rerun src="/js/theme-switcher.js" defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src={publicAsset('/js/analytics.js')} defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src={publicAsset('/js/theme-switcher.js')} defer></script>}
 		{clientRuntime && hasOptionalTracking && <CookieConsent />}
 	        {clientRuntime && <Toast />}
 	        {clientRuntime && <FloatingBar />}

@@ -1,4 +1,5 @@
 import copy from '@data/i18n/nova.json';
+import { withSiteBase } from './site-path';
 
 export type NovaLocale = 'pl' | 'en';
 
@@ -11,16 +12,8 @@ export function getNovaSectionCopy(locale: NovaLocale, dataKey?: string) {
   return getNovaCopy(locale).sections[dataKey as keyof typeof copy.pl.sections];
 }
 
-function withNovaBase(path: string): string {
-  const configuredBase = process.env.PUBLIC_BASE_PATH || import.meta.env.BASE_URL;
-  const base = configuredBase === '/'
-    ? ''
-    : `/${configuredBase.replace(/^\/+|\/+$/g, '')}`;
-  return `${base}${path}` || '/';
-}
-
 export function getNovaLocalePath(locale: NovaLocale): string {
-  return withNovaBase(locale === 'en' ? '/' : '/pl/');
+  return withSiteBase(locale === 'en' ? '/' : '/pl/');
 }
 
 export function getNovaNavigationPath(href: string, locale: NovaLocale): string {
@@ -29,6 +22,6 @@ export function getNovaNavigationPath(href: string, locale: NovaLocale): string 
   }
 
   const normalized = href.startsWith('/') ? href : `/${href}`;
-  if (locale === 'en') return withNovaBase(normalized);
-  return withNovaBase(normalized === '/' ? '/pl/' : `/pl${normalized}`);
+  if (locale === 'en') return withSiteBase(normalized);
+  return withSiteBase(normalized === '/' ? '/pl/' : `/pl${normalized}`);
 }

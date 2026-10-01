@@ -3,6 +3,7 @@ import Section from "@components/ui/layout/Section.astro";
 import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
 import data from "@data/sections/testimonial-v2.json";
 import { ACTIVE_TEMPLATE } from "@config/template";
+import { withSiteBase } from "@utils/site-path";
 
 interface Item { quote: string; author: string; initials: string; role: string; avatar?: string }
 export interface Props { sectionId?: string; title?: string; description?: string; tagline?: string; avatarAltPrefix?: string; items?: Item[]; class?: string }
@@ -32,7 +33,7 @@ const columns = [list, [...list.slice(2), ...list.slice(0, 2)], [...list.slice(1
                     <footer class="mt-6 flex items-center gap-3">
                       <span class="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-primary/15 text-xs font-semibold text-brand-primary">
                         {item.initials}
-                        {item.avatar && <img src={item.avatar} alt={`${resolvedAvatarAltPrefix} ${item.author}`} width="40" height="40" class="absolute inset-0 size-full rounded-full object-cover" loading="eager" onerror="this.remove()" />}
+                        {item.avatar && <img src={withSiteBase(item.avatar)} alt={`${resolvedAvatarAltPrefix} ${item.author}`} width="40" height="40" class="absolute inset-0 size-full rounded-full object-cover" loading="eager" onerror="this.remove()" />}
                       </span>
                       <div>
                         <cite class="block not-italic font-semibold text-brand-dark">{item.author}</cite>

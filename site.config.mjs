@@ -1,7 +1,8 @@
 // Single source of truth for site / client project configuration.
 // Edit THIS file when changing domain.
 // Environment domain used during build.
-export const SITE_URL = 'https://webscale.pl/preview/nova/';
+export const SITE_BASE = '/nova-astro';
+export const SITE_URL = 'https://themewagon.github.io/nova-astro/';
 export const ACTIVE_TEMPLATE = 'nova';
 
 // Nova currently ships English and Polish routes. SITE_LOCALE selects the

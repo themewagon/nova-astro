@@ -1,6 +1,7 @@
 ---
 import companyRaw from '@data/global/company.json';
 import type { CompanyConfig } from '@/types/config';
+import { withSiteBase } from '@utils/site-path';
 
 const company = companyRaw as CompanyConfig;
 
@@ -18,7 +19,7 @@ const { variant = "dark", showText = true, className = "", density = "default" }
 const showTagline = false;
 
 // Why: the generated fallback is an icon, while Nova's header uses a wordmark.
-const logoPath = company.branding.logoImage;
+const logoPath = company.branding.logoImage ? withSiteBase(company.branding.logoImage) : '';
 ---
 
 <div class={`flex items-center ${density === "compact" ? "gap-2" : "gap-3"} ${className}`}>

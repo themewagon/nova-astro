@@ -7,6 +7,7 @@ import { BUILD_SCOPE, SITE_LOCALE } from "../../site.config.mjs";
 import { isPageAllowed, getFullBleedTop } from "@utils/page-scope";
 import { ACTIVE_TEMPLATE } from "@/config/template";
 import { getNovaCopy, type NovaLocale } from "@utils/nova-i18n";
+import { withSiteBase } from "@utils/site-path";
 
 export async function getStaticPaths() {
   // Scope: w buildzie generuj tylko aktywne strony zgodne z BUILD_SCOPE.pages.
@@ -40,7 +41,7 @@ const config: PageConfig | undefined = (
 )?.default;
 
 if (!config) {
-  return Astro.redirect("/404");
+  return Astro.redirect(withSiteBase("/404"));
 }
 
 const { seo, layout: layoutConfig } = config;
