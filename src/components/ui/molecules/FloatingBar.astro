@@ -1,27 +1,19 @@
 ---
-// Why: FloatingBar is a floating CTA bar that is always visible on the screen (fixed). It allows quick contact (WhatsApp, phone, Facebook) and return to the top of the page without scrolling.
+// Why: FloatingBar keeps the permitted phone action and back-to-top control visible.
 import company from "@data/global/company.json";
 import floatingBar from "@data/global/floating-bar.json";
 
 export interface Props {
   ariaBackToTop?: string;
-  ariaWhatsApp?: string;
   ariaCall?: string;
-  ariaFacebook?: string;
 }
 
-const { ariaBackToTop, ariaWhatsApp, ariaCall = "", ariaFacebook = "" } = Astro.props;
+const { ariaBackToTop, ariaCall = "" } = Astro.props;
 
-// Dlaczego: etykiety paska czytamy z floating-bar.json (edytowalne w CMS),
-// props take precedence. WhatsApp number: company.json has no whatsapp field,
-// so the fallback is company.phone (always present in company data).
-const whatsappNumber = (company as any).whatsapp || company.phone;
-const phoneRaw = whatsappNumber.replace(/\D/g, "");
-const whatsappHref = `https://wa.me/${phoneRaw}`;
+// Labels come from editable JSON; tel: links remain permitted.
+const phoneRaw = company.phone.replace(/\D/g, "");
 const phoneHref = `tel:+${phoneRaw}`;
-const facebookHref = company.socials?.facebook || "";
 const backToTopLabel = ariaBackToTop || floatingBar.ariaBackToTop || "";
-const whatsAppLabel = ariaWhatsApp || floatingBar.ariaWhatsApp || "";
 ---
 
 <div
@@ -38,20 +30,6 @@ const whatsAppLabel = ariaWhatsApp || floatingBar.ariaWhatsApp || "";
   </button>
 
   {
-    whatsappHref && (
-      <a
-        href={whatsappHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="ui-icon-button border border-brand-dark/10 bg-white/80 text-brand-dark/60 shadow-sm backdrop-blur-xl transition-all duration-200 hover:border-brand-primary/20 hover:bg-brand-primary/[0.08] hover:text-brand-primary hover:shadow-md active:scale-95"
-        aria-label={whatsAppLabel}
-      >
-        <i class="ph ph-whatsapp-logo text-lg sm:text-xl" aria-hidden="true"></i>
-      </a>
-    )
-  }
-
-  {
     phoneRaw && (
       <a
         href={phoneHref}
@@ -63,19 +41,6 @@ const whatsAppLabel = ariaWhatsApp || floatingBar.ariaWhatsApp || "";
     )
   }
 
-  {
-    facebookHref && (
-      <a
-        href={facebookHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="ui-icon-button border border-brand-dark/10 bg-white/80 text-brand-dark/60 shadow-sm backdrop-blur-xl transition-all duration-200 hover:border-brand-primary/20 hover:bg-brand-primary/[0.08] hover:text-brand-primary hover:shadow-md active:scale-95"
-        aria-label={ariaFacebook || floatingBar.ariaFacebook}
-      >
-        <i class="ph ph-facebook-logo text-lg sm:text-xl" aria-hidden="true"></i>
-      </a>
-    )
-  }
 </div>
 
 <script>

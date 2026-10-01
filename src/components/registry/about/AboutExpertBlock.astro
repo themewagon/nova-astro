@@ -9,7 +9,6 @@ import Section from "@components/ui/layout/Section.astro";
 import Container from "@components/ui/layout/Container.astro";
 import Heading from "@components/ui/atoms/Heading.astro";
 import Text from "@components/ui/atoms/Text.astro";
-import { formatInternalLink } from "@utils/url";
 import jsonData from "@data/sections/about-expert.json";
 
 interface Props {
@@ -43,10 +42,6 @@ const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
 // per language), so we resolve them separately with JSON fallback.
 const imageSrc = data?.imageSrc ?? jsonData.imageSrc;
 const imageAlt = data?.imageAlt ?? jsonData.imageAlt;
-
-// Why: formatInternalLink leaves external https unchanged, and formats
-// internal links with trailing slash (SEO).
-const linkedinHref = formatInternalLink(t.linkedinUrl);
 
 const checks = t.checks ?? [];
 const tags = t.tags ?? [];
@@ -100,51 +95,12 @@ const tags = t.tags ?? [];
           </div>
         )}
 
-        {/* Why: LinkedIn button 1:1 from original (square "in" with slide
-            animation), animation moved to custom .lc-btn-slide* classes because
-            kit's .btn-slide has different mechanism (text slide). */}
-        <a
-          href={linkedinHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="lc-btn-slide lc-btn-slide-teal mt-8 inline-grid h-10 w-10 place-items-center rounded-sm bg-brand-primary text-sm font-extrabold text-white"
-          aria-label={`LinkedIn: ${t.name}`}
-        >
-          {t.linkedinLabel}
-        </a>
       </div>
     </div>
   </Container>
 </Section>
 
 <style>
-  /* Why: client btn-slide-teal animation (dark rectangle slides up
-     from bottom on hover) does not exist in kit, and kit's .btn-slide sets
-     padding: 0 and text slide, which would break the square "in" button.
-     Block defines its own .lc-btn-slide* classes to avoid colliding with core.css. */
-  .lc-btn-slide {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-  }
-
-  .lc-btn-slide::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    top: 100%;
-    transition: top 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    z-index: -1;
-  }
-
-  .lc-btn-slide:hover::before {
-    top: 0;
-  }
-
-  .lc-btn-slide-teal::before {
-    background: var(--color-brand-dark);
-  }
-
   /* Why: L-shape decoration from original (vertical line with horizontal
      curl), client outline color replaced with brand-dark at low alpha. */
   .lc-line-deco {

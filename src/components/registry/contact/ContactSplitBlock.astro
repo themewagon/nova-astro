@@ -80,10 +80,6 @@ const fields = Array.isArray(formFields) ? formFields : [];
 const formId = `contact-form-${sectionId}-${variant}`;
 const fieldIdPrefix = `${sectionId}-${variant}`;
 const phoneHref = phone ? `tel:${phone.replace(/\s+/g, "")}` : undefined;
-const mapExternalUrl = address
-  ? `https://www.google.com/maps?q=${encodeURIComponent(address)}`
-  : undefined;
-
 const contactItems = [
   { key: "phone", label: "Telefon", icon: "phone", href: phoneHref, value: phone },
   { key: "email", label: "E-mail", icon: "envelope", href: email ? `mailto:${email}` : undefined, value: email },
@@ -132,7 +128,6 @@ const contactItems = [
                   <GoogleMapFrame
                     embedUrl={mapUrl}
                     iframeTitle={title || sectionId}
-                    externalUrl={mapExternalUrl}
                     class="min-h-[20rem]"
                     wrapperClass="shadow-sm"
                   />
