@@ -1,0 +1,31 @@
+---
+import { getLegalLayout } from "@/config/template-layouts";
+
+const LegalLayout = await getLegalLayout();
+import company from "@data/global/company.json";
+import termsContent from "@/content/legal/terms.json";
+import { legalBodyToHtml } from "@utils/legal-body-to-html";
+
+const injectData = (text: string) => {
+  return text
+    .replace(/{{COMPANY_NAME}}/g, company.name)
+    .replace(/{{COMPANY_FULL_NAME}}/g, company.fullName)
+    .replace(/{{COMPANY_EMAIL}}/g, company.email)
+    .replace(/{{COMPANY_NIP}}/g, company.nip)
+    .replace(/{{COMPANY_REGON}}/g, company.regon || "")
+    .replace(/{{COMPANY_KRS}}/g, company.krs)
+    .replace(/{{SITE_URL}}/g, company.siteUrl || "nasza-strona.pl");
+};
+
+const html = legalBodyToHtml(injectData(termsContent.body));
+const title = termsContent.title;
+const description = injectData(termsContent.description || "");
+---
+
+<LegalLayout 
+  title={title} 
+  description={description} 
+  lastUpdated={termsContent.lastUpdated}
+>
+  <div set:html={html} />
+</LegalLayout>

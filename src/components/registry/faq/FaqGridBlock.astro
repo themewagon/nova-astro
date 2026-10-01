@@ -1,0 +1,76 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import faqData from "@data/sections/faq.json";
+
+// Why: FaqGridBlock is a grid variant of FAQ.
+// Responsive layout: na mobile lista, na desktop siatka (2-3 kolumny).
+// Perfect for pages with a large number of question categories.
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+	/** Section header tag: 'h2' by default, 'h1' when the block is the first section of a page without hero (SEO).*/
+	headingTag?: string;
+}
+
+const { 
+	class: className = "", 
+	title = faqData.title, 
+	description = faqData.description,
+	tagline = faqData.tagline,
+	headingTag = "h2"
+} = Astro.props;
+
+const categories = faqData.categories || [];
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container">
+		<SectionHeader 
+			title={title}
+			description={description}
+			tagline={tagline}
+			titleTag={headingTag}
+			align="left"
+		/>
+
+		<!-- Dlaczego: responsive grid - 1 kolumna na mobile, 2 na md, 3 na lg.
+   Each category is a separate tab with a title and questions in accordion.-->
+		<div class="grid min-w-0 gap-6 md:grid-cols-2 lg:grid-cols-3 mt-12">
+			{categories.map((cat) => (
+				<div class="ui-bg-surface ui-radius-xl ui-elevation-soft border border-brand-dark/5 overflow-hidden flex min-w-0 flex-col">
+					<div class="p-6 border-b border-brand-dark/5">
+						<Heading level={3} variant="feature-title" class="ui-text-on-light">
+							{cat.title}
+						</Heading>
+					</div>
+					<div class="divide-y divide-brand-dark/5" data-accordion>
+						{cat.items.map((item) => (
+							<details class="group cursor-pointer">
+								<summary class="flex min-w-0 items-center justify-between w-full p-4 text-left list-none select-none">
+									<Text variant="feature-body-sm" tag="span" class="font-bold pr-4 ui-text-on-light">
+										{item.q}
+									</Text>
+									<div class="transition-transform duration-300 group-open:-rotate-45 text-brand-primary shrink-0">
+										<svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+										</svg>
+									</div>
+								</summary>
+								<div class="px-4 pb-4">
+									<Text variant="feature-body-sm" class="ui-text-on-light-subtle">
+										{item.a}
+									</Text>
+								</div>
+							</details>
+						))}
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</Section>

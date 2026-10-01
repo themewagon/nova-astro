@@ -1,0 +1,116 @@
+---
+interface Props {
+  corner?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'all';
+  variant?: 'minimal' | 'ornate' | 'line';
+  size?: 'sm' | 'md' | 'lg';
+  color?: string;
+  class?: string;
+}
+
+const {
+  corner = 'top-left',
+  variant: decorVariant = 'minimal',
+  size = 'md',
+  color = 'var(--color-brand-primary)',
+  class: className,
+} = Astro.props;
+
+const sizeMap: Record<string, string> = {
+  sm: '32',
+  md: '48',
+  lg: '64',
+};
+
+const s = sizeMap[size] || '48';
+
+function cornerClass(c: string): string {
+  switch (c) {
+    case 'top-left': return 'top-0 left-0';
+    case 'top-right': return 'top-0 right-0';
+    case 'bottom-left': return 'bottom-0 left-0';
+    case 'bottom-right': return 'bottom-0 right-0';
+    default: return 'top-0 left-0';
+  }
+}
+
+const corners = corner === 'all'
+  ? ['top-left', 'top-right', 'bottom-left', 'bottom-right']
+  : [corner];
+---
+
+{
+  corners.map((c) => {
+    const cc = cornerClass(c);
+    const isRight = c.includes('right');
+    const isBottom = c.includes('bottom');
+
+    return (
+      <div
+        class:list={['pointer-events-none absolute select-none', cc, className]}
+        aria-hidden="true"
+      >
+        {decorVariant === 'minimal' && (
+          <svg width={s} height={s} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d={isRight && isBottom
+                ? `M${s} ${s} L${s} 0 L0 ${s}`
+                : isRight
+                  ? `M${s} 0 L${s} ${s} L0 ${s}`
+                  : isBottom
+                    ? `M${s} ${s} L0 ${s} L${s} 0`
+                    : `M0 0 L${s} 0 L0 ${s}`
+              }
+              stroke={color}
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        )}
+
+        {decorVariant === 'line' && (
+          <svg width={s} height={s} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d={isRight && isBottom
+                ? `M${s} ${s} L${s} ${Number(s) - 24} M${s} ${s} L${Number(s) - 24} ${s}`
+                : isRight
+                  ? `M${s} 0 L${s} 24 M${s} 0 L${Number(s) - 24} 0`
+                  : isBottom
+                    ? `M0 ${s} L24 ${s} M0 ${s} L0 ${Number(s) - 24}`
+                    : `M0 0 L24 0 M0 0 L0 24`
+              }
+              stroke={color}
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        )}
+
+        {decorVariant === 'ornate' && (
+          <svg width={s} height={s} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d={isRight && isBottom
+                ? `M${s} ${s} L${s} ${Number(s) - 12} M${s} ${s} L${Number(s) - 12} ${s} M${s} ${Number(s) - 8} L${Number(s) - 8} ${Number(s) - 8} L${Number(s) - 8} ${s}`
+                : isRight
+                  ? `M${s} 0 L${s} 12 M${s} 0 L${Number(s) - 12} 0 M${s} 8 L${Number(s) - 8} 8 L${Number(s) - 8} 0`
+                  : isBottom
+                    ? `M0 ${s} L12 ${s} M0 ${s} L0 ${Number(s) - 12} M8 ${s} L8 ${Number(s) - 8} L0 ${Number(s) - 8}`
+                    : `M0 0 L12 0 M0 0 L0 12 M8 0 L8 8 L0 8`
+              }
+              stroke={color}
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle
+              cx={isRight ? Number(s) - 14 : 14}
+              cy={isBottom ? Number(s) - 14 : 14}
+              r="3"
+              fill={color}
+              opacity="0.4"
+            />
+          </svg>
+        )}
+      </div>
+    );
+  })
+}

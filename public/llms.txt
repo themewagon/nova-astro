@@ -1,0 +1,15 @@
+# Nova Template
+
+A business website template (Astro + Tailwind v4) for creative agencies, design studios and ambitious brands, with a modern design, dark mode, a component gallery and a blog.
+
+## Structure
+
+- Homepage: selected work, services, testimonials and contact
+- Blog: articles about services and pricing (`src/content/blog`)
+- Legal pages: privacy policy, terms and cookies
+
+## Machine-readable notes
+
+- Sitemap: /sitemap-index.xml
+- Contact: contact form on the homepage
+- Language: configurable with the `lang` prop in `Layout`

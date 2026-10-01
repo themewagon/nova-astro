@@ -1,0 +1,26 @@
+{
+  "title": "Jak pracujemy?",
+  "description": "Poznaj nasz sprawdzony proces współpracy, od pierwszego kontaktu aż po wdrożenie gotowego rozwiązania i opiekę powdrożeniową.",
+  "items": [
+    {
+      "icon": "chat",
+      "title": "Kontakt i wywiad",
+      "description": "Rozmawiamy o Twoich celach i potrzebach, ustalamy zakres i warunki współpracy."
+    },
+    {
+      "icon": "magnifying-glass",
+      "title": "Analiza i projekt",
+      "description": "Analizujemy konkurencję i przygotowujemy koncepcję dopasowaną do Twojej marki."
+    },
+    {
+      "icon": "gear",
+      "title": "Realizacja",
+      "description": "Budujemy rozwiązanie etapami, pokazując postępy na każdym kroku."
+    },
+    {
+      "icon": "check-circle",
+      "title": "Wdrożenie i wsparcie",
+      "description": "Oddajemy gotowy produkt, szkolimy z obsługi i wspieramy po starcie."
+    }
+  ]
+}

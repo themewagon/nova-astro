@@ -1,0 +1,56 @@
+---
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+
+interface Props {
+    quote: string;
+    author: string;
+    role?: string;
+    avatar?: string;
+    class?: string;
+}
+
+const { 
+    quote, 
+    author, 
+    role, 
+    avatar, 
+    class: className = "" 
+} = Astro.props;
+---
+
+<div class:list={["ui-card-testimonial group", className]}>
+    <figure class="flex flex-col h-full gap-4">
+        <div>
+            <figcaption class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    {avatar && (
+                        <div class="ui-avatar-testimonial">
+                            <SmartImage
+                                src={avatar}
+                                alt={author}
+                                class="object-cover size-full"
+                                width={48}
+                                height={48}
+                            />
+                        </div>
+                    )}
+                    <div>
+                        <h3 class="ui-testimonial-author">
+                            {author}
+                        </h3>
+                        {role && (
+                            <p class="ui-testimonial-role">
+                                {role}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </figcaption>
+            <div>
+                <blockquote class="ui-testimonial-quote mt-6">
+                    "{quote}"
+                </blockquote>
+            </div>
+        </div>
+    </figure>
+</div>

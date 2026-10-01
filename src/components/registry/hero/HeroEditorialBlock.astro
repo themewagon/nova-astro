@@ -1,0 +1,184 @@
+---
+// Dlaczego: HeroEditorialBlock to kopia wizualna hero z projektu klienckiego
+// reference layout (editorial hero: decorative blobs in the background, centered
+// accent header, trust badges with icons and floating marquee at the bottom).
+// Client color tokens have been converted to global brand starter-kit tokens,
+// Phosphor icons (i.ph-ph-*) replaced with <Icon> atom, and the client system
+// content input was taken over by the global motion mechanism built into PageBuilder.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import EditorialBlobs from "@components/decorations/EditorialBlobs.astro";
+import jsonData from "@data/sections/hero-editorial.json";
+
+interface MarqueeItem {
+  name: string;
+  icon?: string;
+  initials?: string;
+}
+
+interface TrustBadge {
+  icon: string;
+  label: string;
+}
+
+export interface Props {
+  /** Overwriting the entire JSON (pl/en object). Props per field take precedence.*/
+  data?: typeof jsonData;
+  /** Content language with JSON. PL is the default language, EN is the English equivalent.*/
+  locale?: "pl" | "en";
+  /** Id kotwicy sekcji. */
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  /** Fragment of the header in brand color (after the space).*/
+  headingAccent?: string;
+  description?: string;
+  primaryCTA?: { label: string; href: string };
+  trustBadges?: TrustBadge[];
+  marqueeItems?: MarqueeItem[];
+  /** Additional classes per section (e.g. with PageBuilder).*/
+  class?: string;
+}
+
+const {
+  data,
+  locale = "pl",
+  id,
+  eyebrow,
+  heading,
+  headingAccent,
+  description,
+  primaryCTA,
+  trustBadges,
+  marqueeItems,
+  class: className = "",
+} = Astro.props as Props;
+
+// Dlaczego: wzorzec "props.data || jsonData[locale]" (jak AboutLawBlock):
+// props.data (full pl/en object) overwrites the default JSON and locale selects
+// Tongue. Fallback to pl protects against empty render when sections are missing.
+const t = (data || jsonData)[locale] ?? (data || jsonData).pl;
+
+// Why: "props || json" pattern (like HeroLawBlock) so PageBuilder can
+// overwrite any text or CTA with flat props from the dataKey section.
+const resolvedEyebrow = eyebrow || t.eyebrow;
+const resolvedHeading = heading || t.heading;
+const resolvedAccent = headingAccent || t.headingAccent;
+const resolvedDescription = description || t.description;
+const primary = primaryCTA || t.primaryCTA;
+const badges: TrustBadge[] = trustBadges ?? t.trustBadges ?? [];
+// Dlaczego: jawna adnotacja typu wymusza union MarqueeItem[] (JSON ma icon
+// required, the interface also allows initials without an icon) to access
+// item.initials was typically safe.
+const marquee: MarqueeItem[] = marqueeItems ?? t.marqueeItems ?? [];
+---
+
+
+<Section
+  id={id}
+  class:list={["relative overflow-x-hidden pb-0!", className]}
+>
+  <!-- Why: the decoration layer lives under the content (z-0) and does not catch clicks
+       (pointer-events-none). EditorialBlobs to dekoracja starter-kita, dodatkowe
+       decorations can be added via slot decorations.-->
+  <div class="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+    <EditorialBlobs />
+    <slot name="decorations" />
+  </div>
+
+  <Container>
+    <div class="relative z-10 flex flex-col items-center py-[clamp(3rem,12vw,8rem)] text-center">
+      {resolvedEyebrow && (
+        <div class="mb-5">
+          <Text variant="accent-label">{resolvedEyebrow}</Text>
+        </div>
+      )}
+
+      <Heading tag="h1" variant="hero" class="max-w-4xl text-balance">
+        {resolvedHeading}
+        {resolvedAccent && <span class="text-brand-primary">{" "}{resolvedAccent}</span>}
+      </Heading>
+
+      {resolvedDescription && (
+        <Text variant="lead" class="mx-auto mt-6 max-w-xl text-pretty">
+          {resolvedDescription}
+        </Text>
+      )}
+
+      {primary?.href && (
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <Button href={primary.href} size="lg">
+            {primary.label}
+          </Button>
+        </div>
+      )}
+
+      {badges.length > 0 && (
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {badges.map((badge, i) => (
+            <>
+              <span class="flex shrink-0 items-center gap-1.5 text-sm text-brand-dark/70">
+                <Icon name={badge.icon} class="text-brand-primary" />
+                {badge.label}
+              </span>
+              {/* Why: the separator between badges is a hidden vertical line
+                   na mobile (sm:block), jak w oryginale. */}
+              {i < badges.length - 1 && (
+                <span class="hidden h-3 w-px bg-brand-dark/10 sm:block" />
+              )}
+            </>
+          ))}
+        </div>
+      )}
+    </div>
+  </Container>
+
+  {marquee.length > 0 && (
+    /* Why: marquee is decoration (aria-hidden), so it has no right
+       catch focus or clicks. We repeat the content 3 times for animation
+       shift (translateX -33.333%) closed the loop without a jump.*/
+    <div class="pointer-events-none z-10 w-full shrink-0 pb-6 pt-2" aria-hidden="true">
+      <div class="ui-container hero-marquee-mask">
+        <div class="hero-marquee-track flex gap-5">
+          {Array.from({ length: 3 }, () => marquee).flat().map((item) => (
+            <span class="flex shrink-0 items-center gap-2.5 rounded-full bg-white/65 px-4 py-2 shadow-sm backdrop-blur-sm">
+              {item.icon ? (
+                <Icon name={item.icon} class="text-brand-primary" />
+              ) : (
+                <span class="flex size-7 items-center justify-center text-[10px] font-bold text-brand-primary">
+                  {item.initials || item.name.charAt(0)}
+                </span>
+              )}
+              <span class="whitespace-nowrap text-sm font-medium text-brand-dark/70">{item.name}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+</Section>
+
+<style>
+  /* Why: The gradient mask blends the marquee into the background on the sides (transparent
+     edges, black center) so that the pills disappear smoothly beyond the edge.*/
+  .hero-marquee-mask {
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  }
+
+  /* Why: marquee track has a width equal to the content (max-content) and moves
+     by -33.333% (one of three copies of the list), which gives a smooth loop of 60 s.*/
+  .hero-marquee-track {
+    width: max-content;
+    animation: hero-marquee-scroll-alt 60s linear infinite;
+  }
+
+  @keyframes hero-marquee-scroll-alt {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-33.333%); }
+  }
+</style>

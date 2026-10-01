@@ -1,0 +1,60 @@
+---
+import Input from '@components/ui/atoms/Input.astro';
+import Label from '@components/ui/atoms/Label.astro';
+import Text from '@components/ui/atoms/Text.astro';
+
+interface Props {
+  id: string;
+  label: string;
+  type?: 'text' | 'email' | 'tel' | 'number' | 'url' | 'password' | 'date';
+  name?: string;
+  value?: string;
+  placeholder?: string;
+  hint?: string;
+  error?: string;
+  state?: 'default' | 'error' | 'success';
+  required?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  label,
+  type = 'text',
+  name,
+  value,
+  placeholder,
+  hint,
+  error,
+  state = error ? 'error' : 'default',
+  required = false,
+  class: className,
+} = Astro.props;
+
+const messageId = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
+const stateClass = state === 'error'
+  ? 'border-[var(--color-error)] focus-visible:border-[var(--color-error)]'
+  : state === 'success'
+    ? 'border-brand-primary focus-visible:border-brand-primary'
+    : '';
+---
+
+<div class:list={['space-y-2', className]}>
+  <Label for={id}>
+    {label}
+    {required && <span class="text-brand-primary" aria-hidden="true"> *</span>}
+  </Label>
+  <Input
+    id={id}
+    name={name}
+    type={type}
+    value={value}
+    placeholder={placeholder}
+    required={required}
+    aria-invalid={state === 'error' ? 'true' : undefined}
+    aria-describedby={messageId}
+    class={stateClass}
+  />
+  {error && <Text id={`${id}-error`} variant="body" class="text-sm text-[var(--color-error)]">{error}</Text>}
+  {!error && hint && <Text id={`${id}-hint`} variant="body" class="text-xs text-brand-dark/50">{hint}</Text>}
+</div>

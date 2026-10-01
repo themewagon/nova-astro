@@ -1,0 +1,39 @@
+---
+import companyRaw from '@data/global/company.json';
+import type { CompanyConfig } from '@/types/config';
+
+const company = companyRaw as CompanyConfig;
+
+interface Props {
+	variant?: "light" | "dark" | "inherit";
+	showText?: boolean;
+	className?: string;
+	/** `compact`, mniejsza ikona i typografia pod pasek nav */
+	density?: "default" | "compact";
+}
+
+const { variant = "dark", showText = true, className = "", density = "default" } = Astro.props;
+
+/** Temporarily disabled — for tagline / company.branding.tagline */
+const showTagline = false;
+
+// Why: the generated fallback is an icon, while Nova's header uses a wordmark.
+const logoPath = company.branding.logoImage;
+---
+
+<div class={`flex items-center ${density === "compact" ? "gap-2" : "gap-3"} ${className}`}>
+  {logoPath ? (
+    <img
+      src={logoPath}
+      alt={`${company.name} ${company.branding.logoSuffix || ""}`}
+      width="512"
+      height="512"
+      loading="eager"
+      class={density === "compact" ? "h-11 w-auto object-contain lg:h-14" : "h-10 lg:h-12 w-auto object-contain"}
+    />
+  ) : (
+    <span class="font-heading text-base font-bold tracking-[0.18em]" aria-label={company.name}>
+      {company.name.toUpperCase()}
+    </span>
+  )}
+</div>

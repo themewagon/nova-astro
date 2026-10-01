@@ -1,0 +1,82 @@
+---
+import Layout from "@layouts/Layout.astro";
+import PageBuilder from "@components/PageBuilder.astro";
+import type { PageConfig } from "@/types/config";
+import { pageModules } from "@data/pages/_registry";
+import { BUILD_SCOPE, SITE_LOCALE } from "../../site.config.mjs";
+import { isPageAllowed, getFullBleedTop } from "@utils/page-scope";
+import { ACTIVE_TEMPLATE } from "@/config/template";
+import { getNovaCopy, type NovaLocale } from "@utils/nova-i18n";
+
+export async function getStaticPaths() {
+  // Scope: w buildzie generuj tylko aktywne strony zgodne z BUILD_SCOPE.pages.
+  // Development sites remain available locally but do not go into production.
+  // isPageAllowed helper extended to @utils/page-scope (testable).
+  // In getStaticPaths we use the inline wrapper isAllowed because Astro 7 cuts it
+  // functions not exported from the module prerender (bug: isPageAllowed is not defined).
+  const isAllowed = (slug: string): boolean => isPageAllowed(slug, BUILD_SCOPE.pages as string[]);
+  return Object.entries(pageModules)
+    .map(([path, module]) => ({
+      path,
+      config: (module as { default?: PageConfig }).default,
+    }))
+    .filter(({ config }) => config?.enabled !== false)
+    .filter(({ config }) => !import.meta.env.PROD || config?.devOnly !== true)
+    .map(({ path }) => {
+      const slug = path.split("/").pop()?.replace(".json", "") || "";
+      return { params: { page: slug === "index" ? undefined : slug } };
+    })
+    // /blog ma wlasny route (blog/index.astro). Blog.json trafialby tez do catch-all
+    // jako /blog, co przy buildzie sypalo "conflicts with /blog". Wykluczamy ten slug.
+    .filter(({ params }) => params.page !== "blog")
+    .filter(({ params }) => !import.meta.env.PROD || isAllowed(params.page ?? "index"));
+}
+
+const { page } = Astro.params;
+const slug = page || "index";
+
+const config: PageConfig | undefined = (
+  pageModules[`/src/data/pages/${slug}.json`] as { default?: PageConfig } | undefined
+)?.default;
+
+if (!config) {
+  return Astro.redirect("/404");
+}
+
+const { seo, layout: layoutConfig } = config;
+const locale: NovaLocale = SITE_LOCALE === "en" ? "en" : "pl";
+const novaPageCopy = ACTIVE_TEMPLATE === "nova" && slug === "index" ? getNovaCopy(locale).page : undefined;
+const resolvedTitle = novaPageCopy?.title ?? seo?.title;
+const resolvedDescription = novaPageCopy?.description ?? seo?.description;
+const resolvedHeading = novaPageCopy?.heading ?? config.heading;
+
+// Why: Local casting bypasses the cascade after a corrupt PageConfig type
+// (@types/config error) and the sections are validated by check-page-registry.
+const sections = (config.sections ?? []) as { id: string; variant?: string }[];
+
+// Why: navbar/footer renders Layout globally, so page only
+// wybiera wariant (fallback: defaultVariant z rejestru, czyli floating).
+// Floating is like on a homepage: transparent overlay (static) at the top,
+// and after scrolling, a fixed bar with background and blur appears. When a page has a hero,
+// section starts from the very top (fullBleedTop = no compensation);
+// without hero main gets padding to compensate for the height of the bar.
+const navbarSection = sections.find((s) => s.id === "navbar");
+const navbarVariant = navbarSection?.variant;
+const fullBleedTop = getFullBleedTop(navbarVariant, sections.map((s) => s.id));
+const footerSection = sections.find((s) => s.id === "footer");
+const footerVariant = footerSection?.variant;
+---
+
+<Layout
+  title={resolvedTitle}
+  description={resolvedDescription}
+  theme={layoutConfig?.theme}
+  sectionPattern={layoutConfig?.sectionPattern}
+  navbarVariant={navbarVariant}
+  footerVariant={footerVariant}
+  fullBleedTop={fullBleedTop}
+  locale={locale}
+  lang={locale}
+>
+  <PageBuilder heading={resolvedHeading} sections={config.sections} locale={locale} />
+</Layout>

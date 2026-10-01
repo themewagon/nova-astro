@@ -1,0 +1,15 @@
+{
+  "title": "Galeria",
+  "description": "Zobacz nasze realizacje.",
+  "emptyText": "Brak zdjęć w galerii.",
+  "ariaPrevPhoto": "Poprzednie zdjęcie",
+  "ariaNextPhoto": "Następne zdjęcie",
+  "images": [
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 1" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 2" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 3" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 4" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 5" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 6" }
+  ]
+}

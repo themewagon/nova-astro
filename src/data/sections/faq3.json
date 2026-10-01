@@ -1,0 +1,22 @@
+{
+  "title": "Najczęściej zadawane pytania",
+  "description": "Najważniejsze informacje o współpracy, procesie i efektach, które mogą Państwa interesować przed rozpoczęciem projektu.",
+  "items": [
+    {
+      "q": "Ile trwa przygotowanie nowej strony internetowej?",
+      "a": "Standardowy projekt realizujemy zwykle w ciągu 2 do 4 tygodni. Termin zależy od zakresu strony, liczby podstron oraz szybkości przekazania materiałów."
+    },
+    {
+      "q": "Czy pomagacie w przygotowaniu treści i zdjęć?",
+      "a": "Tak. Możemy uporządkować istniejące materiały, przygotować strukturę treści oraz wskazać kierunek dla zdjęć i grafik, aby całość była spójna z marką."
+    },
+    {
+      "q": "Czy strona będzie dobrze działać na telefonie?",
+      "a": "Tak. Projektujemy od początku z myślą o telefonach, tabletach i komputerach. Każdy kluczowy widok sprawdzamy w kilku szerokościach ekranu."
+    },
+    {
+      "q": "Czy po publikacji mogę samodzielnie edytować stronę?",
+      "a": "Tak. Przygotowujemy strukturę tak, aby najważniejsze treści można było później łatwo aktualizować. Po wdrożeniu przekazujemy również krótką instrukcję obsługi."
+    }
+  ]
+}

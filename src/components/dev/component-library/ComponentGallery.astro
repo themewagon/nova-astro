@@ -1,0 +1,1089 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Section from '@components/ui/layout/Section.astro';
+import Container from '@components/ui/layout/Container.astro';
+import Card from '@components/ui/atoms/Card.astro';
+import Button from '@components/ui/atoms/Button.astro';
+import Heading from '@components/ui/atoms/Heading.astro';
+import Text from '@components/ui/atoms/Text.astro';
+import { DeveloperTabs } from '@components/dev/DeveloperTabs.tsx';
+import galleryCopy from '@data/dev/component-library/component-gallery.json';
+import { getDeveloperCatalogGroups, type DeveloperCatalogMetadata, type DeveloperCatalogType } from './component-catalog-metadata';
+
+interface Props {
+  catalog: DeveloperCatalogMetadata[];
+  activeSectionId: string;
+}
+
+const { catalog, activeSectionId } = Astro.props;
+const catalogGroups = getDeveloperCatalogGroups();
+
+// Why: The "All" category is the default - it shows cards from all over
+// directory, so that the search searches all components
+// at once, not just the current category.
+const isAll = activeSectionId === 'all';
+
+// Dlaczego: MAPA KATEGORII z SECTION_GROUPS (section-registry.ts) jest jedynym
+// source of truth for categories in the gallery. The gallery does NOT show every entry
+// register separately (there were 26 categories) - groups variants by groupId.
+// Clicking on a category = showing all variants in that group.
+const activeItems = isAll
+  ? catalog
+  : catalog.filter((item) => item.groupId === activeSectionId);
+const activeCatalogType: DeveloperCatalogType | 'all' = isAll
+  ? 'all'
+  : catalog.find((item) => item.groupId === activeSectionId)?.catalogType || 'section';
+const activeSection = isAll
+  ? { sectionLabel: galleryCopy.allCategoriesLabel }
+  : catalogGroups.find((group) => group.id === activeSectionId)
+    ? { sectionLabel: catalogGroups.find((group) => group.id === activeSectionId)?.label }
+    : activeItems[0];
+
+// Why: Only groups that have at least one variant go to
+// navigation (empty group = no sense in the link). Order from SECTION_GROUPS.
+// Why: Your most frequently used groups should be accessible without scrolling.
+// Tie preserves register order, so sorting remains predictable.
+const sections = [
+  { sectionId: 'all', sectionLabel: galleryCopy.allCategoriesLabel, catalogType: 'all' as const },
+  ...catalogGroups
+    .map((group, index) => ({
+      group,
+      index,
+      count: catalog.filter((item) => item.groupId === group.id).length,
+    }))
+    .filter(({ count }) => count > 0)
+    .sort((a, b) => b.count - a.count || a.index - b.index)
+    .map(({ group }) => ({
+      sectionId: group.id,
+      sectionLabel: group.label,
+      catalogType: catalog.find((item) => item.groupId === group.id)?.catalogType || 'section',
+    })),
+];
+
+const typeFilters = [
+  { id: 'all', label: galleryCopy.typeAllLabel },
+  { id: 'section', label: galleryCopy.typeSectionsLabel },
+  { id: 'ui', label: galleryCopy.typeUiLabel },
+  { id: 'pattern', label: galleryCopy.typePatternsLabel },
+  { id: 'decoration', label: galleryCopy.typeDecorationsLabel },
+];
+
+const typeLabels: Record<DeveloperCatalogType, string> = {
+  section: galleryCopy.typeSectionsLabel,
+  ui: galleryCopy.typeUiLabel,
+  pattern: galleryCopy.typePatternsLabel,
+  decoration: galleryCopy.typeDecorationsLabel,
+};
+
+const categoryTabs = sections.map((section) => {
+  const count = section.sectionId === 'all'
+    ? catalog.length
+    : catalog.filter((item) => item.groupId === section.sectionId).length;
+
+  return {
+    id: section.sectionId,
+    label: `${section.sectionLabel} ${count}`,
+    data: {
+      'data-category-button': 'true',
+      'data-category-id': section.sectionId,
+      'data-category-label': section.sectionLabel,
+      'data-category-search': String(section.sectionLabel).toLowerCase(),
+      'data-category-type': section.catalogType || 'all',
+    },
+  };
+});
+
+function previewHref(item: DeveloperCatalogMetadata) {
+  return `/dev/components/${encodeURIComponent(item.sectionId)}/${encodeURIComponent(item.variantId)}/`;
+}
+
+function frameHref(item: DeveloperCatalogMetadata) {
+  return `/dev/components/thumbnail/${encodeURIComponent(item.sectionId)}/${encodeURIComponent(item.variantId)}/`;
+}
+
+function copyPrompt(item: DeveloperCatalogMetadata) {
+  return galleryCopy.copyPromptText
+    .replace('{uid}', String(item.uid))
+    .replace('{sectionId}', item.sectionId)
+    .replace('{variantId}', item.variantId)
+    .replace('{componentName}', item.componentName);
+}
+
+const INITIAL_VISIBLE_COUNT = 6;
+const LOAD_BATCH_SIZE = 6;
+const initialVisibleCount = Math.min(activeItems.length, INITIAL_VISIBLE_COUNT);
+
+// Dlaczego: gdy sekcja ma tylko jeden wariant, etykieta "default" nic nie
+// distinguishes. We then show the name of the section instead of the variantId, so that the tab
+// gallery said what it actually presented.
+const variantCountBySection = new Map<string, number>();
+catalog.forEach((item) => {
+  variantCountBySection.set(item.sectionId, (variantCountBySection.get(item.sectionId) ?? 0) + 1);
+});
+
+function itemLabel(item: DeveloperCatalogMetadata): string {
+  return (variantCountBySection.get(item.sectionId) ?? 1) > 1
+    ? item.variantLabel || item.variantId
+    : item.sectionLabel;
+}
+
+// Why: Polish variation of the number of variants (1 variant, 2-4 variants, 5+ variants).
+// A simple variation algorithm without copying the entire pluralization logic to each view.
+function pluralVariants(n: number, scope: 'kategoria' | 'katalog' = 'kategoria'): string {
+  const noun = scope === 'katalog' ? 'w katalogu' : 'w tej kategorii';
+  if (n === 1) return `${n} wariant ${noun}`;
+  const rem10 = n % 10;
+  const rem100 = n % 100;
+  if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) {
+    return `${n} warianty ${noun}`;
+  }
+  return `${n} wariantów ${noun}`;
+}
+---
+
+<Layout
+  title={galleryCopy.title}
+  description={galleryCopy.description}
+  noIndex={true}
+  theme="default"
+  bodyClass="component-library"
+  enableLenis={false}
+>
+  <Section tone="page" class="min-h-screen">
+    <Container class="pb-8 sm:pb-12 lg:pb-16">
+      <div
+        class="space-y-8"
+        data-component-gallery
+        data-active-section={activeSectionId}
+        data-active-type={activeCatalogType}
+        data-load-initial-count={INITIAL_VISIBLE_COUNT}
+        data-load-batch-size={LOAD_BATCH_SIZE}
+      >
+        <header class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="max-w-3xl space-y-4">
+            <Heading tag="h1" variant="hero">{galleryCopy.title}</Heading>
+            <Text variant="lead" class="max-w-2xl text-brand-dark/65">{galleryCopy.description}</Text>
+          </div>
+          <dl class="flex shrink-0 gap-3">
+            <div class="min-w-24 rounded-xl border border-brand-dark/10 bg-[var(--ui-bg-page)] px-5 py-3 text-center ui-elevation-soft">
+              <dd class="text-xl font-bold leading-none text-brand-dark">{sections.length}</dd>
+              <dt class="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-brand-dark/45">{galleryCopy.statCategoriesLabel}</dt>
+            </div>
+            <div class="min-w-24 rounded-xl border border-brand-dark/10 bg-[var(--ui-bg-page)] px-5 py-3 text-center ui-elevation-soft">
+              <dd class="text-xl font-bold leading-none text-brand-dark">{catalog.length}</dd>
+              <dt class="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-brand-dark/45">{galleryCopy.statVariantsLabel}</dt>
+            </div>
+          </dl>
+        </header>
+
+        <nav aria-label={galleryCopy.catalogLabel} class="component-filter-toolbar">
+          <div class="component-filter-primary">
+            <div class="component-filter-search">
+              <label class="component-search-field" for="component-search">
+                <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+                <span class="sr-only">{galleryCopy.searchLabel}</span>
+                <input
+                  id="component-search"
+                  type="search"
+                  autocomplete="off"
+                  placeholder={galleryCopy.searchPlaceholder}
+                  aria-label={galleryCopy.searchLabel}
+                />
+              </label>
+            </div>
+            <div class="component-filter-segmented" data-type-nav>
+              {typeFilters.map((filter) => {
+                const isActive = filter.id === activeCatalogType;
+                return (
+                  <Button
+                    type="button"
+                    variant={isActive ? 'primary' : 'outline'}
+                    size="sm"
+                    aria-current={isActive ? 'page' : undefined}
+                    data-type-button
+                    data-catalog-type={filter.id}
+                  >
+                    {filter.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div class="component-filter-line">
+            <div class="component-filter-label">
+              <Text variant="accent-label" class="text-brand-dark/45">{galleryCopy.categorySearchLabel}</Text>
+            </div>
+            <DeveloperTabs
+              client:load
+              tabs={categoryTabs}
+              activeTab={activeSectionId}
+              tabGroup="category"
+              className="component-category-nav component-filter-rail"
+              aria-label={galleryCopy.categorySearchLabel}
+            />
+          </div>
+
+        </nav>
+
+        <div class="min-w-0 space-y-1">
+          <Heading tag="h2" variant="section-heading-lg" id="gallery-section-heading">{activeSection?.sectionLabel || galleryCopy.emptyTitle}</Heading>
+          <Text variant="body" class="text-sm text-brand-dark/55" id="gallery-section-count">{pluralVariants(activeItems.length, isAll ? 'katalog' : 'kategoria')}</Text>
+        </div>
+
+        {activeItems.length > 0 ? (
+          <div class="space-y-5">
+            <div id="component-grid" class="grid min-w-0 gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {catalog.map((item, index) => (
+              <Card
+                variant="surface"
+                padding="none"
+                radius="lg"
+                elevation="soft"
+                class="component-card group min-w-0"
+                data-search={String(`${item.sectionLabel} ${item.variantId} ${item.componentName} ${item.groupLabel} ${typeLabels[item.catalogType]} ${item.sectionId}`).toLowerCase()}
+                data-group={item.groupId}
+                data-catalog-type={item.catalogType}
+                data-component-card
+                data-component-index={index}
+                data-load-hidden={index >= INITIAL_VISIBLE_COUNT ? 'true' : undefined}
+              >
+                <div class="relative aspect-[16/10] overflow-hidden border-b border-brand-dark/10 bg-brand-dark/[0.03]">
+                  <span class="absolute left-3 top-3 z-20 rounded-md bg-brand-dark/80 px-2 py-0.5 font-mono text-[11px] font-bold text-white">
+                    #{item.uid}
+                  </span>
+                  <iframe
+                    title={`${itemLabel(item)}`}
+                    loading="lazy"
+                    class="component-thumbnail-frame pointer-events-none absolute top-0 left-1/2 border-0 bg-white"
+                    data-thumbnail-frame
+                    data-thumbnail-src={frameHref(item)}
+                  ></iframe>
+                  <a href={previewHref(item)} class="absolute inset-0 z-10" aria-label={`${galleryCopy.openPreviewLabel}: ${itemLabel(item)}`}>
+                    <span class="sr-only">{galleryCopy.openPreviewLabel}</span>
+                  </a>
+                </div>
+                <div class="flex min-w-0 flex-col">
+                  <div class="min-w-0 space-y-1 p-5 pb-4">
+                    <div class="flex min-w-0 items-center gap-2">
+                      <code class="shrink-0 rounded bg-brand-dark/5 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-brand-primary">{item.sectionId}</code>
+                      <Text variant="accent-label" class="truncate text-brand-dark/45">{item.componentName}</Text>
+                      <span class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-dark/50 ring-1 ring-inset ring-brand-dark/10">{typeLabels[item.catalogType]}</span>
+                    </div>
+                    <Heading tag="h3" variant="feature-title" class="truncate">{itemLabel(item)}</Heading>
+                  </div>
+                  <div class="flex items-center justify-end gap-2 border-t border-brand-dark/10 bg-brand-dark/[0.02] px-5 py-3">
+                    <Button
+                      href={frameHref(item)}
+                      variant="ghost"
+                      size="icon"
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={galleryCopy.thumbnailLabel}
+                      title={galleryCopy.thumbnailLabel}
+                      class="component-action-button"
+                    >
+                      <i class="ph ph-image text-base" aria-hidden="true"></i>
+                      <span class="sr-only">{galleryCopy.thumbnailLabel}</span>
+                    </Button>
+                    <Button
+                      href={previewHref(item)}
+                      variant="outline"
+                      size="icon"
+                      aria-label={galleryCopy.openLabel}
+                      title={galleryCopy.openLabel}
+                      class="component-action-button"
+                    >
+                      <i class="ph ph-arrow-up-right text-base" aria-hidden="true"></i>
+                      <span class="sr-only">{galleryCopy.openLabel}</span>
+                    </Button>
+                    <Button type="button" variant="ghost" size="icon" class="component-action-button" aria-label={galleryCopy.copyPromptLabel} title={galleryCopy.copyPromptLabel} data-copy-prompt={copyPrompt(item)} data-copy-prompt-label={galleryCopy.copyPromptLabel} data-copy-prompt-success={galleryCopy.copyPromptSuccessLabel}>
+                      <i class="ph ph-copy text-base" aria-hidden="true"></i>
+                      <span class="sr-only">{galleryCopy.copyPromptLabel}</span>
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+              ))}
+            </div>
+            {activeItems.length > initialVisibleCount && (
+              <div class="flex justify-center pt-2" data-load-more-wrap>
+                <Button type="button" variant="outline" size="md" data-load-more-button>
+                  {galleryCopy.loadMoreLabel}
+                  <span class="ml-2 text-brand-dark/50" data-load-more-remaining>
+                    {activeItems.length - initialVisibleCount}
+                  </span>
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Card variant="surface" padding="lg" radius="lg" class="text-center">
+            <Heading tag="h2" variant="section-heading-lg">{galleryCopy.emptyTitle}</Heading>
+            <Text variant="body" class="mt-3 text-brand-dark/60">{galleryCopy.emptyDescription}</Text>
+          </Card>
+        )}
+
+        <div id="component-search-empty" class="hidden rounded-lg border border-brand-dark/10 bg-brand-dark/[0.03] p-10 text-center">
+          <Heading tag="h2" variant="section-heading-lg">{galleryCopy.noResultsTitle}</Heading>
+          <Text variant="body" class="mt-3 text-brand-dark/60">{galleryCopy.noResultsDescription}</Text>
+        </div>
+
+        <!-- Dlaczego: gdy fraza pasuje do kategorii, ale nie do kart AKTUALNEJ
+             kategorii, pokazujemy dopasowane kategorie jako linki zamiast
+             misleading "no variant found". JS builds links from buttons.-->
+        <div id="category-match-hint" class="hidden rounded-lg border border-brand-dark/10 bg-brand-dark/[0.03] p-8 text-center">
+          <Text variant="body" class="text-brand-dark/60">{galleryCopy.categoryMatchHint}</Text>
+          <div id="category-match-links" class="mt-4 flex flex-wrap justify-center gap-2"></div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+</Layout>
+
+<script is:inline>
+  (() => {
+    const setupComponentGallery = () => {
+      const root = document.querySelector('[data-component-gallery]');
+      if (!root) return;
+
+      // ClientRouter replaces cards without fully reloading the document.
+      // We are cleaning up the previous cycle so that the new category gets its own followers.
+      window.__componentGalleryCleanup?.();
+      const cleanups = [];
+      let isCleaned = false;
+      const cleanup = () => {
+        if (isCleaned) return;
+        isCleaned = true;
+        cleanups.forEach((dispose) => dispose());
+        if (window.__componentGalleryCleanup === cleanup) {
+          delete window.__componentGalleryCleanup;
+        }
+      };
+      window.__componentGalleryCleanup = cleanup;
+
+      const copyButtons = Array.from(root.querySelectorAll('[data-copy-prompt]'));
+      const copyPrompt = async (event) => {
+        const button = event.currentTarget;
+        const prompt = button.getAttribute('data-copy-prompt');
+        if (!prompt) return;
+        try {
+          await navigator.clipboard.writeText(prompt);
+          const icon = button.querySelector('i');
+          const label = button.querySelector('.sr-only');
+          const successLabel = button.getAttribute('data-copy-prompt-success') || 'Skopiowano';
+          icon?.classList.remove('ph-copy');
+          icon?.classList.add('ph-check-circle');
+          button.setAttribute('aria-label', successLabel);
+          button.setAttribute('title', successLabel);
+          if (label) label.textContent = successLabel;
+          window.setTimeout(() => {
+            const defaultLabel = button.getAttribute('data-copy-prompt-label') || 'Kopiuj dla AI';
+            icon?.classList.remove('ph-check-circle');
+            icon?.classList.add('ph-copy');
+            button.setAttribute('aria-label', defaultLabel);
+            button.setAttribute('title', defaultLabel);
+            if (label) label.textContent = defaultLabel;
+          }, 1400);
+        } catch {
+          const icon = button.querySelector('i');
+          const label = button.querySelector('.sr-only');
+          const errorLabel = 'Nie udało się skopiować';
+          icon?.classList.remove('ph-copy');
+          icon?.classList.add('ph-x');
+          button.setAttribute('aria-label', errorLabel);
+          button.setAttribute('title', errorLabel);
+          if (label) label.textContent = errorLabel;
+        }
+      };
+      copyButtons.forEach((button) => button.addEventListener('click', copyPrompt));
+      cleanups.push(() => copyButtons.forEach((button) => button.removeEventListener('click', copyPrompt)));
+
+      const thumbnailFrames = Array.from(root.querySelectorAll('[data-thumbnail-frame]'));
+      const thumbnailArtboard = { width: 1440, height: 900 };
+
+      let fitFrameId;
+      let thumbnailSyncHandle;
+      const isRenderableThumbnail = (frame) => {
+        const card = frame.closest('[data-component-card]');
+        return card && !card.hasAttribute('data-load-hidden') && !card.classList.contains('hidden');
+      };
+
+      const fitThumbnailFrames = () => {
+        if (fitFrameId !== undefined) cancelAnimationFrame(fitFrameId);
+        fitFrameId = requestAnimationFrame(() => {
+          thumbnailFrames.forEach((frame) => {
+            if (!isRenderableThumbnail(frame)) return;
+            const container = frame.parentElement;
+            if (!container) return;
+
+            const scale = Math.min(
+              container.clientWidth / thumbnailArtboard.width,
+              container.clientHeight / thumbnailArtboard.height,
+            );
+
+            frame.style.width = `${thumbnailArtboard.width}px`;
+            frame.style.height = `${thumbnailArtboard.height}px`;
+            frame.style.transformOrigin = 'top center';
+            frame.style.transform = `translateX(-50%) scale(${scale})`;
+          });
+          fitFrameId = undefined;
+        });
+      };
+
+      fitThumbnailFrames();
+      window.addEventListener('resize', fitThumbnailFrames, { passive: true });
+      cleanups.push(() => {
+        window.removeEventListener('resize', fitThumbnailFrames);
+        if (fitFrameId !== undefined) cancelAnimationFrame(fitFrameId);
+      });
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const resizeObserver = new ResizeObserver(fitThumbnailFrames);
+        resizeObserver.observe(root);
+        cleanups.push(() => resizeObserver.disconnect());
+      }
+
+      // We only load frames visible or just before the viewport. Smaller buffer
+      // protects the gallery from running multiple heavy previews at once.
+      const loadThumbnail = (frame) => {
+        const src = frame.getAttribute('data-thumbnail-src');
+        if (!src || frame.getAttribute('src')) return;
+        frame.setAttribute('src', src);
+      };
+
+      // Why: the preview iframe runs the component's own runtime.
+      // Just hiding the tab doesn't stop this runtime, so when you change it
+      // filter, we release previews that are no longer needed.
+      const unloadThumbnail = (frame) => {
+        if (frame?.getAttribute('src')) frame.removeAttribute('src');
+      };
+
+      // Why: Changing the filter is supposed to refresh the text and tab layout first.
+      // Starting and closing an iframe in the same frame blocks the animation
+      // bookmarks, so we only synchronize thumbnails when idle.
+      const scheduleThumbnailSync = () => {
+        if (thumbnailSyncHandle !== undefined) {
+          if ('cancelIdleCallback' in window) window.cancelIdleCallback(thumbnailSyncHandle);
+          else window.clearTimeout(thumbnailSyncHandle);
+        }
+
+        const sync = () => {
+          thumbnailSyncHandle = undefined;
+          loadVisibleThumbnails();
+          fitThumbnailFrames();
+        };
+
+        if ('requestIdleCallback' in window) {
+          thumbnailSyncHandle = window.requestIdleCallback(sync, { timeout: 180 });
+        } else {
+          thumbnailSyncHandle = window.setTimeout(sync, 40);
+        }
+      };
+
+      cleanups.push(() => {
+        if (thumbnailSyncHandle === undefined) return;
+        if ('cancelIdleCallback' in window) window.cancelIdleCallback(thumbnailSyncHandle);
+        else window.clearTimeout(thumbnailSyncHandle);
+      });
+
+      if ('IntersectionObserver' in window) {
+        const thumbnailLoader = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            if (!isRenderableThumbnail(entry.target)) return;
+            loadThumbnail(entry.target);
+          });
+        }, { rootMargin: '160px 0px' });
+
+        thumbnailFrames.forEach((frame) => thumbnailLoader.observe(frame));
+        cleanups.push(() => thumbnailLoader.disconnect());
+      } else {
+        thumbnailFrames.slice(0, 3).forEach(loadThumbnail);
+      }
+
+      // Why: one common input searches for categories and cards at the same time.
+      // Filtrujemy przyciski kategorii (data-category-search) oraz karty
+      // (data-search) with one phrase, and we show both empty-states as needed.
+      const normalizeSearch = (value) => value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '');
+      const search = root.querySelector('#component-search');
+      const cards = Array.from(root.querySelectorAll('[data-component-card]'));
+      const empty = root.querySelector('#component-search-empty');
+      const categoryButtons = Array.from(root.querySelectorAll('[data-category-button]'));
+      const typeButtons = Array.from(root.querySelectorAll('[data-type-button]'));
+      const categoryEmpty = root.querySelector('#category-search-empty');
+      const categoryHint = root.querySelector('#category-match-hint');
+      const categoryHintLinks = root.querySelector('#category-match-links');
+      const loadMoreButton = root.querySelector('[data-load-more-button]');
+      const loadMoreRemaining = root.querySelector('[data-load-more-remaining]');
+      const sectionHeading = root.querySelector('#gallery-section-heading');
+      const sectionCount = root.querySelector('#gallery-section-count');
+      const initialVisibleCount = Number(root.dataset.loadInitialCount || 12);
+      const loadBatchSize = Number(root.dataset.loadBatchSize || 12);
+      let revealedCount = Math.min(cards.length, initialVisibleCount);
+      const galleryStateKey = 'component-gallery-state';
+
+      const selectVercelTab = (group, tabId) => {
+        window.dispatchEvent(new CustomEvent('developer-tabs-select', {
+          detail: { group, tabId },
+        }));
+      };
+
+      const refreshVercelTabs = (group) => {
+        window.dispatchEvent(new CustomEvent('developer-tabs-refresh', {
+          detail: { group },
+        }));
+      };
+
+      const readGalleryState = () => {
+        try {
+          const stored = sessionStorage.getItem(galleryStateKey);
+          if (!stored) return { query: '', sectionId: root.dataset.activeSection || 'all', type: root.dataset.activeType || 'all' };
+
+          const parsed = JSON.parse(stored);
+          return {
+            query: typeof parsed?.query === 'string' ? parsed.query : '',
+            sectionId: typeof parsed?.sectionId === 'string'
+              ? parsed.sectionId
+              : root.dataset.activeSection || 'all',
+            type: typeof parsed?.type === 'string' ? parsed.type : root.dataset.activeType || 'all',
+          };
+        } catch {
+          return { query: '', sectionId: root.dataset.activeSection || 'all', type: root.dataset.activeType || 'all' };
+        }
+      };
+
+      const persistGalleryState = (sectionId = root.dataset.activeSection || 'all') => {
+        try {
+          sessionStorage.setItem(galleryStateKey, JSON.stringify({
+            query: search?.value || '',
+            sectionId,
+            type: root.dataset.activeType || 'all',
+          }));
+        } catch {
+          // Missing sessionStorage cannot block gallery search.
+        }
+      };
+
+      const applyTypeFilter = (catalogType) => {
+        root.dataset.activeType = catalogType;
+        revealedCount = Math.min(cards.length, initialVisibleCount);
+        typeButtons.forEach((button) => {
+          const isActive = button.dataset.catalogType === catalogType;
+          button.classList.toggle('ui-button-primary', isActive);
+          button.classList.toggle('ui-button-outline', !isActive);
+          if (isActive) button.setAttribute('aria-current', 'page');
+          else button.removeAttribute('aria-current');
+        });
+        categoryButtons.forEach((button) => {
+          const categoryType = button.dataset.categoryType || 'all';
+          const visible = catalogType === 'all' || categoryType === 'all' || categoryType === catalogType;
+          button.classList.toggle('hidden', !visible);
+          if (!visible) button.classList.remove('is-search-match');
+        });
+        refreshVercelTabs('category');
+      };
+
+      // Why: categories filter in place (like customers) instead of navigating,
+      // so that switching does not reload the page. We update the URL by
+      // history.pushState, so deep links /dev/components/library/<id>/
+      // they still work (the server renders the same directory with the active section).
+      const sectionHref = (sectionId) => (
+        sectionId === 'all' ? '/dev/components/' : `/dev/components/library/${encodeURIComponent(sectionId)}/`
+      );
+
+      // Why: Polish variation of the number of variants (1 variant, 2-4 variants,
+      // 5+ variants) - a copy of the logic from frontmatter, because we update the header
+      // in JS when switching categories.
+      const pluralVariantsJs = (n, scope) => {
+        const noun = scope === 'katalog' ? 'w katalogu' : 'w tej kategorii';
+        if (n === 1) return `${n} wariant ${noun}`;
+        const rem10 = n % 10;
+        const rem100 = n % 100;
+        if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) {
+          return `${n} warianty ${noun}`;
+        }
+        return `${n} wariantów ${noun}`;
+      };
+
+      const applySectionFilter = (sectionId, syncType = true) => {
+        root.dataset.activeSection = sectionId;
+        revealedCount = Math.min(cards.length, initialVisibleCount);
+        const activeButton = categoryButtons.find((button) => button.dataset.categoryId === sectionId);
+        const categoryType = activeButton?.dataset.categoryType;
+        if (syncType && sectionId !== 'all' && categoryType) applyTypeFilter(categoryType);
+        categoryButtons.forEach((button) => {
+          const isActive = button.dataset.categoryId === sectionId;
+          if (isActive) button.setAttribute('aria-current', 'page');
+          else button.removeAttribute('aria-current');
+        });
+        selectVercelTab('category', sectionId);
+        // Dlaczego: etykieta z data-category-label (server-rendered), bo
+        // galleryCopy from frontmatter is not available in the inline script.
+        const label = activeButton?.dataset.categoryLabel || sectionId;
+        const activeType = root.dataset.activeType || 'all';
+        const count = cards.filter((card) => {
+          const typeMatches = activeType === 'all' || card.getAttribute('data-catalog-type') === activeType;
+          const sectionMatches = sectionId === 'all' || (card.getAttribute('data-group') || '') === sectionId;
+          return typeMatches && sectionMatches;
+        }).length;
+        if (sectionHeading) sectionHeading.textContent = label;
+        if (sectionCount) sectionCount.textContent = pluralVariantsJs(count, sectionId === 'all' ? 'katalog' : 'kategoria');
+        try {
+          const nextPath = sectionHref(sectionId);
+          if (location.pathname !== nextPath) {
+            history.pushState({}, '', nextPath);
+          }
+        } catch {
+          // The lack of history API cannot block category filtering.
+        }
+      };
+
+      const searchableCards = cards.map((card) => ({
+        card,
+        value: normalizeSearch(card.getAttribute('data-search') || ''),
+      }));
+      const searchableCategories = categoryButtons.map((button) => ({
+        button,
+        value: normalizeSearch(button.getAttribute('data-category-search') || ''),
+      }));
+      let lastQuery = '';
+
+      const updateLoadMore = () => {
+        // Why: the counter takes into account all active filters, including the phrase,
+        // so that the button does not reveal games without hits.
+        const activeSection = root.dataset.activeSection || 'all';
+        const activeType = root.dataset.activeType || 'all';
+        const query = normalizeSearch(search?.value || '');
+        const remaining = searchableCards.filter(({ card, value }) =>
+          card.getAttribute('data-load-hidden') === 'true'
+          && (!query || value.includes(query))
+          && !card.classList.contains('hidden')
+          && (activeType === 'all' || card.getAttribute('data-catalog-type') === activeType)
+          && (activeSection === 'all' || (card.getAttribute('data-group') || '') === activeSection)
+        ).length;
+        if (loadMoreButton) loadMoreButton.toggleAttribute('hidden', remaining === 0);
+        if (loadMoreRemaining) loadMoreRemaining.textContent = String(remaining);
+      };
+
+      const revealNextBatch = () => {
+        // Why: We only reveal cards not hidden by the active filters.
+        const hiddenCards = cards.filter((card) =>
+          card.getAttribute('data-load-hidden') === 'true'
+          && !card.classList.contains('hidden')
+        );
+        hiddenCards.slice(0, loadBatchSize).forEach((card) => card.removeAttribute('data-load-hidden'));
+        revealedCount = Math.min(cards.length, revealedCount + loadBatchSize);
+        updateSearch();
+        fitThumbnailFrames();
+      };
+
+      const loadVisibleThumbnails = () => {
+        const viewportH = window.innerHeight || document.documentElement.clientHeight;
+
+        cards.forEach((card) => {
+          if (card.classList.contains('hidden') || card.hasAttribute('data-load-hidden')) return;
+          const frame = card.querySelector('iframe[data-thumbnail-frame]');
+          if (!frame) return;
+          const rect = frame.getBoundingClientRect();
+          if (rect.top < viewportH + 160 && rect.bottom > -160) {
+            loadThumbnail(frame);
+          } else {
+            unloadThumbnail(frame);
+          }
+        });
+      };
+
+      const updateSearch = () => {
+        const query = normalizeSearch(search.value);
+        const activeSection = root.dataset.activeSection || 'all';
+        const activeType = root.dataset.activeType || 'all';
+        if (query !== lastQuery) {
+          revealedCount = Math.min(cards.length, initialVisibleCount);
+          lastQuery = query;
+        }
+        persistGalleryState();
+        let visibleCards = 0;
+        let visibleCategories = 0;
+        let renderedCards = 0;
+
+        searchableCards.forEach(({ card, value }) => {
+          const typeMatches = activeType === 'all' || card.getAttribute('data-catalog-type') === activeType;
+          const sectionMatches = activeSection === 'all' || (card.getAttribute('data-group') || '') === activeSection;
+          const matches = (!query || value.includes(query)) && typeMatches && sectionMatches;
+          card.classList.toggle('hidden', !matches);
+          if (matches) {
+            const shouldRender = renderedCards < revealedCount;
+            renderedCards += 1;
+            if (shouldRender) {
+              card.removeAttribute('data-load-hidden');
+            } else {
+              card.setAttribute('data-load-hidden', 'true');
+            }
+          } else {
+            card.removeAttribute('data-load-hidden');
+          }
+          if (matches) visibleCards += 1;
+        });
+
+        // We collect matching categories to prompt the user to click,
+        // gdy fraza pasuje do kategorii, ale nie do kart aktualnej kategorii.
+        const matchedCategories = [];
+        searchableCategories.forEach(({ button, value }) => {
+          const categoryType = button.dataset.categoryType || 'all';
+          const typeMatches = activeType === 'all' || categoryType === 'all' || categoryType === activeType;
+          const matches = typeMatches && (!query || value.includes(query));
+          button.classList.toggle('hidden', !matches);
+          button.classList.toggle('is-search-match', matches && !!query);
+          if (matches) {
+            visibleCategories += 1;
+            if (query) matchedCategories.push(button);
+          }
+        });
+        refreshVercelTabs('category');
+
+        // Tabs are visible from the current category, so when categories match,
+        // but not cards, we show them as links (instead of the misleading empty).
+        const showHint = query !== '' && visibleCards === 0 && matchedCategories.length > 0;
+        categoryHint?.classList.toggle('hidden', !showHint);
+        categoryEmpty?.classList.toggle('hidden', visibleCategories !== 0 || query === '');
+        empty?.classList.toggle('hidden', visibleCards !== 0 || query === '' || showHint);
+        if (categoryHintLinks) {
+          categoryHintLinks.replaceChildren();
+          if (showHint) {
+            matchedCategories.forEach((button) => {
+              const link = document.createElement('a');
+              // Why: tooltip leads to categories but no navigation -
+              // klika aplikuje filtr w miejscu (jak przyciski kategorii).
+              link.href = sectionHref(button.dataset.categoryId);
+              link.className = 'rounded-md border border-brand-dark/15 bg-[var(--ui-bg-page)] px-3 py-1.5 text-sm font-medium text-brand-dark transition-colors hover:border-brand-primary/40 hover:text-brand-primary';
+              link.textContent = button.textContent.trim();
+              link.addEventListener('click', (event) => {
+                event.preventDefault();
+                applySectionFilter(button.dataset.categoryId);
+                persistGalleryState();
+                updateSearch();
+              });
+              categoryHintLinks.appendChild(link);
+            });
+          }
+        }
+
+        updateLoadMore();
+        scheduleThumbnailSync();
+      };
+
+      search?.addEventListener('input', updateSearch);
+      cleanups.push(() => search?.removeEventListener('input', updateSearch));
+
+      const restoreState = readGalleryState();
+      if (search && restoreState.query) {
+        search.value = restoreState.query;
+        search.dispatchEvent(new Event('component-search-restore'));
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      const routeHasCategory = (root.dataset.activeSection || 'all') !== 'all';
+      applyTypeFilter(routeHasCategory ? (root.dataset.activeType || 'all') : (restoreState.type || 'all'));
+      // Dlaczego: aktywna kategoria wynika z URL (server-rendered data-active-section),
+      // and not with sessionStorage - the URL is the source of truth for deep links.
+      applySectionFilter(root.dataset.activeSection || 'all', false);
+      typeButtons.forEach((button) => {
+        const handleTypeClick = () => {
+          applyTypeFilter(button.dataset.catalogType || 'all');
+          applySectionFilter('all', false);
+          persistGalleryState();
+          updateSearch();
+        };
+        button.addEventListener('click', handleTypeClick);
+        cleanups.push(() => button.removeEventListener('click', handleTypeClick));
+      });
+      categoryButtons.forEach((button) => {
+        const handleCategoryClick = () => {
+          applySectionFilter(button.dataset.categoryId);
+          persistGalleryState();
+          updateSearch();
+        };
+        button.addEventListener('click', handleCategoryClick);
+        cleanups.push(() => button.removeEventListener('click', handleCategoryClick));
+      });
+
+      loadMoreButton?.addEventListener('click', revealNextBatch);
+      cleanups.push(() => loadMoreButton?.removeEventListener('click', revealNextBatch));
+
+      // Why: pushState creates history entries, so browser back/forward
+      // changes URL without reloading - we read the section with URL and filter.
+      const handlePopState = () => {
+        const match = location.pathname.match(/^\/dev\/components\/library\/([^/]+)\/$/);
+        const pathSection = match ? decodeURIComponent(match[1]) : 'all';
+        if (pathSection === 'all') {
+          applyTypeFilter('all');
+          applySectionFilter('all', false);
+        } else {
+          applySectionFilter(pathSection);
+        }
+        persistGalleryState();
+        updateSearch();
+      };
+      window.addEventListener('popstate', handlePopState);
+      cleanups.push(() => window.removeEventListener('popstate', handlePopState));
+
+      // Enter with one matching category takes you directly to it.
+      const handleSearchKeydown = (event) => {
+        if (event.key !== 'Enter') return;
+
+        const query = normalizeSearch(search.value);
+        const matchingButtons = categoryButtons.filter((button) => !button.classList.contains('hidden'));
+        if (!query || matchingButtons.length !== 1) return;
+
+        event.preventDefault();
+        matchingButtons[0].click();
+      };
+
+      search?.addEventListener('keydown', handleSearchKeydown);
+      cleanups.push(() => search?.removeEventListener('keydown', handleSearchKeydown));
+
+      updateSearch();
+    };
+
+    if (!window.__componentGalleryPageLoadBound) {
+      document.addEventListener('astro:page-load', setupComponentGallery);
+      window.__componentGalleryPageLoadBound = true;
+    }
+
+    setupComponentGallery();
+  })();
+</script>
+
+<style is:global>
+  body.component-library #floating-bar,
+  body.component-library #cookie-consent,
+  body.component-library #cookie-settings-launcher,
+  body.component-library #vt-bar,
+  body.component-library #fst {
+    display: none !important;
+  }
+
+  .component-filter-toolbar {
+    display: grid;
+    gap: 1.125rem;
+    border-block: 1px solid color-mix(in srgb, var(--color-brand-dark) 10%, transparent);
+    padding-block: 1.125rem;
+  }
+
+  .component-filter-primary {
+    display: grid;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .component-filter-search {
+    width: 100%;
+  }
+
+  .component-search-field {
+    display: flex;
+    min-height: 3.125rem;
+    width: 100%;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-brand-dark) 16%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--ui-bg-page) 92%, transparent);
+    color: var(--color-brand-dark);
+    padding-inline: 1rem;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .component-search-field:focus-within {
+    border-color: color-mix(in srgb, var(--color-brand-dark) 42%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-primary) 12%, transparent);
+  }
+
+  .component-search-field > i {
+    flex: 0 0 auto;
+    color: color-mix(in srgb, var(--color-brand-dark) 72%, transparent);
+    font-size: 1.15rem;
+  }
+
+  .component-search-field input {
+    min-width: 0;
+    flex: 1 1 auto;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--color-brand-dark);
+    font-size: 0.9375rem;
+  }
+
+  .component-search-field input::placeholder {
+    color: color-mix(in srgb, var(--color-brand-dark) 52%, transparent);
+  }
+
+  .component-search-field input::-webkit-search-cancel-button {
+    opacity: 0.5;
+  }
+
+  .component-filter-line {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .component-filter-label {
+    display: flex;
+    min-height: 2rem;
+    align-items: center;
+  }
+
+  .component-filter-segmented,
+  .component-filter-rail {
+    min-width: 0;
+  }
+
+  .component-filter-segmented {
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 0.125rem;
+    border: 1px solid color-mix(in srgb, var(--color-brand-dark) 10%, transparent);
+    border-radius: var(--rounded-lg);
+    background: color-mix(in srgb, var(--ui-bg-page) 72%, transparent);
+    padding: 0.1875rem;
+  }
+
+  .component-filter-segmented .ui-button {
+    min-height: 2.375rem;
+    border-radius: var(--rounded-md);
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    padding-inline: 0.75rem;
+  }
+
+  .component-filter-segmented .ui-button-primary {
+    background: var(--color-brand-dark);
+    box-shadow: var(--ui-elevation-soft);
+  }
+
+  .component-filter-rail {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.5rem 0.625rem;
+    margin-block: -0.5rem -0.625rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, var(--color-brand-dark) 0%, var(--color-brand-dark) calc(100% - 2.5rem), transparent 100%);
+    mask-image: linear-gradient(to right, var(--color-brand-dark) 0%, var(--color-brand-dark) calc(100% - 2.5rem), transparent 100%);
+    overscroll-behavior-inline: contain;
+  }
+
+  .component-filter-rail::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+
+  .component-filter-rail > div {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .component-filter-rail > div > div[aria-hidden='true']:first-child {
+    will-change: transform, width, opacity;
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), width 240ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease;
+  }
+
+  .component-filter-rail [role='tablist'] {
+    min-width: max-content;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-brand-dark) 12%, transparent);
+  }
+
+  .component-filter-rail [role='tab'] {
+    min-height: 2rem;
+  }
+
+  /* Why: the active indicator should be readable against the background of a common line,
+     instead of looking like a separate black button under the tab.*/
+  .component-filter-rail > div > div[aria-hidden='true']:nth-child(2) {
+    bottom: -1px !important;
+    background: var(--color-brand-primary) !important;
+  }
+
+  @media (min-width: 48rem) {
+    .component-filter-primary {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .component-filter-search {
+      width: 100%;
+    }
+
+    .component-filter-line {
+      display: grid;
+      grid-template-columns: minmax(6.5rem, 0.15fr) minmax(0, 1fr);
+      align-items: start;
+      column-gap: 1rem;
+    }
+
+    .component-filter-label {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .component-card {
+    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 600ms cubic-bezier(0.16, 1, 0.3, 1), border-color 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    content-visibility: auto;
+    contain-intrinsic-size: 24rem;
+  }
+
+  .component-card[data-load-hidden='true'] {
+    display: none;
+  }
+
+  .component-card:hover {
+    transform: translateY(-0.25rem);
+    box-shadow: var(--ui-elevation-strong);
+    border-color: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
+  }
+
+  .component-action-button {
+    flex: 0 0 auto;
+    border-color: color-mix(in srgb, var(--color-brand-dark) 14%, transparent);
+  }
+
+  .component-action-button:hover {
+    transform: translateY(-0.125rem);
+  }
+
+  .component-category-nav {
+    overscroll-behavior-inline: contain;
+  }
+
+  /* Why: matching categories in the search get a subtle ring,
+     so that the user can see where he can click outside the current category.*/
+  .component-category-nav .is-search-match {
+    color: var(--color-brand-primary);
+  }
+
+  .component-thumbnail-frame {
+    transform: translateX(-50%) scale(0.27);
+    transform-origin: top center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .component-card {
+      transition: none;
+    }
+
+    .component-card:hover {
+      transform: none;
+    }
+  }
+</style>

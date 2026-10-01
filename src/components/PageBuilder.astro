@@ -1,0 +1,94 @@
+---
+import { SECTION_REGISTRY } from "@config/section-registry";
+import { COMPONENT_MAP } from "@config/component-map";
+import { HERO_SECTION_IDS } from "@config/hero-ids";
+import companyData from "@data/global/company.json";
+import type { PageSection } from "@/types/config";
+import { createSectionDataCache, type SectionJsonModule } from "@utils/section-data";
+import { getNovaSectionCopy, type NovaLocale } from "@utils/nova-i18n";
+import { ACTIVE_TEMPLATE } from "@/config/template";
+
+// Why: PageBuilder renders pages from JSON configs (data-driven).
+// The component never hardcodes the content, only dynamically resolves sections from the config.
+interface Props {
+  sections: PageSection[];
+  heading?: string;
+  locale?: NovaLocale;
+}
+
+// Why: import.meta.glob with eagerly: true loads all JSON at build start,
+// to avoid lazy loading and delays in page rendering.
+const dataModules = import.meta.glob<SectionJsonModule>("/src/data/sections/**/*.json", { eager: true });
+
+// Why: one helper applies to both the page renderer and the Studio directory.
+const sectionDataCache = createSectionDataCache(dataModules);
+
+const { heading, sections, locale = "pl" } = Astro.props;
+
+const hasHeroSection = sections.some((s) => (HERO_SECTION_IDS as readonly string[]).includes(s.id));
+
+type Resolved = { component: any; props: Record<string, unknown> };
+
+// Why: resolveSection is the heart of PageBuilder. Combines configuration with section-registry
+// with data from JSON and component from component-map. Without this pattern, each new section
+// would require changes in PageBuilder.
+function resolveSection(section: PageSection): Resolved | null {
+  const entry = SECTION_REGISTRY[section.id];
+  if (!entry) {
+    if (import.meta.env.DEV) console.warn(`[PageBuilder] brak wpisu SECTION_REGISTRY dla id="${section.id}"`);
+    return null;
+  }
+
+  const variant = entry.variants[section.variant];
+  if (!variant || !variant.component) {
+    if (import.meta.env.DEV) console.warn(`[PageBuilder] brak wariantu "${String(section.variant)}" dla id="${section.id}"`);
+    return null;
+  }
+
+  const Component = COMPONENT_MAP[variant.component];
+  if (!Component) {
+    if (import.meta.env.DEV) console.warn(`[PageBuilder] brak komponentu "${variant.component}" w COMPONENT_MAP dla id="${section.id}"`);
+    return null;
+  }
+
+  let props: Record<string, unknown> = { ...(variant.props || {}) };
+  props.company = companyData;
+  props.locale = locale;
+  // Why: heading from page config (e.g. "Our services") is the h1 source of the page.
+  // We pass it as pageHeading to all sections and the hero component uses it as the h1 title.
+  props.pageHeading = heading;
+  if (variant.dataKey) {
+    const data = sectionDataCache[variant.dataKey];
+    if (data) props = { ...props, ...data };
+  }
+
+  // Dlaczego: Nova ma jedną strukturę homepage'u, a copy dla PL i EN jest
+  // wybierane tutaj, zanim props trafią do konkretnego bloku.
+  if (ACTIVE_TEMPLATE === "nova") {
+    const localized = getNovaSectionCopy(locale, variant.dataKey);
+    if (localized) props = { ...props, ...localized };
+    if (section.id === "novaServices" && !props.id) props.id = locale === "pl" ? "uslugi" : "services";
+  }
+
+  return { component: Component, props };
+}
+
+// Why: navbar and footer are shell sections that Layout now renders
+// globalnie (zawsze ta sama wersja, fallback do defaultVariant z rejestru).
+// PageBuilder only renders the page content; shell never goes to content.
+const SHELL_IDS = ["navbar", "footer"];
+const contentSections = sections
+  .filter((s) => !SHELL_IDS.includes(s.id))
+  .map((s) => resolveSection(s))
+  .filter(Boolean) as Resolved[];
+---
+
+{contentSections.map((r, i) => (
+  // Why: On pages without a hero, the first section of content takes over
+  // website h1 header (SEO). headingTag="h1" only she gets, the rest
+  // sections stay with the default h2. Blocks without headingTag support ignore prop.
+  <r.component
+    {...r.props}
+    headingTag={!hasHeroSection && i === 0 ? "h1" : undefined}
+  />
+))}

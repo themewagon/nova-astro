@@ -1,0 +1,117 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Grid from "@components/ui/layout/Grid.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Card from "@components/ui/atoms/Card.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import { formatInternalLink } from "@utils/url";
+import data from "@data/sections/services-cards.json";
+
+// Why: content lives in JSON (src/data/sections/services-cards.json) with pl/en sections.
+// Props from PageBuilder or CMS take precedence over JSON, and the missing language falls to
+// Polish fallback. SSOT pattern from the configurable hero block.
+type ServiceItem = {
+  icon: string;
+  title: string;
+  description: string;
+  href?: string;
+  linkLabel?: string;
+};
+
+export interface Props {
+  /** Id sekcji dla kotwic nawigacyjnych. */
+  sectionId?: string;
+/** Content language from JSON. */
+  lang?: "pl" | "en";
+  title?: string;
+  description?: string;
+  items?: ServiceItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+/** Additional section classes, for example from PageBuilder. */
+  class?: string;
+}
+
+const {
+sectionId = "uslugi",
+lang = "pl",
+title,
+description,
+items,
+headingTag = "h2",
+class: className = "",
+} = Astro.props as Props;
+
+const t = data[lang] ?? data.pl;
+
+const resolvedTitle = title || t.title;
+const resolvedDescription = description || t.description;
+const resolvedItems = items ?? t.items ?? [];
+const isPl = lang === "pl";
+// Why: CTA label fallback is linguistic, because JSON always specifies linkLabel, and props
+// without this value should not render the English name in the Polish section.
+const fallbackLinkLabel = isPl ? "Umów konsultację" : "Book a consultation";
+---
+
+<Section id={sectionId} tone="page" class:list={[className]}>
+  <Container>
+    <SectionHeader title={resolvedTitle} description={resolvedDescription} titleTag={headingTag} align="center" />
+
+    <Grid cols={{ default: 1, md: 2, lg: 4 }} gap="lg">
+      {resolvedItems.map((item) => (
+        <Card
+          variant="surface"
+          radius="xl"
+          elevation="soft"
+          padding="none"
+          class="ui-card-interactive group flex h-full flex-col border-brand-dark/10 p-8"
+        >
+          {/* Why: icon in a dark square, when you hover over the card the square
+               inverts the colors (dark background and light icon), which emphasizes the interaction. */}
+          <div class="mb-6 inline-flex size-14 items-center justify-center rounded-2xl border border-brand-dark/15 bg-brand-dark/10 text-brand-dark transition-colors duration-300 group-hover:border-brand-dark group-hover:bg-brand-dark group-hover:text-brand-light">
+            <Icon name={item.icon} size={28} />
+          </div>
+
+          <Heading level={3} variant="feature-title" class="mb-3 font-heading text-xl font-bold text-brand-dark">
+            {item.title}
+          </Heading>
+
+          <Text variant="feature-body-sm" class="mb-6 leading-relaxed text-brand-dark/70">
+            {item.description}
+          </Text>
+
+          {/* Why: CTA glued to the bottom of the card (mt-auto), making it
+               all cards in a row have their buttons aligned independently
+               on the length of the description. */}
+          <div class="mt-auto">
+            <a
+              href={formatInternalLink(item.href || "/kontakt/")}
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-brand-primary/90 hover:shadow-lg active:scale-[0.97]"
+            >
+              {item.linkLabel || fallbackLinkLabel}
+              {/* Why: inline SVG instead of an arrow sign, because stroke currentColor
+                   inherits the color of the button and moves with the label
+                   on hover (group-hover:translate-x-1). */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="size-4 transition-transform duration-300 ease-out group-hover:translate-x-1"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </Card>
+      ))}
+    </Grid>
+  </Container>
+</Section>

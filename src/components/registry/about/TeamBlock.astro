@@ -1,0 +1,53 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import jsonData from "@data/sections/nova-team.json";
+import { ACTIVE_TEMPLATE } from "@config/template";
+
+interface TeamAvatar { src: string; alt: string; }
+interface Props { title?: string; description?: string; image?: string; imageAlt?: string; checks?: string[]; teamLabel?: string; teamCount?: string; teamAriaLabel?: string; teamAvatars?: TeamAvatar[]; buttonLabel?: string; buttonHref?: string; class?: string; }
+const props = Astro.props as Props;
+const fallback = ACTIVE_TEMPLATE === "nova" ? undefined : jsonData;
+const title = props.title ?? fallback?.title;
+const description = props.description ?? fallback?.description;
+const image = props.image ?? fallback?.image;
+const imageAlt = props.imageAlt ?? fallback?.imageAlt ?? "";
+const checks = props.checks ?? fallback?.checks ?? [];
+const teamLabel = props.teamLabel ?? fallback?.teamLabel;
+const teamCount = props.teamCount ?? fallback?.teamCount;
+const teamAriaLabel = props.teamAriaLabel ?? fallback?.teamAriaLabel;
+const buttonLabel = props.buttonLabel ?? fallback?.buttonLabel;
+const buttonHref = props.buttonHref ?? fallback?.buttonHref;
+const teamAvatars = props.teamAvatars ?? fallback?.teamAvatars ?? [];
+---
+
+<Section id="zespol" tone="page" class:list={["py-12", props.class]}>
+  <Container class="w-full max-w-none px-[clamp(1.5rem,5vw,5rem)]">
+    <div class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
+      <figure class="m-0 grid min-h-80 place-items-center overflow-hidden rounded-[var(--ui-radius-xl)]" data-motion="viewport" data-motion-skip>
+        <SmartImage src={image} alt={imageAlt} width={1280} height={900} loading="eager" class="h-full min-h-80 w-full object-cover" />
+      </figure>
+      <div class="flex flex-col gap-4 px-0 py-6 md:p-8" data-motion-sequence="viewport" data-motion-profile="soft">
+        <Heading tag="h2" variant="section-title">{title}</Heading>
+        <Text variant="lead">{description}</Text>
+        <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-3 sm:gap-4">
+          <div class="relative z-10 flex shrink-0 items-center -space-x-2.5 pr-1 sm:-space-x-3" aria-label={teamAriaLabel}>
+              {teamAvatars.map((avatar, index) => (
+                <img src={avatar.src} alt={avatar.alt} width="48" height="48" loading="lazy" class="relative size-10 rounded-full border-2 border-surface object-cover sm:size-12" style={`z-index: ${teamAvatars.length - index};`} />
+              ))}
+          </div>
+          <div class="relative z-20 flex min-w-0 flex-1 items-baseline gap-2 sm:flex-none sm:gap-3 sm:whitespace-nowrap">
+            <strong class="shrink-0 text-2xl leading-none">{teamCount}</strong>
+            <Text tag="span" variant="body" class="min-w-0 text-sm sm:text-base">{teamLabel}</Text>
+          </div>
+        </div>
+        <ul class="m-0 grid list-none gap-3 py-4">{checks.map((check) => <li class="flex items-center gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full border border-white/45 bg-brand-accent text-xl leading-none text-brand-dark" aria-hidden="true">→</span><Text tag="span" variant="body">{check}</Text></li>)}</ul>
+        <Button href={buttonHref} variant="primary" size="md" class="min-h-11 w-full sm:w-fit">{buttonLabel}</Button>
+      </div>
+    </div>
+  </Container>
+</Section>

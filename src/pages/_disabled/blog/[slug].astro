@@ -1,0 +1,82 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { formatBlogDate } from "@utils/format-blog-date";
+import { getCollection, render } from "astro:content";
+
+// Why: navbar and footer render globally Layout (shell), so entry
+// the blog does not have to import them or compensate for the height of the fixed header.
+
+// Dlaczego: Astro Content Collections zamiast import.meta.glob
+// It provides frontmatter validation, type safety and a consistent data structure
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  return allPosts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout title={post.data.title} description={post.data.description} navbarVariant="plain">
+	<Section tone="page">
+		<Container>
+			<div class="mx-auto flex max-w-4xl flex-col gap-8">
+				<div class="space-y-4">
+					<Text tag="time" variant="feature-body-sm" class="text-brand-dark/60">
+						{formatBlogDate(post.data.pubDate)}
+					</Text>
+					<Heading tag="h1" variant="section-title">
+						{post.data.title}
+					</Heading>
+					<Text variant="lead" class="text-brand-dark/75">
+						{post.data.description}
+					</Text>
+
+					{post.data.tags && post.data.tags.length > 0 && (
+						<div class="flex flex-wrap gap-2">
+							{post.data.tags.map((tag) => (
+								<Text
+									tag="span"
+									variant="accent-label"
+									class="text-[0.7rem] tracking-[0.22em] text-brand-dark/60"
+								>
+									{tag}
+								</Text>
+							))}
+						</div>
+					)}
+				</div>
+
+				<div class="contents">
+					<SmartImage
+						src={post.data.heroImage}
+						alt={post.data.title}
+						width={1600}
+						height={900}
+						class="aspect-[16/9] w-full rounded-3xl object-cover"
+					/>
+
+					{/* Markdown content rendered from Content Collections.*/}
+					<article class="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-brand-dark prose-p:text-brand-dark/80">
+						<Content />
+					</article>
+
+					<div>
+						<Button href="/blog/" variant="outline" size="sm">
+							Powrót do bloga
+						</Button>
+					</div>
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>

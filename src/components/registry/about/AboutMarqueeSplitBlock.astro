@@ -1,0 +1,147 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import aboutData from "@data/sections/about-marquee.json";
+
+// Why: AboutMarqueeSplitBlock is a visual copy of the "About me" section from the
+// reference project: split image + text, and below 3 marquee tracks
+// with clients. Data has JSON fallback, so the block works without props too.
+export interface Props {
+  sectionId?: string;
+  heading?: string;
+  lead?: string;
+  paragraphs?: string[];
+  clientsHeadline?: string;
+  image?: { src?: string; alt?: string };
+  clients?: string[];
+  labels?: string[];
+  moreClients?: string[];
+  /** Section heading tag: 'h2' by default, 'h1' when block is the first section without hero (SEO). */
+  headingTag?: string;
+}
+
+const {
+  sectionId = "o-nas",
+  heading = "",
+  lead = "",
+  paragraphs = [],
+  clientsHeadline = "",
+  image,
+  clients = [],
+  labels = [],
+  moreClients = [],
+  headingTag = "h2",
+} = Astro.props as Props;
+
+// Why: "props || json" pattern from starter-kit, so PageBuilder
+// can override any field, and the rest comes from section data.
+const resolvedHeading = heading || aboutData.heading;
+const resolvedLead = lead || aboutData.lead;
+const resolvedParagraphs = paragraphs.length > 0 ? paragraphs : aboutData.paragraphs;
+const resolvedClientsHeadline = clientsHeadline || aboutData.clientsHeadline;
+const resolvedImage = image && image.src ? image : aboutData.image;
+const resolvedClients = clients.length > 0 ? clients : aboutData.clients;
+const resolvedLabels = labels.length > 0 ? labels : aboutData.labels;
+const resolvedMoreClients = moreClients.length > 0 ? moreClients : aboutData.moreClients;
+---
+
+<Section id={sectionId} tone="base" class="relative overflow-hidden">
+  <Container>
+    <div class="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+      <!-- Why: aspect-[4/5] + grayscale is the visual signature of the section.
+           Plain <img>, because SmartImage adds its own
+           aspect-ratio (800/600) on <picture>, which conflicts with container aspect-[4/5]
+           and stretches the image. object-cover + h-full w-full fill the frame. -->
+      <div class="overflow-hidden rounded shadow-xl aspect-[4/5] max-w-md mx-auto lg:mr-0 lg:ml-auto">
+        <img
+          src={resolvedImage.src}
+          alt={resolvedImage.alt}
+          width="800"
+          height="1000"
+          class="w-full h-full object-cover grayscale"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      <div class="max-w-lg text-center lg:text-left">
+        <Heading tag={headingTag} class="text-3xl font-light! tracking-[0.08em] text-neutral-900 sm:text-4xl">
+          {resolvedHeading}
+        </Heading>
+
+        {resolvedLead && (
+          <Text variant="lead" class="mt-6 text-neutral-800">
+            {resolvedLead}
+          </Text>
+        )}
+
+        <div class="mt-6 space-y-3">
+          {resolvedParagraphs.map((paragraph) => (
+            <Text class="text-sm text-neutral-500">
+              {paragraph}
+            </Text>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Why: ui-divider from core.css provides gradient lines on the sides
+         of the heading without manual elements ("mixer channel" aesthetics). -->
+    <div class="ui-divider mt-16 mb-8">
+      <h3 class="text-xl sm:text-2xl font-light! tracking-[0.08em] text-neutral-900 text-center shrink-0">
+        {resolvedClientsHeadline}
+      </h3>
+    </div>
+
+    <!-- Why: 3 pairs of tracks (ui-marquee-* classes from core.css). Second track
+         in pair has aria-hidden because it is a duplicate for seamless loop. -->
+    <div class="mt-10 space-y-6">
+      <div class="ui-marquee-row" style="--ui-marquee-desktop-duration: 36s; --ui-marquee-mobile-duration: 28s;">
+        <div class="ui-marquee-track ui-marquee-ltr">
+          {resolvedClients.map((client) => (
+            <span class="text-sm font-bold tracking-widest text-neutral-800 whitespace-nowrap uppercase">{client}</span>
+          ))}
+        </div>
+        <div class="ui-marquee-track ui-marquee-ltr" aria-hidden="true">
+          {resolvedClients.map((client) => (
+            <span class="text-sm font-bold tracking-widest text-neutral-800 whitespace-nowrap uppercase">{client}</span>
+          ))}
+        </div>
+      </div>
+
+      <div class="ui-marquee-row" style="--ui-marquee-desktop-duration: 32s; --ui-marquee-mobile-duration: 24s;">
+        <div class="ui-marquee-track ui-marquee-rtl items-center">
+          {resolvedLabels.map((label, index) => (
+            <Fragment>
+              <span class="text-xs font-bold tracking-[0.18em] text-neutral-700 uppercase whitespace-nowrap">{label}</span>
+              {index < resolvedLabels.length - 1 && <span class="inline-block size-1 rounded-full bg-neutral-300 shrink-0" aria-hidden="true" />}
+            </Fragment>
+          ))}
+        </div>
+        <div class="ui-marquee-track ui-marquee-rtl items-center" aria-hidden="true">
+          {resolvedLabels.map((label, index) => (
+            <Fragment>
+              <span class="text-xs font-bold tracking-[0.18em] text-neutral-700 uppercase whitespace-nowrap">{label}</span>
+              {index < resolvedLabels.length - 1 && <span class="inline-block size-1 rounded-full bg-neutral-300 shrink-0" aria-hidden="true" />}
+            </Fragment>
+          ))}
+        </div>
+      </div>
+
+      <div class="ui-marquee-row" style="--ui-marquee-desktop-duration: 45s; --ui-marquee-mobile-duration: 30s;">
+        <div class="ui-marquee-track ui-marquee-ltr">
+          {resolvedMoreClients.map((client) => (
+            <span class="text-sm font-bold tracking-widest text-neutral-800 whitespace-nowrap uppercase">{client}</span>
+          ))}
+        </div>
+        <div class="ui-marquee-track ui-marquee-ltr" aria-hidden="true">
+          {resolvedMoreClients.map((client) => (
+            <span class="text-sm font-bold tracking-widest text-neutral-800 whitespace-nowrap uppercase">{client}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </Container>
+</Section>

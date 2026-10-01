@@ -1,0 +1,38 @@
+{
+  "labels": {
+    "contact": "Kontakt",
+    "hours": "Godziny pracy",
+    "location": "Lokalizacja",
+    "pricing": "Wycena",
+    "quickLinks": "Szybkie linki",
+    "legal": "Informacje",
+    "webscale": "WebScale",
+    "rightsReserved": "Wszelkie prawa zastrzeżone.",
+    "realization": "Realizacja"
+  },
+  "description": "Kompleksowe usługi realizowane z najwyższą starannością. Łączymy jakość wykonania, terminowość i indywidualne podejście do każdego projektu.",
+  "contact": {
+    "email": "kontakt@twojafirma.pl",
+    "phone": "+48 123 456 789",
+    "hours": "Pon - Pt: 08:00 - 16:00",
+    "saturday": "Soboty: Do ustalenia",
+    "city": "Warszawa",
+    "region": "mazowieckie",
+    "pricing": ["Darmowa wycena", "Profesjonalne doradztwo"],
+    "social": {
+      "facebook": "",
+      "googleMaps": ""
+    },
+    "quickLinks": [
+      { "label": "O nas", "href": "/o-nas/" },
+      { "label": "Usługi", "href": "/uslugi/" },
+      { "label": "Cennik", "href": "/cennik/" },
+      { "label": "Kontakt", "href": "/kontakt/" }
+    ]
+  },
+  "legal": [
+    { "label": "Polityka Prywatności", "href": "/polityka-prywatnosci/" },
+    { "label": "Regulamin", "href": "/regulamin/" },
+    { "label": "Cookies", "href": "/cookies/" }
+  ]
+}

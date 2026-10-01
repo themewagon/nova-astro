@@ -1,0 +1,80 @@
+---
+import Icon from "@components/ui/atoms/Icon.astro";
+import Text from "@components/ui/atoms/Text.astro";
+
+type ContactItem = {
+  key: "phone" | "email" | "address";
+  label: string;
+  icon: string;
+  href?: string;
+  value: string;
+};
+
+interface Props {
+  items: ContactItem[];
+  variant?: "detailed" | "compact";
+  class?: string;
+}
+
+const {
+  items = [],
+  variant = "detailed",
+  class: className = "",
+} = Astro.props as Props;
+
+const isDetailed = variant === "detailed";
+---
+
+<!-- Why: contact information has one renderer and variant changes exclusively
+     card detail level. This prevents contact layouts from duplicating markups.-->
+<div
+  class:list={[isDetailed ? "space-y-3" : "space-y-4", className]}
+>
+  {items.map((item) => (
+    isDetailed ? (
+      item.href ? (
+        <a
+          href={item.href}
+          class="flex items-center gap-4 rounded-2xl border border-brand-dark/10 p-4 ui-bg-base shadow-sm transition-all duration-200 hover:bg-brand-light/50"
+        >
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-primary/10 text-brand-primary">
+            <Icon name={item.icon} class="text-lg" />
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold uppercase tracking-wider text-brand-dark/50">{item.label}</div>
+            <div class="break-all text-sm font-semibold text-brand-dark">{item.value}</div>
+          </div>
+        </a>
+      ) : (
+        <div class="flex items-center gap-4 rounded-2xl border border-brand-dark/10 p-4 ui-bg-base shadow-sm">
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-primary/10 text-brand-primary">
+            <Icon name={item.icon} class="text-lg" />
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold uppercase tracking-wider text-brand-dark/50">{item.label}</div>
+            <div class="break-all text-sm font-semibold text-brand-dark">{item.value}</div>
+          </div>
+        </div>
+      )
+    ) : (
+      <div class="flex items-start gap-4 rounded-2xl border border-brand-dark/10 p-4 ui-bg-base shadow-sm">
+        <div class="pt-1">
+          <Icon name={item.icon} class="text-xl text-brand-primary" />
+        </div>
+        {
+          item.href ? (
+            <a href={item.href} class="flex min-h-11 items-center">
+              <Text tag="span" variant="body" class="font-medium text-brand-dark">
+                {item.value}
+              </Text>
+            </a>
+          ) : (
+            <Text variant="body" class="font-medium text-brand-dark">
+              {item.value}
+            </Text>
+          )
+        }
+      </div>
+    )
+  ))}
+</div>

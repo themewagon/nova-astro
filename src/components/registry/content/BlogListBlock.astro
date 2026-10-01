@@ -1,0 +1,106 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { formatBlogDate } from "@utils/format-blog-date";
+import { getCollection } from "astro:content";
+import blogData from "@data/pages/blog.json";
+
+// Dlaczego: teksty w propsach zamiast hardkodu to SSOT (Single Source of Truth), ulatwia lokalizacje i zmiane
+interface Props {
+  label?: string;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  /** Section header tag: 'h2' by default, 'h1' when the block is the first section of a page without hero (SEO).*/
+  headingTag?: string;
+}
+
+const {
+  label = "",
+  title = "",
+  description = "",
+  ctaLabel = "",
+  headingTag = "h2",
+} = Astro.props;
+
+// Dlaczego: Astro Content Collections zamiast import.meta.glob
+// It provides frontmatter validation, type safety and a consistent data structure
+const allPosts = await getCollection("blog");
+const posts = allPosts
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 3);
+---
+
+<Section tone="page">
+	<Container>
+		<div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+			<div class="space-y-3">
+			<Text variant="accent-label" tag="span">{label || blogData.block?.label}</Text>
+			<Heading tag={headingTag} variant="section-title">{title || blogData.block?.title}</Heading>
+			<Text variant="lead" class="max-w-2xl">
+				{description || blogData.block?.description}
+			</Text>
+			</div>
+
+			<div>
+			<Button href="/blog/" variant="outline" size="sm">
+				{ctaLabel || blogData.block?.ctaLabel}
+			</Button>
+			</div>
+		</div>
+
+		<div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+			{posts.map((post) => {
+				return (
+					<article class="ui-card-interactive flex h-full flex-col overflow-hidden rounded-3xl border border-brand-dark/10 ui-bg-page shadow-sm">
+						<SmartImage
+							src={post.data.heroImage}
+							alt={post.data.title}
+							width={1200}
+							height={720}
+							class="aspect-[16/10] w-full object-cover"
+						/>
+
+						<div class="flex h-full flex-col gap-5 p-6">
+							<div class="space-y-3">
+								<Text tag="time" variant="feature-body-sm" class="text-brand-dark/60">
+									{formatBlogDate(post.data.pubDate)}
+								</Text>
+								<Heading tag="h3" variant="feature-title">
+									{post.data.title}
+								</Heading>
+								<Text variant="body" class="text-brand-dark/75">
+									{post.data.description}
+								</Text>
+							</div>
+
+							{post.data.tags && post.data.tags.length > 0 && (
+								<div class="flex flex-wrap gap-2">
+									{post.data.tags.map((tag) => (
+										<Text
+											tag="span"
+											variant="accent-label"
+											class="text-[0.7rem] tracking-[0.22em] text-brand-dark/60"
+										>
+											{tag}
+										</Text>
+									))}
+								</div>
+							)}
+
+							<div class="mt-auto pt-2">
+								<Button href={`/blog/${post.id}/`} variant="outline" size="sm">
+									Czytaj wpis
+								</Button>
+							</div>
+						</div>
+					</article>
+				);
+			})}
+		</div>
+	</Container>
+</Section>

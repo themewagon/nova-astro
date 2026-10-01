@@ -1,0 +1,67 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import TestimonialCard from "@components/ui/molecules/TestimonialCard.astro";
+import testimonialsData from "@data/sections/testimonials.json";
+
+// Why: testimonials use dynamic data from JSON.
+interface Testimonial {
+    quote: string;
+    author: string;
+    role: string;
+    avatar: string;
+}
+
+interface Props {
+    title?: string;
+    description?: string;
+    testimonials?: Testimonial[];
+    /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+    headingTag?: string;
+    class?: string;
+}
+
+const {
+title = testimonialsData.title || testimonialsData.marquee.title,
+description = testimonialsData.description || testimonialsData.marquee.description,
+testimonials = [],
+headingTag = "h2",
+class: className = ""
+} = Astro.props;
+
+// Why: fallback to demoTestimonials from JSON when the client provides no data.
+// Allows previewing the component before connecting real data.
+const demoTestimonials = testimonialsData.testimonials || testimonialsData.marquee.testimonials || [];
+const list = testimonials.length > 0 ? testimonials : demoTestimonials;
+---
+
+<Section tone="page" class:list={["overflow-hidden", className]}>
+    <div class="ui-container">
+        <SectionHeader
+title={title}
+description={description}
+titleTag={headingTag}
+align="center"
+/>
+
+        <div class="ui-marquee" style="--ui-marquee-duration: 46s; mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);">
+            <div class="ui-marquee__track">
+                <div class="ui-marquee__group">
+                    {list.map((item) => (
+                        <div class="w-80 shrink-0">
+                            <TestimonialCard {...item} class="h-full" />
+                        </div>
+                    ))}
+                </div>
+
+                <div class="ui-marquee__group" aria-hidden="true">
+                    {list.map((item) => (
+                        <div class="w-80 shrink-0">
+                            <TestimonialCard {...item} class="h-full" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+</Section>

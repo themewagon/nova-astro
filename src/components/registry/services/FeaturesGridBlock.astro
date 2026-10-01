@@ -1,0 +1,93 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Card from "@components/ui/atoms/Card.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import data from "@data/sections/features-grid.json";
+
+// Why: the block accepts props (SSOT from PageBuilder/CMS) with fallback to JSON
+// (src/data/sections/features-grid.json). JSON holds the en/pl content, and props overwrite
+// the JSON. Pattern: configurable hero block.
+interface FeatureItem {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface Props {
+  sectionId?: string;
+/** Content language from JSON: "pl" (default) or "en". */
+  lang?: "pl" | "en";
+  title?: string;
+  description?: string;
+  items?: FeatureItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+/** Additional section classes, for example from PageBuilder. */
+  class?: string;
+}
+
+const {
+  sectionId = "features-grid",
+  lang = "pl",
+  title,
+  description,
+  items,
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+const t = data[lang] ?? data.pl;
+
+// Why: props take precedence over JSON so that the CMS/PageBuilder can overwrite the default
+// content without touching the component.
+const resolvedTitle = title || t.title;
+const resolvedDescription = description || t.description;
+const resolvedItems = items ?? t.items ?? [];
+---
+
+<Section id={sectionId} tone="base" class:list={[className]}>
+  <Container>
+    <SectionHeader title={resolvedTitle} description={resolvedDescription} titleTag={headingTag} align="center" />
+
+    <!-- Why: grid mobile-first (1 column), sm 2 columns, lg 3 columns.
+         gap-6 is a breather between cards, hover lift comes from a global contract
+         ui-card-interactive (motion.css/components.css). -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {resolvedItems.map((item) => (
+        <Card
+          variant="surface"
+          padding="none"
+          radius="xl"
+          elevation="soft"
+          class="ui-card-interactive group relative overflow-hidden border-brand-dark/10"
+        >
+          <!-- Why: a decorative circle in the corner, just a decoration (aria-hidden).
+               bg-brand-primary/10 and border-brand-primary/15 are brand tokens,
+               which unify the block with the global starter kit styles.
+               On hover the circle grows (scale-150) and dims. -->
+          <div class="absolute -right-8 -top-8 size-24 rounded-full bg-brand-primary/10 border border-brand-primary/15 transition-all duration-500 group-hover:scale-150 group-hover:bg-brand-primary/15 group-hover:border-brand-primary/25" aria-hidden="true"></div>
+
+          <div class="relative flex h-full flex-col p-6 sm:p-8">
+            <!-- Why: square icon (size-12, rounded corners).
+                 On hover, the card fills the square with the brand color and the icon turns white. -->
+            <div class="mb-5 inline-flex size-12 items-center justify-center rounded-xl border border-brand-primary/15 bg-brand-primary/5 text-brand-primary transition-all duration-500 group-hover:bg-brand-primary group-hover:text-white">
+              <Icon name={item.icon} size={24} />
+            </div>
+
+            <Heading level={3} variant="feature-title" class="mb-3 text-brand-dark text-[clamp(1rem,1.6vw,1.125rem)]">
+              {item.title}
+            </Heading>
+
+            <Text variant="feature-body-sm" class="text-brand-dark/65 leading-relaxed">
+              {item.description}
+            </Text>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </Container>
+</Section>

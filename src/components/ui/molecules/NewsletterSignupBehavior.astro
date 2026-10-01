@@ -1,0 +1,138 @@
+---
+import newsletterMessagesRaw from "@data/sections/newsletter.json";
+
+/**
+ * Walidacja e-mail + komunikaty oraz otwieranie/zamykanie modala newslettera.
+ * Append to each newsletter block (Studio renders one variant at a time).
+ */
+// Dlaczego: komunikaty walidacji i sukcesu czytane z sections/newsletter.json,
+// for the client to edit them in the CMS. The block doesn't get props from PageBuilder,
+// so the import is direct.
+const newsletterMessages = {
+	invalidEmail: newsletterMessagesRaw.errors.invalidEmail,
+	noConsent: newsletterMessagesRaw.errors.noConsent,
+	successMessage: newsletterMessagesRaw.successMessage,
+};
+---
+
+<script is:inline define:vars={{ newsletterMessages }}>
+	// @ts-nocheck
+	function isLikelyEmail(value) {
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim());
+	}
+
+	function setFeedback(el, kind, text) {
+		if (!el) return;
+		if (kind === "hidden") {
+			el.setAttribute("hidden", "");
+			el.textContent = "";
+			el.classList.remove("text-ui-success", "text-ui-error");
+			return;
+		}
+		el.removeAttribute("hidden");
+		el.textContent = text;
+		el.classList.remove("text-ui-success", "text-ui-error");
+		el.classList.add(kind === "success" ? "text-ui-success" : "text-ui-error");
+	}
+
+	function wireForms() {
+		document.querySelectorAll("form[data-newsletter-form]").forEach((formEl) => {
+			const form = formEl;
+			if (!(form instanceof HTMLFormElement)) return;
+			if (form.dataset.newsletterWired === "true") return;
+			form.dataset.newsletterWired = "true";
+
+			const feedback = form.querySelector("[data-newsletter-feedback]");
+			const email = form.querySelector('input[name="newsletter-email"]');
+			const consent = form.querySelector('input[name="newsletter-consent"]');
+
+			form.addEventListener("submit", (e) => {
+				e.preventDefault();
+				const fb = feedback instanceof HTMLElement ? feedback : null;
+				setFeedback(fb, "hidden", "");
+
+				if (!(email instanceof HTMLInputElement)) return;
+
+				const value = email.value.trim();
+				if (!value || !email.checkValidity() || !isLikelyEmail(value)) {
+					setFeedback(fb, "error", newsletterMessages.invalidEmail);
+					email.focus();
+					return;
+				}
+
+				if (consent instanceof HTMLInputElement && consent.type === "checkbox" && !consent.checked) {
+					setFeedback(fb, "error", newsletterMessages.noConsent);
+					consent.focus();
+					return;
+				}
+
+				setFeedback(fb, "success", newsletterMessages.successMessage);
+				form.reset();
+
+				const modal = form.closest("dialog");
+				if (modal instanceof HTMLDialogElement) {
+					window.setTimeout(() => modal.close(), 1400);
+				}
+			});
+		});
+	}
+
+	function wireModals() {
+		document.querySelectorAll("[data-newsletter-modal-open]").forEach((btnEl) => {
+			const btn = btnEl;
+			if (!(btn instanceof HTMLButtonElement)) return;
+			if (btn.dataset.newsletterModalWired === "true") return;
+			btn.dataset.newsletterModalWired = "true";
+			btn.addEventListener("click", () => {
+				const id = btn.getAttribute("data-newsletter-modal-open");
+				const el = id ? document.getElementById(id) : null;
+				if (el instanceof HTMLDialogElement) {
+					el.showModal();
+					document.body.style.overflow = "hidden";
+				}
+			});
+		});
+
+		document.querySelectorAll("[data-newsletter-modal-close]").forEach((btnEl) => {
+			const btn = btnEl;
+			if (!(btn instanceof HTMLButtonElement)) return;
+			if (btn.dataset.newsletterModalCloseWired === "true") return;
+			btn.dataset.newsletterModalCloseWired = "true";
+			btn.addEventListener("click", () => {
+				const dialogEl = btn.closest("dialog");
+				if (dialogEl instanceof HTMLDialogElement) {
+					dialogEl.close();
+					document.body.style.overflow = "";
+				}
+			});
+		});
+
+		document.querySelectorAll("dialog.newsletter-signup-dialog").forEach((dialogEl) => {
+			const dialog = dialogEl;
+			if (!(dialog instanceof HTMLDialogElement)) return;
+			if (dialog.dataset.newsletterBackdropWired === "true") return;
+			dialog.dataset.newsletterBackdropWired = "true";
+			dialog.addEventListener("click", (e) => {
+				if (e.target === dialog) {
+					dialog.close();
+					document.body.style.overflow = "";
+				}
+			});
+			dialog.addEventListener("close", () => {
+				document.body.style.overflow = "";
+			});
+		});
+	}
+
+	function initNewsletterUi() {
+		wireForms();
+		wireModals();
+	}
+
+	document.addEventListener("astro:page-load", initNewsletterUi);
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initNewsletterUi);
+	} else {
+		initNewsletterUi();
+	}
+</script>

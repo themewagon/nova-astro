@@ -1,0 +1,17 @@
+{
+  "tagline": "Pełnoekranowe wideo w tle",
+  "title": "Twój przekaz w ruchu",
+  "subtitle": "Wideo ładuje się dopiero, gdy przeglądarka jest bezczynna, a na mobile zamiast filmu wyświetlany jest statyczny poster. Dzięki temu strona startuje szybko, bez marnowania transferu.",
+  "primaryCta": { "label": "Bezpłatna wycena", "href": "/kontakt/" },
+  "secondaryCta": { "label": "Zobacz realizacje", "href": "/#realizacje" },
+  "trustItems": [
+    { "text": "Szybkie ładowanie strony" },
+    { "text": "Oszczędność transferu na mobile" },
+    { "text": "Pełna zgodność z SEO" }
+  ],
+  "video": {
+    "sources": ["/assets/placeholders/video-placeholder.mp4"],
+    "poster": "/assets/placeholders/video-poster.svg",
+    "grayscale": false
+  }
+}

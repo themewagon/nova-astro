@@ -1,0 +1,25 @@
+{
+  "index": {
+    "label": "Articles",
+    "title": "Blog",
+    "description": "Latest posts about websites, SEO and buying decisions.",
+    "empty": "No blog posts yet.",
+    "metaTitle": "Blog | Company Name, tips and case studies",
+    "metaDescription": "Latest blog posts, tips and case studies. Check our articles on web design and digital marketing."
+  },
+  "archive": {
+    "label": "Archive",
+    "heading": "Blog, page {page}",
+    "description": "Older posts sorted from newest to oldest.",
+    "empty": "No posts on this page.",
+    "metaTitle": "Blog, page {page}",
+    "metaDescription": "Archive of blog posts"
+  },
+  "readMore": "Read post",
+  "block": {
+    "label": "Blog",
+    "title": "Latest posts",
+    "description": "A short overview of the latest articles published in the starter kit.",
+    "ctaLabel": "See all posts"
+  }
+}

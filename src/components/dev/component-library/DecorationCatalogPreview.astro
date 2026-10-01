@@ -1,0 +1,48 @@
+---
+import BlurGlow from '@components/decorations/BlurGlow.astro';
+import BeamLines from '@components/decorations/BeamLines.astro';
+import CornerFlourish from '@components/decorations/CornerFlourish.astro';
+import DecorationLayer from '@components/decorations/DecorationLayer.astro';
+import EditorialBlobs from '@components/decorations/EditorialBlobs.astro';
+import FloatingShapes from '@components/decorations/FloatingShapes.astro';
+import GradientOrb from '@components/decorations/GradientOrb.astro';
+import GridPattern from '@components/decorations/GridPattern.astro';
+import PatternOverlay from '@components/decorations/PatternOverlay.astro';
+import RingDecoration from '@components/decorations/RingDecoration.astro';
+import SectionWave from '@components/decorations/SectionWave.astro';
+import Spotlight from '@components/decorations/Spotlight.astro';
+import SvgDecoration from '@components/decorations/SvgDecoration.astro';
+import Heading from '@components/ui/atoms/Heading.astro';
+import Text from '@components/ui/atoms/Text.astro';
+import previewCopy from '@data/dev/component-library/decoration-preview.json';
+
+interface Props {
+  previewId?: string;
+}
+
+const { previewId = 'gradient-orb' } = Astro.props;
+---
+
+<div class="relative isolate flex min-h-[22rem] w-full items-center justify-center overflow-hidden ui-bg-page p-6 sm:p-10">
+  <div class="relative z-10 max-w-md space-y-4 text-center">
+    <Text variant="accent-label">{previewCopy.label}</Text>
+    <Heading tag="h2" variant="section-heading-lg">{previewCopy.title}</Heading>
+    <Text variant="body" class="text-brand-dark/60">{previewCopy.description}</Text>
+  </div>
+
+  <DecorationLayer>
+    {previewId === 'gradient-orb' && <GradientOrb position="top-left" size="28rem" opacity="0.2" />}
+    {previewId === 'blur-glow' && <BlurGlow placement="behind-right" size="22rem" opacity="0.22" />}
+    {previewId === 'beam-lines' && <BeamLines opacity="0.16" />}
+    {previewId === 'floating-shapes' && <FloatingShapes variant="geometric" density="medium" />}
+    {previewId === 'editorial-blobs' && <EditorialBlobs />}
+    {previewId === 'grid-pattern' && <GridPattern opacity="0.2" />}
+    {previewId === 'pattern-grid' && <PatternOverlay variant="mesh" opacity="0.08" />}
+    {previewId === 'pattern-noise' && <PatternOverlay variant="noise" opacity="0.08" />}
+    {previewId === 'corner-flourish' && <CornerFlourish corner="all" variant="line" size="lg" />}
+    {previewId === 'ring-decoration' && <RingDecoration count={3} size="26rem" opacity="0.08" />}
+    {previewId === 'section-wave' && <SectionWave variant="wave" class="absolute inset-x-0 bottom-0" />}
+    {previewId === 'spotlight' && <Spotlight position="top-right" opacity="0.2" />}
+    {previewId?.startsWith('shape-') && <SvgDecoration name={previewId} size="clamp(8rem, 24vw, 14rem)" opacity="0.9" />}
+  </DecorationLayer>
+</div>

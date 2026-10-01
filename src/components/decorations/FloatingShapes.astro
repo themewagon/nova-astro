@@ -1,0 +1,221 @@
+---
+interface ShapeConfig {
+  type: 'circle' | 'diamond' | 'cross' | 'ring' | 'plus' | 'blob';
+  color?: string;
+  size?: number;
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+  opacity?: string;
+  animationSpeed?: 'slow' | 'medium' | 'fast';
+  animationDelay?: string;
+}
+
+interface Props {
+  shapes?: ShapeConfig[];
+  variant?: 'geometric' | 'organic' | 'minimal';
+  density?: 'low' | 'medium' | 'high';
+  class?: string;
+}
+
+const geometricShapes: ShapeConfig[] = [
+  { type: 'diamond', size: 28, top: '12%', left: '5%', opacity: '0.18' },
+  { type: 'circle', size: 16, top: '28%', right: '10%', opacity: '0.15' },
+  { type: 'plus', size: 24, top: '45%', left: '8%', opacity: '0.16' },
+  { type: 'ring', size: 40, top: '8%', right: '18%', opacity: '0.12' },
+  { type: 'cross', size: 20, bottom: '20%', left: '12%', opacity: '0.2' },
+  { type: 'diamond', size: 18, bottom: '15%', right: '8%', opacity: '0.15', animationSpeed: 'fast' },
+  { type: 'circle', size: 10, top: '55%', right: '25%', opacity: '0.22' },
+  { type: 'plus', size: 16, bottom: '35%', right: '20%', opacity: '0.14', animationSpeed: 'slow' },
+];
+
+const organicShapes: ShapeConfig[] = [
+  { type: 'blob', size: 220, top: '18%', left: '4%', opacity: '0.15' },
+  { type: 'blob', size: 140, top: '24%', right: '8%', opacity: '0.2', animationSpeed: 'medium', animationDelay: '-3s' },
+  { type: 'blob', size: 100, top: '48%', left: '18%', opacity: '0.18', animationSpeed: 'fast', animationDelay: '-5s' },
+  { type: 'circle', size: 60, top: '52%', right: '22%', opacity: '0.14', animationSpeed: 'slow', animationDelay: '-7s' },
+  { type: 'blob', size: 50, top: '14%', left: '38%', opacity: '0.25', animationSpeed: 'medium', animationDelay: '-1.5s' },
+  { type: 'blob', size: 50, top: '14%', right: '38%', opacity: '0.25', animationSpeed: 'medium', animationDelay: '-4s' },
+];
+
+const minimalShapes: ShapeConfig[] = [
+  { type: 'circle', size: 120, top: '10%', right: '5%', opacity: '0.2', animationSpeed: 'slow' },
+  { type: 'ring', size: 80, bottom: '15%', left: '8%', opacity: '0.15', animationSpeed: 'medium', animationDelay: '-2s' },
+  { type: 'circle', size: 40, top: '50%', left: '30%', opacity: '0.25', animationSpeed: 'fast', animationDelay: '-4s' },
+  { type: 'ring', size: 200, top: '50%', left: '50%', opacity: '0.12', animationSpeed: 'slow', animationDelay: '-6s' },
+];
+
+const densityMap: Record<string, number> = {
+  low: 0.5,
+  medium: 1,
+  high: 1.5,
+};
+
+const shapePresets: Record<string, ShapeConfig[]> = {
+  geometric: geometricShapes,
+  organic: organicShapes,
+  minimal: minimalShapes,
+};
+
+const { variant = 'geometric', density = 'medium', class: className } = Astro.props;
+
+const preset = shapePresets[variant] || geometricShapes;
+const densityFactor = densityMap[density] || 1;
+
+const finalShapes = Astro.props.shapes || preset;
+
+interface RenderedShape {
+  config: ShapeConfig;
+  index: number;
+}
+
+function getPositionStyle(shape: ShapeConfig): string {
+  const parts: string[] = [];
+  if (shape.top) parts.push(`top: ${shape.top}`);
+  if (shape.left) parts.push(`left: ${shape.left}`);
+  if (shape.right) parts.push(`right: ${shape.right}`);
+  if (shape.bottom) parts.push(`bottom: ${shape.bottom}`);
+  return parts.join('; ');
+}
+
+function getAnimationClass(speed?: string): string {
+  switch (speed) {
+    case 'slow': return 'fs-drift-slow';
+    case 'fast': return 'fs-drift-fast';
+    default: return 'fs-drift-medium';
+  }
+}
+
+function getTypeColor(type: string): string {
+  switch (type) {
+    case 'diamond':
+    case 'cross':
+    case 'plus':
+      return 'var(--color-brand-primary)';
+    default:
+      return 'var(--color-brand-accent)';
+  }
+}
+---
+
+<div
+  data-floating-shapes
+  class:list={['pointer-events-none absolute inset-0 z-0 overflow-hidden hidden md:block select-none', className]}
+  aria-hidden="true"
+>
+  <div class="relative size-full">
+    {
+      finalShapes.map((shape, i) => {
+        const color = shape.color || getTypeColor(shape.type);
+        const size = Math.round((shape.size || 40) * densityFactor);
+        const animClass = getAnimationClass(shape.animationSpeed);
+        const delay = shape.animationDelay || '0s';
+        const posStyle = getPositionStyle(shape);
+
+        switch (shape.type) {
+          case 'circle':
+            return (
+              <svg
+                class:list={['absolute', animClass]}
+                style={`${posStyle}; animation-delay: ${delay}; width: ${size}px; height: ${size}px; opacity: ${shape.opacity || '0.08'}`}
+                width={size} height={size} viewBox="0 0 200 200" fill="none"
+              >
+                <circle cx="100" cy="100" r="80" fill={color} />
+              </svg>
+            );
+
+          case 'ring':
+            return (
+              <svg
+                class:list={['absolute', animClass]}
+                style={`${posStyle}; animation-delay: ${delay}; width: ${size}px; height: ${size}px; opacity: ${shape.opacity || '0.06'}`}
+                width={size} height={size} viewBox="0 0 200 200" fill="none"
+              >
+                <circle cx="100" cy="100" r="70" stroke={color} stroke-width="8" fill="none" />
+                <circle cx="100" cy="100" r="50" stroke={color} stroke-width="3" fill="none" opacity="0.5" />
+              </svg>
+            );
+
+          case 'diamond':
+            return (
+              <svg
+                class:list={['absolute', animClass]}
+                style={`${posStyle}; animation-delay: ${delay}; width: ${size}px; height: ${size}px; opacity: ${shape.opacity || '0.08'}`}
+                width={size} height={size} viewBox="0 0 200 200" fill="none"
+              >
+                <rect x="100" y="6" width="132" height="132" rx="8" transform="rotate(45 100 6)" stroke={color} stroke-width="6" fill="none" />
+              </svg>
+            );
+
+          case 'cross':
+            return (
+              <svg
+                class:list={['absolute', animClass]}
+                style={`${posStyle}; animation-delay: ${delay}; width: ${size}px; height: ${size}px; opacity: ${shape.opacity || '0.08'}`}
+                width={size} height={size} viewBox="0 0 200 200" fill="none"
+              >
+                <path d="M100 40 L100 160 M40 100 L160 100" stroke={color} stroke-width="12" stroke-linecap="round" />
+              </svg>
+            );
+
+          case 'plus':
+            return (
+              <svg
+                class:list={['absolute', animClass]}
+                style={`${posStyle}; animation-delay: ${delay}; width: ${size}px; height: ${size}px; opacity: ${shape.opacity || '0.07'}`}
+                width={size} height={size} viewBox="0 0 200 200" fill="none"
+              >
+                <rect x="84" y="40" width="32" height="120" rx="6" fill={color} />
+                <rect x="40" y="84" width="120" height="32" rx="6" fill={color} />
+              </svg>
+            );
+
+          case 'blob':
+          default:
+            return (
+              <svg
+                class:list={['absolute', animClass]}
+                style={`${posStyle}; animation-delay: ${delay}; width: ${size}px; height: ${size}px; opacity: ${shape.opacity || '0.06'}`}
+                width={size} height={size} viewBox="0 0 200 200" fill="none"
+              >
+                <path d="M45.2,-58.3C57.9,-48.2,66.8,-33.1,71.4,-16.5C76,0.1,76.3,18.2,69.3,33.3C62.3,48.4,48,60.5,32.1,67.1C16.2,73.7,-1.3,74.8,-17.5,70.4C-33.7,66,-48.6,56.1,-59.3,42.3C-70,28.5,-76.5,10.8,-75.1,-6.3C-73.7,-23.4,-64.4,-40,-51.3,-50.1C-38.2,-60.2,-21.3,-63.8,-4.1,-65.2C13.1,-66.6,32.5,-68.4,45.2,-58.3Z" transform="translate(100 100)" fill={color} />
+              </svg>
+            );
+        }
+      })
+    }
+  </div>
+</div>
+
+<style>
+  @keyframes fs-drift-slow {
+    0% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+    25% { transform: translateY(-28px) translateX(18px) scale(1.06) rotate(4deg); }
+    50% { transform: translateY(-12px) translateX(30px) scale(1.03) rotate(2deg); }
+    75% { transform: translateY(10px) translateX(8px) scale(0.97) rotate(-2deg); }
+    100% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+  }
+  @keyframes fs-drift-medium {
+    0% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+    33% { transform: translateY(-20px) translateX(-22px) scale(1.05) rotate(-3deg); }
+    66% { transform: translateY(12px) translateX(-10px) scale(0.96) rotate(2deg); }
+    100% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+  }
+  @keyframes fs-drift-fast {
+    0% { transform: translateY(0px) translateX(0px) scale(1); }
+    40% { transform: translateY(-14px) translateX(14px) scale(1.07); }
+    70% { transform: translateY(6px) translateX(-8px) scale(0.95); }
+    100% { transform: translateY(0px) translateX(0px) scale(1); }
+  }
+
+  [data-floating-shapes] .fs-drift-slow { animation: fs-drift-slow 12s ease-in-out infinite; }
+  [data-floating-shapes] .fs-drift-medium { animation: fs-drift-medium 8s ease-in-out infinite; }
+  [data-floating-shapes] .fs-drift-fast { animation: fs-drift-fast 5.5s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-floating-shapes] .fs-drift-slow,
+    [data-floating-shapes] .fs-drift-medium,
+    [data-floating-shapes] .fs-drift-fast { animation: none; }
+  }
+</style>

@@ -1,0 +1,107 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import Pagination from "@components/ui/molecules/Pagination.astro";
+import { formatBlogDate } from "@utils/format-blog-date";
+import { PER_PAGE, paginate } from "@utils/blog";
+import { getCollection } from "astro:content";
+import blogData from "@data/pages/blog.json";
+
+// Why: navbar and footer render globally Layout (shell), so archive
+// the blog does not have to import them or compensate for the height of the fixed header.
+
+// Dlaczego: Astro Content Collections zamiast import.meta.glob
+// Paginacja musi dzialac z prerender
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  const { totalPages } = paginate(allPosts, 1, PER_PAGE);
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+    params: { page: String(i + 2) },
+  }));
+}
+
+const pageNum = Number(Astro.params.page || "1");
+
+if (!Number.isInteger(pageNum) || pageNum < 2) {
+  return Astro.redirect("/blog/");
+}
+
+const allPosts = await getCollection("blog");
+const sorted = allPosts.sort(
+  (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
+const { items: posts, totalPages: total } = paginate(sorted, pageNum, PER_PAGE);
+
+if (pageNum > total) {
+  return Astro.redirect("/404/");
+}
+---
+
+<Layout title={blogData.archive.metaTitle.replace("{page}", String(pageNum))} description={blogData.archive.metaDescription} navbarVariant="plain">
+  <Section tone="page">
+    <Container>
+      <div class="space-y-4">
+        <Text variant="accent-label" tag="span">{blogData.archive.label}</Text>
+        <Heading tag="h1" variant="section-title">{blogData.archive.heading.replace("{page}", String(pageNum))}</Heading>
+        <Text variant="lead" class="max-w-3xl">
+          {blogData.archive.description}
+        </Text>
+      </div>
+
+      <div>
+      {posts.length > 0 ? (
+        <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => {
+            return (
+              <article class="ui-card-interactive flex h-full flex-col overflow-hidden rounded-3xl border border-brand-dark/10 ui-bg-page shadow-sm">
+                <SmartImage
+                  src={post.data.heroImage}
+                  alt={post.data.title}
+                  width={1200} height={720}
+                  class="aspect-[16/10] w-full object-cover"
+                />
+                <div class="flex h-full flex-col gap-5 p-6">
+                  <div class="space-y-3">
+                    <Text tag="time" variant="feature-body-sm" class="text-brand-dark/60">
+                      {formatBlogDate(post.data.pubDate)}
+                    </Text>
+                    <Heading tag="h2" variant="feature-title">
+                      {post.data.title}
+                    </Heading>
+                    <Text variant="body" class="text-brand-dark/75">
+                      {post.data.description}
+                    </Text>
+                  </div>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2">
+                      {post.data.tags.map((tag) => (
+                        <Text tag="span" variant="accent-label" class="text-[0.7rem] tracking-[0.22em] text-brand-dark/60">
+                          {tag}
+                        </Text>
+                      ))}
+                    </div>
+                  )}
+                  <div class="mt-auto pt-2">
+                    <Button href={`/blog/${post.id}/`} variant="outline" size="sm">{blogData.readMore}</Button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="mt-20 text-center">
+          <Text variant="body" class="text-brand-dark/50">{blogData.archive.empty}</Text>
+        </div>
+      )}
+
+      <Pagination currentPage={pageNum} totalPages={total} baseHref="/blog/" />
+      </div>
+    </Container>
+  </Section>
+</Layout>

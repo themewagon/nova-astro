@@ -1,0 +1,58 @@
+RewriteEngine On
+Options -Indexes
+
+# Wymusza HTTPS i usuwa www w jednym kroku (301), bez pośredniego przekierowania przez www.
+# Np. http://www.example.com -> https://example.com
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L,NE]
+
+# Dodaje trailing slash dla adresow bez rozszerzenia pliku.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !/$
+RewriteCond %{REQUEST_URI} !\.[^./]+$
+RewriteRule ^(.+)$ https://%{HTTP_HOST}/$1/ [R=301,L,NE]
+
+# Blokuje dostep do wrazliwych plikow i katalogow.
+RewriteRule (^|/)\.git - [F,L,NC]
+
+<FilesMatch "(^smtp-config\.php$|\.log$)">
+    Require all denied
+</FilesMatch>
+
+# Kompresja tekstowych assetów ogranicza transfer CSS, JS i HTML.
+# Mod Brotli ma pierwszeństwo, a mod_deflate pozostaje bezpiecznym fallbackiem.
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml image/svg+xml
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Nie cachuje HTML i PHP, aby tresc zawsze byla aktualna.
+    <FilesMatch "\.(?:html?|php)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # Daje dlugi cache dla assetow statycznych.
+    <FilesMatch "\.(?:css|js|mjs|jpg|jpeg|png|gif|webp|svg|ico|woff|woff2|ttf|otf)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # HSTS: https jest wymuszany wyżej regułą 301, więc włączone.
+    # Bez includeSubDomains, żeby nie zepsuć poddomen klienta spoza HTTPS.
+    Header always set Strict-Transport-Security "max-age=31536000"
+
+    # Nagłówki bezpieczeństwa: chronią przed clickjackingiem, MIME-sniffingiem,
+    # wyciekiem referera i niepotrzebnymi API przeglądarki (kamera, mikrofon itd.).
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>

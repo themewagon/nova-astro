@@ -1,0 +1,209 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import ContactDetails from "@components/ui/molecules/ContactDetails.astro";
+import ContactForm from "@components/ui/molecules/ContactForm.astro";
+import GoogleMapFrame from "@components/ui/molecules/GoogleMapFrame.astro";
+
+// Why: All contact variants use the same molecules, and the block is solely responsible for layout
+// composition and data normalization.
+type ContactVariant = "split" | "map" | "simple" | "default";
+
+type ContactField = {
+  name: string;
+  label: string;
+  type?: "text" | "email" | "tel" | "number" | "url" | "password" | "date" | "textarea" | "select" | "checkbox";
+  required?: boolean;
+  placeholder?: string;
+  rows?: number;
+  autoComplete?: string;
+  options?: { value: string; label: string }[];
+};
+
+export interface Props {
+  variant?: ContactVariant;
+  sectionId?: string;
+  title?: string;
+  description?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  mapUrl?: string;
+  formFields?: ContactField[];
+  submitLabel?: string;
+  submittingLabel?: string;
+  resetLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  company?: {
+    email?: string;
+    phone?: string;
+    address?: string;
+    zipCode?: string;
+    city?: string;
+  };
+  /* * Section header tag: 'h2' by default, 'h1' when the block is the first section of the page without hero (SEO). */
+  headingTag?: string;
+}
+
+const {
+  variant = "split",
+  sectionId = "kontakt",
+  title = "",
+  description = "",
+  email: emailProp = "",
+  phone: phoneProp = "",
+  address: addressProp = "",
+  mapUrl = "",
+  formFields = [],
+  submitLabel = "",
+  submittingLabel = "",
+  resetLabel = "",
+  successMessage = "",
+  errorMessage = "",
+  headingTag = "h2",
+  company,
+} = Astro.props as Props;
+
+// Why: fallbacks allow you to use a block with both contact.json and company data.
+const email = emailProp || company?.email || "";
+const phone = phoneProp || company?.phone || "";
+// Why: the address is one whole in company.json ("ul. X 1, 00-001 Miasto").
+const address = addressProp || company?.address || "";
+const hasMap = typeof mapUrl === "string" && mapUrl.trim().length > 0;
+const isSimple = variant === "simple";
+const isDefault = variant === "default";
+const isMap = variant === "map";
+const fields = Array.isArray(formFields) ? formFields : [];
+const formId = `contact-form-${sectionId}-${variant}`;
+const fieldIdPrefix = `${sectionId}-${variant}`;
+const phoneHref = phone ? `tel:${phone.replace(/\s+/g, "")}` : undefined;
+const contactItems = [
+  { key: "phone", label: "Telefon", icon: "phone", href: phoneHref, value: phone },
+  { key: "email", label: "E-mail", icon: "envelope", href: email ? `mailto:${email}` : undefined, value: email },
+  { key: "address", label: "Adres", icon: "map-pin", href: undefined, value: address },
+].filter(
+  // Why: Empty data should not create blank tabs or placeholder links.
+  (item): item is { key: "phone" | "email" | "address"; label: string; icon: string; href: string | undefined; value: string } =>
+    item.value.trim().length > 0,
+);
+---
+
+<Section id={sectionId} tone="page">
+  <Container>
+    {
+      isDefault ? (
+        <div class="space-y-8">
+          <div class="mx-auto max-w-2xl text-center">
+            <Heading tag={headingTag} variant="section-title" class="text-brand-dark">
+              {title}
+            </Heading>
+            <Text variant="lead" class="text-brand-dark/70">
+              {description}
+            </Text>
+          </div>
+
+          <!-- Why: Why: The form and the contact panel are the two main input units. -->
+          <div class="grid gap-8 lg:grid-cols-2">
+            <div class="space-y-6">
+              <ContactForm
+                formId={formId}
+                fieldIdPrefix={fieldIdPrefix}
+                fields={fields}
+                submitLabel={submitLabel}
+                submittingLabel={submittingLabel}
+                resetLabel={resetLabel}
+                successMessage={successMessage}
+                errorMessage={errorMessage}
+                showHeader={false}
+                includeRodoConsent={false}
+              />
+            </div>
+
+            <div class="space-y-6">
+              {
+                hasMap && (
+                  <GoogleMapFrame
+                    embedUrl={mapUrl}
+                    iframeTitle={title || sectionId}
+                    class="min-h-[20rem]"
+                    wrapperClass="shadow-sm"
+                  />
+                )
+              }
+              <ContactDetails items={contactItems} variant="detailed" />
+            </div>
+          </div>
+        </div>
+      ) : isSimple ? (
+        <div class="mx-auto max-w-2xl">
+          <!-- Why: Why: simple contact has two rhythms, first the context, then the whole form. -->
+          <div class="space-y-4 text-center">
+            <Heading tag={headingTag} variant="section-title" class="text-brand-dark">
+              {title}
+            </Heading>
+            <Text variant="lead" class="text-brand-dark/70">
+              {description}
+            </Text>
+          </div>
+
+          <ContactForm
+            formId={formId}
+            fieldIdPrefix={fieldIdPrefix}
+            fields={fields}
+            submitLabel={submitLabel}
+            submittingLabel={submittingLabel}
+            resetLabel={resetLabel}
+            successMessage={successMessage}
+            errorMessage={errorMessage}
+            showHeader={false}
+            includeRodoConsent={false}
+            class="mt-10"
+          />
+        </div>
+      ) : (
+        <div class="grid items-start gap-12 md:grid-cols-2">
+          <!-- Why: Why: split and map use the same composition, so only the right column differs. -->
+          <div class="space-y-6">
+            <div class="space-y-4">
+              <Heading tag={headingTag} variant="section-title" class="text-brand-dark">
+                {title}
+              </Heading>
+              <Text variant="lead" class="text-brand-dark/70">
+                {description}
+              </Text>
+            </div>
+
+            <ContactForm
+              formId={formId}
+              fieldIdPrefix={fieldIdPrefix}
+              fields={fields}
+              submitLabel={submitLabel}
+              submittingLabel={submittingLabel}
+              resetLabel={resetLabel}
+              successMessage={successMessage}
+              errorMessage={errorMessage}
+              showHeader={false}
+              includeRodoConsent={false}
+            />
+          </div>
+
+          {
+            isMap && hasMap ? (
+              <GoogleMapFrame
+                embedUrl={mapUrl}
+                iframeTitle={title || sectionId}
+                class="min-h-[20rem]"
+                wrapperClass="shadow-sm"
+              />
+            ) : (
+              <ContactDetails items={contactItems} variant="compact" />
+            )
+          }
+        </div>
+      )
+    }
+  </Container>
+</Section>

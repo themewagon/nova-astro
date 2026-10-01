@@ -1,0 +1,70 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+
+// Why: AboutBlock is a new block with data-driven props.
+// It follows the same pattern as other blocks (props + JSON) to keep
+// architecture consistent. New block = new file in registry, zero changes in PageBuilder.
+type AboutHighlight = {
+  icon: string;
+  text: string;
+};
+
+export interface Props {
+  sectionId?: string;
+  title?: string;
+  description?: string;
+  highlights?: AboutHighlight[];
+  /** Section heading tag: 'h2' by default, 'h1' when block is the first section on a page without hero (SEO). */
+  headingTag?: string;
+}
+
+const { sectionId = "o-nas", title = "", description = "", highlights = [], headingTag = "h2" } = Astro.props as Props;
+---
+
+<Section id={sectionId} tone="page">
+  <Container>
+    <!-- Why: grid lg:grid-cols-2 is a responsive layout - single column on mobile,
+         two columns on desktop (text + image placeholder).
+         Placeholder is temporary, client will add their own image. -->
+    <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div class="space-y-6">
+        <Heading tag={headingTag} variant="section-title" class="text-brand-dark">
+          {title}
+        </Heading>
+        <Text variant="body" class="text-brand-dark/70 leading-relaxed">
+          {description}
+        </Text>
+
+        {highlights.length > 0 && (
+          <div class="space-y-4 pt-4">
+            {highlights.map((item) => (
+              <div class="flex items-center gap-4">
+                <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-primary/10 text-brand-primary">
+                  <Icon name={item.icon} class="text-lg" />
+                </div>
+                <Text variant="body" class="text-brand-dark font-medium">
+                  {item.text}
+                </Text>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Why: placeholder with inline styles instead of an image.
+         Allows the client to visualize the layout before adding images. -->
+      <div class="relative rounded-2xl overflow-hidden bg-brand-light border-2 border-dashed border-brand-dark/10 aspect-[4/3] flex items-center justify-center">
+        <div class="text-center p-8">
+          <Icon name="image" class="text-5xl text-brand-dark/15 mx-auto mb-3" />
+          <Text variant="disclaimer" class="text-brand-dark/30">
+            Zdjęcie Sekcji
+          </Text>
+        </div>
+      </div>
+    </div>
+  </Container>
+</Section>

@@ -1,0 +1,21 @@
+{
+  "enabled": false,
+  "title": "404",
+  "heading": "Page not found",
+  "body": "It looks like this page does not exist or has been moved.",
+  "cta1": {
+    "label": "Back to home",
+    "hover": "Going back!",
+    "href": "/"
+  },
+  "cta2": {
+    "label": "Contact us",
+    "hover": "Write to us",
+    "href": "#kontakt"
+  },
+  "seo": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist."
+  },
+  "sections": []
+}

@@ -1,0 +1,90 @@
+import type { StudioAdapter } from "./types";
+
+const DEFAULT_ICON =
+  '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" stroke-linecap="round"/></svg>';
+
+export const novaStudioAdapter: StudioAdapter = {
+  id: "nova",
+  label: "Nova",
+  groups: [
+    { id: "theme", label: "Motyw" },
+    { id: "navbar", label: "Menu" },
+    { id: "footer", label: "Footer" },
+    { id: "sections", label: "Sekcje strony" },
+    { id: "conversion", label: "Cennik i CTA" },
+  ],
+  sections: [
+    {
+      id: "navbar",
+      label: "Navbar",
+      groupId: "navbar",
+      icon: DEFAULT_ICON,
+      options: ["centered", "floating", "local"],
+      defaultVariant: "centered",
+      hint: "Układ menu głównego",
+    },
+    {
+      id: "section-pattern",
+      label: "Tło sekcji",
+      groupId: "theme",
+      icon: DEFAULT_ICON,
+      options: ["off", "repeat", "mesh", "noise"],
+      defaultVariant: "off",
+      hint: "Dekoracyjne tło sekcji .ui-section",
+    },
+    {
+      id: "theme",
+      label: "Theme",
+      groupId: "theme",
+      icon: DEFAULT_ICON,
+      options: ["nova"],
+      defaultVariant: "nova",
+      hint: "Globalny motyw kolorystyczny",
+    },
+    {
+      id: "hero",
+      label: "Hero",
+      groupId: "sections",
+      icon: DEFAULT_ICON,
+      options: ["service", "conversion", "showcase", "registry-centered", "registry-split"],
+      defaultVariant: "service",
+      hint: "Wariant sekcji Hero",
+    },
+    {
+      id: "features",
+      label: "Features",
+      groupId: "sections",
+      icon: DEFAULT_ICON,
+      options: ["off", "grid", "list", "zigzag"],
+      defaultVariant: "grid",
+      hint: "Układ sekcji korzyści i funkcji",
+    },
+    {
+      id: "pricing",
+      label: "Pricing",
+      groupId: "conversion",
+      icon: DEFAULT_ICON,
+      options: ["off", "simple", "minimal", "estimate", "process", "packages"],
+      defaultVariant: "estimate",
+      hint: "Wariant sekcji cennika",
+    },
+    {
+      id: "cta",
+      label: "CTA",
+      groupId: "conversion",
+      icon: DEFAULT_ICON,
+      options: ["off", "centered", "banner", "banner-split", "banner-dual"],
+      defaultVariant: "centered",
+      hint: "Wariant sekcji wezwania do działania",
+    },
+    {
+      id: "footer",
+      label: "Footer",
+      groupId: "footer",
+      icon: DEFAULT_ICON,
+      options: ["columns", "minimal", "promo"],
+      defaultVariant: "columns",
+      hint: "Wariant stopki strony",
+    },
+  ],
+};

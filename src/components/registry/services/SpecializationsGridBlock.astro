@@ -1,0 +1,325 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { formatInternalLink } from "@utils/url";
+import defaultData from "@data/sections/specializations-grid.json";
+
+// Why: SpecializationsGridBlock is a visual copy of the specializations section from the
+// reference project (law firm). The original loaded data from the content source.
+// specialization registry, here the data comes from JSON (props || json), so the block works
+// independently without importing client data.
+
+type FeaturedItem = {
+  title: string;
+  description: string;
+  image?: string;
+  icon?: string;
+  href?: string;
+  cta?: { label: string; hoverText?: string; href: string };
+};
+
+type GridItem = {
+  icon?: string;
+  title: string;
+  description: string;
+  href?: string;
+};
+
+type SectionContent = {
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  featured?: FeaturedItem[];
+  items?: GridItem[];
+};
+
+export interface Props {
+  lang?: 'pl' | 'en';
+  sectionId?: string;
+  content?: SectionContent | Record<'pl' | 'en', SectionContent>;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+}
+
+const { lang = 'pl', sectionId = 'specjalizacje', content: contentProp, headingTag = 'h2' } = Astro.props as Props;
+
+// Why: the formula "props" (as in ServicesStudioGridBlock). Props can contain a language map
+// or single language content;fallback is JSON from the starter kit, so the block runs without
+// providing any data.
+const hasLangMap = !!contentProp && 'pl' in contentProp;
+const provided = hasLangMap
+  ? (contentProp as Record<'pl' | 'en', SectionContent>)[lang]
+  : (contentProp as SectionContent | undefined);
+const defaultDataByLang = defaultData as unknown as Record<'pl' | 'en', SectionContent>;
+const fallback = defaultDataByLang[lang] ?? defaultDataByLang.pl;
+
+// Why: merging field by field with fallback allows you to overwrite only part of the content
+// with props (e.g. the header itself), taking the rest from JSON.
+const data: SectionContent = {
+  eyebrow: provided?.eyebrow ?? fallback.eyebrow ?? '',
+  heading: provided?.heading ?? fallback.heading ?? '',
+  description: provided?.description ?? fallback.description ?? '',
+  ctaLabel: provided?.ctaLabel ?? fallback.ctaLabel ?? '',
+  ctaHref: provided?.ctaHref ?? fallback.ctaHref ?? '',
+  featured: provided?.featured ?? fallback.featured ?? [],
+  items: provided?.items ?? fallback.items ?? [],
+};
+
+// Why: default placeholder of starter-kit, when featured there is no image (the image comes
+// only from the client).Replacement map from the client's original.
+const PLACEHOLDER_IMAGE = '/assets/placeholders/image-landscape.svg';
+
+// Why: dictionary of hints per language, as in the original (t.poznajZakres and
+// t.poznajSzczegoly), but only pl/en, because the starter-kit does not have a de version.
+const t = {
+  pl: {
+    poznajZakres: 'Poznaj zakres usług',
+    poznajSzczegoly: 'Poznaj szczegóły',
+  },
+  en: {
+    poznajZakres: 'Explore services',
+    poznajSzczegoly: 'View details',
+  },
+}[lang];
+
+// Why: featured is a large card above the grid (picture with gradient mask) and the other
+// items are simple cards with an icon in grid 3 columns.
+const featured = data.featured ?? [];
+const items = data.items ?? [];
+---
+
+<Section id={sectionId} tone="page" class="relative overflow-hidden scroll-mt-28">
+  <Container>
+    <div class="mx-auto mb-14 max-w-2xl text-center md:mb-18">
+      {data.eyebrow && (
+        <Text variant="accent-label" class="mb-4 text-brand-dark" motion="fade">{data.eyebrow}</Text>
+      )}
+      <Heading tag={headingTag} variant="section-title" class="mb-5 text-brand-dark" motion="fade">
+        {data.heading}
+      </Heading>
+      <Text variant="lead" class="text-brand-dark/70" motion="fade">
+        {data.description}
+      </Text>
+    </div>
+
+    {featured.length > 0 && (
+      <div class="mb-4 flex flex-col gap-4">
+        {featured.map((item) => (
+          <div
+            class="cross-border-card group relative overflow-hidden rounded-2xl border border-brand-dark/10 bg-white"
+            style="border-color: color-mix(in oklch, var(--color-brand-primary) 45%, transparent)"
+          >
+            <a
+              class="card-hit-area"
+              href={formatInternalLink(item.href ?? item.cta?.href ?? data.ctaHref)}
+              aria-label={`${t.poznajZakres}: ${item.title}`}
+            ></a>
+            <div class="cross-border-card__media" aria-hidden="true">
+              <img
+                src={item.image || PLACEHOLDER_IMAGE}
+                alt=""
+                width="1824"
+                height="862"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="cross-border-card__mask"></div>
+            </div>
+
+            <div class="cross-border-card__content pointer-events-none p-5 md:p-6">
+              <div class="max-w-2xl">
+                <Heading tag="h3" variant="feature-title" class="mb-4 text-brand-dark">
+                  {item.title}
+                </Heading>
+                <Text variant="body" class="mb-4 text-brand-dark/70">
+                  {item.description}
+                </Text>
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
+                  {item.cta?.href && (
+                    <Button href={item.cta.href} variant="primary" size="sm" hoverText={item.cta.hoverText}>
+                      {item.cta.label}
+                    </Button>
+                  )}
+                  <span
+                    class="card-link-hint inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] sm:text-xs"
+                    aria-hidden="true"
+                  >
+                    {t.poznajZakres} <Icon name="arrow-up-right" size={14} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item) => (
+        <a
+          href={formatInternalLink(item.href)}
+          class="ui-card-interactive spec-grid-card group relative flex cursor-pointer flex-col rounded-2xl border border-brand-dark/10 bg-white p-6 no-underline sm:p-8"
+        >
+          <div class="spec-icon" aria-hidden="true">
+            <Icon name={item.icon || 'scales'} size={24} />
+          </div>
+          <Heading tag="h3" variant="feature-title" class="mb-2 text-brand-dark">
+            {item.title}
+          </Heading>
+          <Text variant="body" class="text-brand-dark/70">
+            {item.description}
+          </Text>
+          <span
+            class="card-link-hint mt-auto inline-flex items-center gap-2 pt-6 text-xs font-semibold uppercase tracking-[0.16em]"
+            aria-hidden="true"
+          >
+            {t.poznajSzczegoly} <Icon name="arrow-up-right" size={14} />
+          </span>
+        </a>
+      ))}
+    </div>
+
+    {data.ctaHref && (
+      <div class="mt-12 text-center">
+        <Button href={data.ctaHref} variant="outline" size="lg">
+          {data.ctaLabel || t.poznajZakres}
+        </Button>
+      </div>
+    )}
+  </Container>
+</Section>
+
+<style>
+  /* Why: specialization icon in grid tab.Instead of client tokens
+(accent-hover, text-primary) we use global starter-kit tokens:
+border and background from brand-dark, color and glow from brand-primary. */
+  .spec-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    height: 3.5rem;
+    width: 3.5rem;
+    border-radius: var(--ui-radius-lg);
+    border: 1px solid color-mix(in oklch, var(--color-brand-dark) 10%, transparent);
+    background: color-mix(in oklch, var(--color-brand-dark) 3%, transparent);
+    color: var(--color-brand-primary);
+    box-shadow: 0 0 28px color-mix(in oklch, var(--color-brand-primary) 30%, transparent);
+    transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .spec-grid-card:hover .spec-icon {
+    color: var(--color-brand-primary);
+    border-color: color-mix(in oklch, var(--color-brand-primary) 55%, transparent);
+    box-shadow: 0 0 36px color-mix(in oklch, var(--color-brand-primary) 42%, transparent);
+  }
+
+  /* Why: large card featured (cross-border) with image and mask. Hover conquers the border and gives shine in the color brand-primary (replaces var ((-ui-glow) from the client's design). */
+  .cross-border-card {
+    position: relative;
+    min-height: 18rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .cross-border-card:hover {
+    border-color: var(--color-brand-primary) !important;
+    box-shadow: 0 0 30px color-mix(in oklch, var(--color-brand-primary) 20%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .card-hit-area {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .cross-border-card__content {
+    z-index: 2;
+  }
+
+  .cross-border-card__content .ui-button {
+    pointer-events: auto;
+  }
+
+  .card-link-hint {
+    position: relative;
+    z-index: 2;
+    color: var(--color-brand-primary);
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+
+  .cross-border-card:hover .card-link-hint,
+  .spec-grid-card:hover .card-link-hint {
+    color: var(--color-brand-dark);
+    transform: translateX(0.2rem);
+  }
+
+  .cross-border-card__media,
+  .cross-border-card__mask {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .cross-border-card__media {
+    left: 34%;
+    overflow: hidden;
+  }
+
+  .cross-border-card__media img {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center right;
+    opacity: 0.82;
+    transform: scale(1.35);
+    transform-origin: right center;
+  }
+
+  /* Why: gradient mask in the background color of the card (bg-white in the starter kit),
+so that the text on the left is legible and the image on the right looks embedded. */
+  .cross-border-card__mask {
+    background:
+      linear-gradient(90deg, #ffffff 0%, #ffffff 28%, transparent 72%),
+      linear-gradient(180deg, #ffffff 0%, transparent 18%, transparent 82%, #ffffff 100%);
+  }
+
+  .cross-border-card__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: 16rem;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .cross-border-card__content {
+      padding: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cross-border-card__media {
+      left: 42%;
+    }
+
+    .cross-border-card__media img {
+      transform: scale(1.45);
+    }
+
+    .cross-border-card__content {
+      padding: 2rem 3rem;
+    }
+  }
+</style>

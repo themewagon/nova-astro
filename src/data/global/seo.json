@@ -1,0 +1,13 @@
+{
+  "defaultTitle": "Nova, websites for ambitious brands",
+  "defaultDescription": "We create modern websites that strengthen your image, attract clients and support business growth.",
+  "defaultOgImage": "/og-image.png",
+  "index": false,
+  "follow": true,
+  "analytics": {
+    "googleAnalyticsId": "",
+    "googleTagManagerId": "",
+    "facebookPixelId": "",
+    "clarityId": ""
+  }
+}

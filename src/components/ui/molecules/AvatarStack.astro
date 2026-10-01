@@ -1,0 +1,42 @@
+---
+/**
+ * AvatarStack — Molecule
+ * Row of overlapping avatars with optional caption beside.
+ * Used in CtaAvatarsBlock and similar sections.
+ */
+interface Avatar {
+  src: string;
+  alt?: string;
+}
+
+interface Props {
+  avatars: Avatar[];
+  class?: string;
+  ariaLabel?: string;
+}
+
+const { avatars, class: className = "", ariaLabel = "Użytkownicy" } = Astro.props;
+---
+
+<div class:list={["flex flex-col md:flex-row lg:items-center gap-2", className]}>
+  <!-- Why: Negative margin (-space-x-2) overlaps avatars, creating a "stack" effect. This allows showing many avatars in compact space, highlighting the team or clients. -->
+  <div class="flex -space-x-2" role="list" aria-label={ariaLabel}>
+    {avatars.map((avatar) => (
+      <img
+        src={avatar.src}
+        alt={avatar.alt ?? "User avatar"}
+        loading="lazy"
+        decoding="async"
+        width="200"
+        height="200"
+        role="listitem"
+        class="inline-block object-cover object-center rounded-full size-8 outline-2 outline-border"
+      />
+    ))}
+  </div>
+  {Astro.slots.has("caption") && (
+    <div class="text-xs text-muted-foreground">
+      <slot name="caption" />
+    </div>
+  )}
+</div>

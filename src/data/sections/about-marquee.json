@@ -1,0 +1,18 @@
+{
+  "heading": "O nas",
+  "lead": "Poznaj naszą filozofię pracy i podejście do każdego projektu.",
+  "paragraphs": [
+    "Od lat pomagamy firmom z różnych branż budować silną pozycję na rynku. Łączymy doświadczenie z nowoczesnymi narzędziami, a każdy projekt traktujemy indywidualnie, dopasowując rozwiązania do realnych potrzeb klienta.",
+    "Wierzymy, że dobra współpraca opiera się na zaufaniu, komunikacji i konkretnych efektach. Dlatego od pierwszego spotkania aż po wdrożenie i wsparcie towarzyszymy klientom na każdym etapie.",
+    "Nasz zespół to specjaliści, którzy nie boją się wyzwań. Podchodzimy do pracy z pełnym zaangażowaniem, dbając o jakość, terminowość i przejrzystość działań.",
+    "Stawiamy na długofalowe relacje. Wielu klientów wraca do nas z kolejnymi projektami, a ich zaufanie jest dla nas najlepszą rekomendacją."
+  ],
+  "clientsHeadline": "Klienci",
+  "image": {
+    "src": "/assets/placeholders/image-portrait.svg",
+    "alt": "Zdjęcie zespołu"
+  },
+  "clients": ["Budownictwo", "Architektura", "Energetyka", "IT", "Medycyna", "Edukacja", "Rolnictwo", "Transport", "Logistyka", "Finanse", "Prawo", "Marketing", "Turystyka", "Gastronomia", "Moda", "Sport", "Kultura", "Przemysł"],
+  "labels": ["Wycena", "Projekt", "Realizacja", "Opieka", "Serwis", "Gwarancja", "Rozwój", "Szkolenia"],
+  "moreClients": ["Stal", "Beton", "Drewno", "Szkło", "Aluminium", "Tworzywa", "Ceramika", "Kamień", "Cegła", "Tynk", "Farby", "Izolacje", "Kable", "Rury", "Płyty", "Profile", "Wkręty", "Uszczelki"]
+}

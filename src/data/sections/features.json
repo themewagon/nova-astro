@@ -1,0 +1,12 @@
+{
+  "title": "Co możemy dla Ciebie zrobić",
+  "subtitle": "Kompleksowe usługi dopasowane do Twoich potrzeb",
+  "items": [
+    { "icon": "hammer", "title": "Remonty i wykończenia", "description": "Kompleksowe remonty mieszkań, domów i lokali użytkowych. Od projektu po realizację." },
+    { "icon": "house", "title": "Budowa domów", "description": "Budujemy domy jednorodzinne w technologii murowanej i szkieletowej." },
+    { "icon": "paint-roller", "title": "Malowanie i tapetowanie", "description": "Profesjonalne malowanie ścian, sufitów oraz tapetowanie." },
+    { "icon": "wrench", "title": "Instalacje hydrauliczne", "description": "Montaż i naprawa instalacji wodno-kanalizacyjnych." },
+    { "icon": "screwdriver", "title": "Instalacje elektryczne", "description": "Projektowanie i montaż instalacji elektrycznych." },
+    { "icon": "truck", "title": "Transport materiałów", "description": "Zapewniamy transport materiałów budowlanych na miejsce realizacji." }
+  ]
+}

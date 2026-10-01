@@ -1,0 +1,138 @@
+---
+interface FilterCardItem {
+  title: string;
+  subtitle?: string;
+  image?: string;
+  initials?: string;
+  badge?: string;
+  bonus?: string;
+  rate?: string;
+  features?: string[];
+  description?: string;
+  cta?: { label: string; href: string };
+  category?: string;
+}
+
+interface Props {
+  item: FilterCardItem;
+  class?: string;
+  index: number;
+  freeOpeningLabel?: string;
+}
+
+const { item, class: className = "", index, freeOpeningLabel = "Darmowe otwarcie" } = Astro.props;
+const {
+  title, subtitle, image, initials, badge, bonus, rate,
+  features = [], description, cta, category
+} = item;
+
+const isFeatured = badge === "Polecane" || badge === "Featured";
+const hasFeatures = features.length > 0;
+const hasCta = cta?.href;
+---
+
+<!-- Dlaczego: data-filterable-item i data-category umozliwiaja filtrowanie kart przez JavaScript bez przeladowania strony. Kazda karta deklaruje swoja kategorie, a parent container steruje widocznoscia. -->
+<article
+  class:list={[
+    "offer-card ui-card-interactive group relative flex h-full w-full max-w-full flex-col overflow-hidden rounded-[1.25rem] border border-brand-primary/10 bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)]",
+    "group-data-[view=list]/filterable:rounded-[1rem] group-data-[view=list]/filterable:flex-row group-data-[view=list]/filterable:items-center group-data-[view=list]/filterable:gap-6 group-data-[view=list]/filterable:p-5",
+    className,
+  ]}
+  data-filterable-item
+  data-category={category || ""}
+>
+  <div class="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+    style="background: radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in oklch, var(--color-brand-primary) 8%, transparent) 0%, transparent 70%)" />
+
+  <!-- Dlaczego: Dwa layouty (grid i list) w jednym komponencie. Grid na mobile, list na desktop. Przelaczanie przez data-view na parent container. To eliminuje potrzebe oddzielnych komponentow dla roznych widokow. -->
+  <!-- Grid layout -->
+  <div class="offer-card-inner relative flex min-h-0 flex-1 flex-col gap-0 p-5 md:p-6 group-data-[view=list]/filterable:hidden">
+    {badge && (
+      <span class="absolute right-5 top-5 z-10 text-[10px] font-black uppercase tracking-[0.2em] md:right-6 md:top-6"
+        class:list={[isFeatured ? "text-brand-primary" : "text-brand-accent"]}>
+        {badge}
+      </span>
+    )}
+
+    <div class="flex w-full min-w-0 flex-col items-start gap-2 pr-[4.25rem]">
+      <div class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline/15 bg-brand-light">
+        {image ? (
+          <img src={image} alt={title} width={40} height={40} class="size-full object-contain" loading="lazy" decoding="async" />
+        ) : (
+          <span class="font-heading text-xs font-bold text-on-surface-variant/60">{initials || title.charAt(0)}</span>
+        )}
+      </div>
+      {subtitle && (
+        <span class="max-w-full text-[10px] font-bold uppercase tracking-wide text-on-surface-variant/60 break-words leading-snug">{subtitle}</span>
+      )}
+    </div>
+
+    {bonus && <h3 class="mb-2 mt-4 text-xl font-extrabold leading-snug text-brand-dark">{bonus}</h3>}
+
+    {description && (
+      <p class="mb-4 text-sm leading-relaxed text-on-surface-variant line-clamp-3 md:line-clamp-2">{description}</p>
+    )}
+
+    <div class="mb-6 flex flex-wrap gap-x-4 gap-y-1">
+      {rate && (
+        <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-brand-primary">{rate}</span>
+      )}
+      {hasFeatures && features.slice(0, 2).map((f) => (
+        <span class="text-[11px] font-medium text-on-surface-variant/70">{f}</span>
+      ))}
+    </div>
+
+    <div class="offer-card-cta-row mt-auto flex flex-col border-t border-brand-primary/15 pt-4 md:flex-row md:items-center md:justify-between md:gap-4">
+      <span class="hidden items-center gap-1.5 text-sm font-medium leading-snug text-on-surface-variant md:flex md:gap-1 md:text-xs md:text-on-surface-variant/60">
+        <i class="ph ph-check-circle shrink-0 text-[1.35rem] leading-none text-brand-primary md:text-[1rem]" aria-hidden="true" />
+        <span>{freeOpeningLabel}</span>
+      </span>
+      {hasCta && (
+        <div class="flex w-full flex-col items-stretch md:contents">
+          <a href={cta.href} target="_blank" rel="noopener noreferrer"
+            class="flex min-h-12 w-full shrink-0 items-center justify-center gap-2 rounded-md bg-brand-dark px-6 text-sm font-semibold text-white transition-all duration-300 hover:bg-brand-dark/90 md:w-auto md:px-8">
+            <span class="whitespace-nowrap">{cta.label}</span>
+            <i class="ph ph-arrow-right text-lg shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+          </a>
+          <p class="mt-2 text-center text-[11px] font-medium leading-snug text-on-surface-variant/50 md:hidden">{freeOpeningLabel}</p>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- List layout -->
+  <div class="offer-card-inner hidden group-data-[view=list]/filterable:flex flex-row items-center gap-6 w-full">
+    <div class="flex min-w-0 max-w-[8rem] flex-[0_0_8rem] flex-col items-center gap-2 overflow-hidden">
+      <div class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline/15 bg-brand-light">
+        {image ? (
+          <img src={image} alt={title} width={40} height={40} class="size-full object-contain" loading="lazy" decoding="async" />
+        ) : (
+          <span class="font-heading text-xs font-bold text-on-surface-variant/60">{initials || title.charAt(0)}</span>
+        )}
+      </div>
+      <div class="flex w-full min-w-0 flex-col items-center gap-0.5 self-stretch text-center">
+        <span class="w-full min-w-0 text-[10px] font-bold uppercase tracking-wide text-on-surface-variant/60 break-words leading-snug">{subtitle || title}</span>
+        {badge && <span class="w-full min-w-0 text-[10px] font-bold leading-snug text-brand-primary break-words">{badge}</span>}
+      </div>
+    </div>
+    <div class="flex min-w-0 flex-grow flex-col justify-center">
+      {bonus && <h3 class="text-lg font-extrabold leading-snug text-brand-dark">{bonus}</h3>}
+      {description && <p class="mb-4 line-clamp-1 text-sm leading-relaxed text-on-surface-variant">{description}</p>}
+      <div class="flex flex-wrap gap-x-4 gap-y-1">
+        {rate && <span class="text-[11px] font-bold uppercase tracking-[0.15em] text-brand-primary">{rate}</span>}
+        {hasFeatures && features.slice(0, 2).map((f) => (
+          <span class="text-[11px] font-medium text-on-surface-variant/70">{f}</span>
+        ))}
+      </div>
+    </div>
+    <div class="shrink-0">
+      {hasCta && (
+        <a href={cta.href} target="_blank" rel="noopener noreferrer"
+          class="flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-brand-dark px-8 text-sm font-semibold text-white transition-all duration-300 hover:bg-brand-dark/90">
+          <span>{cta.label}</span>
+          <i class="ph ph-arrow-right text-lg transition-transform duration-300 group-hover:translate-x-1" />
+        </a>
+      )}
+    </div>
+  </div>
+</article>

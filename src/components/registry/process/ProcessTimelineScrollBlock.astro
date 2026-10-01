@@ -1,0 +1,237 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import data from "@data/sections/process-timeline-scroll.json";
+
+// Why: ProcessTimelineScrollBlock is a faithful copy of the “Collaboration Process” section of the
+// brand-jodlow project (ProcessStepsBlock, the “timeline” variant used on the customer page): a
+// vertical timeline with numbered circles (01-06), a background line, and a progress bar with
+// animated scrolling (IntersectionObserver). It differs from the starter ProcessTimelineBlock in
+// the progress bar and numbers instead of icons.
+
+interface ProcessStep {
+  icon?: string;
+  title: string;
+  description: string;
+}
+
+export interface Props {
+  /* * Section Id, default "process". */
+  sectionId?: string;
+  /* * Content language from JSON. PL is the default language for this copy of the section. */
+  lang?: "pl" | "en";
+  title?: string;
+  description?: string;
+  items?: ProcessStep[];
+  /* * Section header tag: 'h2' by default, 'h1' when the block is the first section of the page without hero (SEO). */
+  headingTag?: string;
+  /* * Additional classes per section (e.g. with PageBuilder). */
+  class?: string;
+}
+
+const {
+sectionId = "proces",
+lang = "pl",
+title,
+description,
+items,
+headingTag = "h2",
+class: className = "",
+} = Astro.props as Props;
+
+const t = data[lang] ?? data.pl;
+
+// Why: the "props || json" pattern, so that the block works independently with the section data,
+// and PageBuilder or CMS could overwrite each text.
+const resolvedTitle = title || t.title;
+const resolvedDescription = description || t.description;
+const list = items && items.length > 0 ? items : t.items;
+
+// Why: "Step XX" label read from JSON (SSOT for CMS).
+const stepLabel = t.stepLabel || "Krok";
+---
+
+<Section id={sectionId} tone="base" class:list={[className]}>
+  <Container>
+    <div data-motion="fade">
+      <SectionHeader title={resolvedTitle} description={resolvedDescription} titleTag={headingTag} align="center" />
+    </div>
+    <div id="process-timeline" class="relative mx-auto mt-16 max-w-4xl">
+      <!-- Why: Timeline background line (silent, 10% brand) and progress bar above it
+           (full brand) controlled scrolling by JS below. On mobile line
+           is on the left, centered on lg. -->
+      <div class="absolute left-6 top-3 h-[calc(100%-1.5rem)] w-0.5 rounded-full bg-brand-primary/10 lg:left-1/2 lg:-translate-x-1/2" aria-hidden="true"></div>
+      <div
+        id="timeline-progress"
+        class="absolute left-6 top-3 w-0.5 origin-top rounded-full bg-brand-primary transition-all duration-700 ease-out lg:left-1/2 lg:-translate-x-1/2"
+        aria-hidden="true"
+        style="height: 0"
+      ></div>
+
+      <ol class="space-y-8 lg:space-y-20" id="timeline-steps">
+        {list.map((item, index) => {
+          const isEven = index % 2 === 0;
+          const stepNum = (index + 1).toString().padStart(2, "0");
+          return (
+            <li
+              class="timeline-step relative flex gap-5 lg:items-start"
+              class:list={[isEven ? "lg:flex-row" : "lg:flex-row-reverse"]}
+              data-step={index}
+              data-motion="fade"
+              style={`--motion-delay: ${index * 120}ms`}
+            >
+              <!-- Why: step number in a circle (01-06), exactly as in the original
+                   customer. On lg the wheel is absolute on the center axis. -->
+              <div class="relative z-10 flex shrink-0 items-start justify-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+                <div class="timeline-dot relative flex size-11 items-center justify-center rounded-full border-2 border-brand-primary/20 bg-brand-light text-brand-primary transition-all duration-500">
+                  <span class="relative text-sm font-bold tabular-nums">{stepNum}</span>
+                </div>
+              </div>
+
+              <div
+                class="timeline-content flex-1 pt-0.5 lg:pt-1"
+                class:list={[isEven ? "lg:pr-14 lg:text-right" : "lg:pl-14 lg:text-left"]}
+              >
+                <div class="mb-1 lg:mb-2">
+                  <span class="text-xs font-semibold uppercase tracking-widest text-brand-primary/60">{stepLabel} {stepNum}</span>
+                </div>
+                <Heading tag="h3" variant="feature-title" class="mb-2 text-brand-dark">
+                  {item.title}
+                </Heading>
+                <Text variant="body" class="text-brand-dark/65">
+                  {item.description}
+                </Text>
+              </div>
+
+              <div class="hidden flex-1 lg:block" aria-hidden="true"></div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  </Container>
+</Section>
+
+<script is:inline data-astro-rerun>
+  // Why: the progress bar fills the timeline as you scroll (pattern
+  // 1:1 from the customer's original). IntersectionObserver only responds when exceeded
+  // activation line (rootMargin -78%/-21%), not for every scroll pixel.
+  // data-astro-rerun: ClientRouter re-runs this script on every navigation
+  // SPA (without this, the initialization works only after a full reload of the page).
+  (function () {
+    var timeline = document.getElementById("process-timeline");
+    if (!timeline) return;
+
+    var steps = timeline.querySelectorAll(".timeline-step");
+    var progress = document.getElementById("timeline-progress");
+    if (steps.length === 0) return;
+
+    var activeIndex = -1;
+    var lastScrollY = window.scrollY;
+
+    function updateTimeline(nextIndex) {
+      activeIndex = Math.max(-1, Math.min(nextIndex, steps.length - 1));
+
+      steps.forEach(function (step, index) {
+        step.classList.toggle("is-active", index <= activeIndex);
+      });
+
+      if (progress) {
+        var progressPercent = ((activeIndex + 1) / steps.length) * 100;
+        progress.style.height = Math.min(progressPercent, 100) + "%";
+      }
+    }
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        var currentScrollY = window.scrollY;
+        var isScrollingUp = currentScrollY < lastScrollY;
+        lastScrollY = currentScrollY;
+
+        entries
+          .sort(function (a, b) {
+            return Number(a.target.dataset.step) - Number(b.target.dataset.step);
+          })
+          .forEach(function (entry) {
+            var index = Number(entry.target.dataset.step);
+            if (entry.isIntersecting) {
+              updateTimeline(index);
+            } else if (isScrollingUp && entry.rootBounds && entry.boundingClientRect.top < entry.rootBounds.top) {
+              updateTimeline(index - 1);
+            }
+          });
+      },
+      {
+        rootMargin: "-78% 0px -21% 0px",
+        threshold: 0,
+      },
+    );
+
+    steps.forEach(function (step) {
+      observer.observe(step);
+    });
+
+    function syncInitialState() {
+      var firstVisibleStep = Array.from(steps).reduce(function (lastIndex, step, index) {
+        return step.getBoundingClientRect().top < window.innerHeight * 0.78 ? index : lastIndex;
+      }, -1);
+      updateTimeline(firstVisibleStep);
+    }
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(syncInitialState, { timeout: 1000 });
+    } else {
+      window.setTimeout(syncInitialState, 0);
+    }
+  })();
+</script>
+
+<style>
+  /* Why: Why: active states and timeline animations are moved 1:1 from core.css
+       client (brand-jodlowski, section "Timeline / Process Steps"). Inactive
+       steps are dimmed (opacity 0.3, blur 2px, shift down), and after
+       entering the active zone, the circle fills with a brand with a pulsating ring
+       (timeline-pulse), and the content brightens and returns to its place. */
+  .timeline-step .timeline-dot {
+    transition:
+      background 0.6s ease,
+      border-color 0.6s ease,
+      color 0.6s ease,
+      box-shadow 0.6s ease;
+  }
+
+  .timeline-step .timeline-content {
+    opacity: 0.3;
+    transform: translateY(1rem);
+    filter: blur(2px);
+    transition:
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.6s ease;
+  }
+
+  .timeline-step.is-active .timeline-dot {
+    border-color: var(--color-brand-primary);
+    background: var(--color-brand-primary);
+    color: white;
+    animation: timeline-pulse 1.2s ease-out;
+  }
+
+  .timeline-step.is-active .timeline-content {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  @keyframes timeline-pulse {
+    /* Why: Why: the ring pulsates in brand color (the customer used a hard
+         rgba(20,87,184,0.35), here brand-primary by color-mix to
+         pulsation followed the design of starter-kita tokens). */
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-brand-primary) 35%, transparent); }
+    50% { box-shadow: 0 0 0 16px color-mix(in oklab, var(--color-brand-primary) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-brand-primary) 0%, transparent); }
+  }
+</style>

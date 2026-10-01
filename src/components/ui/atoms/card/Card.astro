@@ -1,0 +1,15 @@
+---
+interface Props {
+  class?: string;
+  size?: "sm" | "md";
+}
+
+const { class: className, size = "md" } = Astro.props;
+
+const padding = size === "sm" ? "py-4" : "py-6";
+const gap = size === "sm" ? "gap-4" : "gap-6";
+---
+
+<div class:list={["flex flex-col min-w-0 rounded-xl border border-brand-dark/10 shadow-sm overflow-hidden ui-bg-page", padding, gap, className]}>
+  <slot />
+</div>

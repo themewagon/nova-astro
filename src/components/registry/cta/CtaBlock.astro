@@ -1,0 +1,45 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import jsonData from "@data/sections/nova-cta.json";
+import { ACTIVE_TEMPLATE } from "@config/template";
+
+interface Props { id?: string; locale?: "en" | "pl"; title?: string; description?: string; primaryLabel?: string; primaryHref?: string; secondaryLabel?: string; secondaryHref?: string; image?: string; imageAlt?: string; class?: string; }
+const props = Astro.props as Props;
+const fallback = ACTIVE_TEMPLATE === "nova" ? undefined : jsonData;
+const title = props.title ?? fallback?.title;
+const description = props.description ?? fallback?.description;
+const primaryLabel = props.primaryLabel ?? fallback?.primaryLabel;
+const primaryHref = props.primaryHref ?? fallback?.primaryHref;
+const secondaryLabel = props.secondaryLabel ?? fallback?.secondaryLabel;
+const secondaryHref = props.secondaryHref ?? fallback?.secondaryHref;
+const image = props.image ?? fallback?.image;
+const imageAlt = props.imageAlt ?? fallback?.imageAlt ?? "";
+---
+
+<Section id={props.id ?? (props.locale === "pl" ? "kontakt" : "contact")} tone="page" class:list={["cta-section", props.class]}>
+  <Container class="w-full max-w-none px-[clamp(1.5rem,5vw,5rem)]">
+    <div class="nova-cta-frame" style={`background-image: url('${image}')`}>
+      <div class="nova-cta-copy">
+        <Heading tag="h2" variant="section-title">{title}</Heading>
+        <Text variant="lead">{description}</Text>
+        <div class="nova-cta-actions">
+          <Button href={primaryHref} variant="primary" size="lg">{primaryLabel}</Button>
+          <Button href={secondaryHref} variant="outline" size="lg">{secondaryLabel}</Button>
+        </div>
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  :global(section.cta-section) { padding-top: 3rem; padding-bottom: 3rem; }
+  .nova-cta-frame { position: relative; min-height: 24rem; display: flex; align-items: center; overflow: hidden; border-radius: var(--ui-radius-xl); background-color: var(--color-brand-dark); background-position: center; background-size: cover; }
+  .nova-cta-frame::before { position: absolute; inset: 0; background: color-mix(in oklab, var(--color-brand-dark) 72%, transparent); content: ""; }
+  .nova-cta-copy { position: relative; z-index: 1; display: flex; max-width: 42rem; flex-direction: column; gap: 1rem; padding: clamp(1.5rem, 6vw, 4rem); color: var(--color-brand-light); }
+  .nova-cta-copy :global(.ui-heading), .nova-cta-copy :global(.ui-text) { color: inherit; }
+  .nova-cta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+</style>

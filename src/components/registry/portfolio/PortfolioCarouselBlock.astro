@@ -1,0 +1,170 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import portfolioData from "@data/sections/portfolio.json";
+
+interface PortfolioItem {
+	title: string;
+	category: string;
+	img: string;
+	span?: string;
+	height?: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+  items?: PortfolioItem[];
+  ariaPrevProject?: string;
+  ariaNextProject?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+  }
+
+const { 
+	class: className = "", 
+	title = "", 
+	description = "",
+	tagline = "",
+	headingTag = "h2",
+	items,
+	ariaPrevProject = "",
+	ariaNextProject = ""
+} = Astro.props;
+
+const list = items && items.length > 0 ? items : portfolioData.items;
+---
+
+<!-- Why: carousel for clients with multiple projects, horizontal scrolling allows you to save space -->
+<Section class:list={["ui-bg-page overflow-hidden", className]}>
+	<div data-carousel>
+		<div class="ui-container" data-lightbox-group>
+			<div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+				<SectionHeader 
+title={title || portfolioData.title || portfolioData.variants.carousel.title}
+description={description || portfolioData.description || portfolioData.variants.carousel.description}
+tagline={tagline || portfolioData.tagline || portfolioData.variants.carousel.tagline}
+titleTag={headingTag}
+align="left"
+class="max-w-2xl mb-0"
+/>
+				<div class="flex items-center gap-3 pb-1 md:pb-2 shrink-0">
+					<button
+						type="button"
+						data-carousel-prev
+						class="size-11 min-h-[44px] min-w-[44px] rounded-full border border-brand-dark/15 flex items-center justify-center hover:bg-brand-dark/5 transition-colors"
+						aria-label={ariaPrevProject || portfolioData.variants.carousel.ariaPrevProject}
+					>
+						<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+						</svg>
+					</button>
+					<button
+						type="button"
+						data-carousel-next
+						class="size-11 min-h-[44px] min-w-[44px] rounded-full border border-brand-dark/15 flex items-center justify-center hover:bg-brand-dark/5 transition-colors"
+						aria-label={ariaNextProject || portfolioData.variants.carousel.ariaNextProject}
+					>
+						<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div
+			data-carousel-slider
+			class="mt-12 flex min-w-0 overflow-x-auto snap-x snap-mandatory gap-6 px-4 md:px-8 lg:px-12 pb-8 scrollbar-hide touch-pan-x scroll-pl-4 md:scroll-pl-8 lg:scroll-pl-12"
+		>
+		{list.map((item) => (
+			<div
+				class="shrink-0 w-[85vw] sm:w-80 md:w-96 snap-start group relative ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in aspect-[4/5] md:aspect-[3/4]"
+				data-portfolio-card
+				data-lightbox
+				data-href={item.img}
+				data-title={item.title}
+			>
+				<SmartImage 
+					src={item.img} 
+					alt={item.title} 
+					class="ui-media-zoom"
+				/>
+				
+				{/* Gradient Overlay */}
+				<div class="ui-media-overlay"></div>
+				
+				{/* Content */}
+				<div class="absolute inset-x-0 bottom-0 p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+					<Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">
+						{item.category}
+					</Text>
+					<Heading level={3} variant="feature-title" class="text-white">
+						{item.title}
+					</Heading>
+				</div>
+			</div>
+		))}
+		
+		{/* Add empty padding div at end */}
+		<div class="shrink-0 w-4 md:w-12"></div>
+	</div>
+	</div>
+</Section>
+
+<script>
+	let carouselAbort: AbortController | null = null;
+
+	function setupCarousels(): void {
+		carouselAbort?.abort();
+		carouselAbort = new AbortController();
+		const { signal } = carouselAbort;
+
+		document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+		const slider = root.querySelector<HTMLElement>('[data-carousel-slider]');
+		if (!slider) return;
+		const carouselSlider = slider;
+
+		carouselSlider.addEventListener('wheel', (event: WheelEvent) => {
+			if (carouselSlider.scrollWidth <= carouselSlider.clientWidth) return;
+			if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+			event.preventDefault();
+			carouselSlider.scrollLeft += event.deltaY;
+		}, { passive: false, signal });
+
+		function cardStep() {
+			const card = carouselSlider.querySelector('[data-portfolio-card]');
+			if (!card) return 320;
+			return card.getBoundingClientRect().width + 24;
+		}
+
+		root.querySelector('[data-carousel-prev]')?.addEventListener('click', () => {
+			const step = cardStep();
+			let target = carouselSlider.scrollLeft - step;
+			if (target < 2) target = Math.max(0, carouselSlider.scrollWidth - carouselSlider.clientWidth);
+			carouselSlider.scrollTo({ left: target, behavior: 'smooth' });
+		}, { signal });
+
+		root.querySelector('[data-carousel-next]')?.addEventListener('click', () => {
+			const step = cardStep();
+			let target = carouselSlider.scrollLeft + step;
+			const maxScroll = carouselSlider.scrollWidth - carouselSlider.clientWidth;
+			if (target > maxScroll - 2) target = 0;
+			carouselSlider.scrollTo({ left: target, behavior: 'smooth' });
+		}, { signal });
+		});
+	}
+
+	document.addEventListener('astro:page-load', setupCarousels);
+	setupCarousels();
+</script>
+
+<style>
+	.scrollbar-hide::-webkit-scrollbar { display: none; }
+	.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>

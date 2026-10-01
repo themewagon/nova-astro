@@ -1,0 +1,94 @@
+{
+  "pl": {
+    "title": "Nasze usługi",
+    "description": "Kompleksowa obsługa inwestycji od projektu po oddanie kluczy. Zobacz, jak możemy pomóc na każdym etapie prac.",
+    "items": [
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "house",
+        "title": "Wykończenia pod klucz",
+        "description": "Przejmujemy całą realizację wnętrz: zamawiamy materiały, koordynujemy ekipy i nadzorujemy prace. Odbierasz gotowe mieszkanie bez angażowania się w budowę.",
+        "href": "/kontakt/",
+        "linkLabel": "Umów konsultację"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "wrench",
+        "title": "Remonty i modernizacje",
+        "description": "Generalne remonty oraz modernizacje mieszkań i domów z zachowaniem najwyższych standardów wykonania i estetyki.",
+        "href": "/kontakt/",
+        "linkLabel": "Bezpłatna wycena"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "pencil",
+        "title": "Projektowanie wnętrz",
+        "description": "Projekt techniczny, wizualizacje, lista materiałów i nadzór autorski. Współpracujemy z doświadczonymi projektantami wnętrz.",
+        "href": "/kontakt/",
+        "linkLabel": "Zobacz szczegóły"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "check-circle",
+        "title": "Odbiory i doradztwo techniczne",
+        "description": "Pomagamy przy odbiorze nieruchomości od dewelopera. Sprawdzamy tynki, wylewki i instalacje pod kątem norm budowlanych, eliminując ryzyko kosztownych niespodzianek.",
+        "href": "/kontakt/",
+        "linkLabel": "Umów konsultację"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "users",
+        "title": "Koordynacja podwykonawców",
+        "description": "Nie musisz osobno szukać i pilnować fachowców. Organizujemy i nadzorujemy pracę wyspecjalizowanych ekip, pilnując spójności całego harmonogramu.",
+        "href": "/kontakt/",
+        "linkLabel": "Bezpłatna wycena"
+      }
+    ]
+  },
+  "en": {
+    "title": "Our services",
+    "description": "End-to-end support for your project, from design to handover. See how we can help at every stage.",
+    "items": [
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "house",
+        "title": "Turnkey finishing",
+        "description": "We handle the entire interior fit-out: we order materials, coordinate crews and supervise the work. You receive a finished apartment without getting involved in the build.",
+        "href": "/contact/",
+        "linkLabel": "Book a consultation"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "wrench",
+        "title": "Renovations and upgrades",
+        "description": "Full renovations and modernisation of apartments and houses, delivered to the highest standards of workmanship and aesthetics.",
+        "href": "/contact/",
+        "linkLabel": "Free quote"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "pencil",
+        "title": "Interior design",
+        "description": "Technical design, visualisations, material lists and author supervision. We work with experienced interior designers.",
+        "href": "/contact/",
+        "linkLabel": "See details"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "check-circle",
+        "title": "Handover checks and technical advice",
+        "description": "We assist with developer handovers. We inspect plaster, screeds and installations against building standards, removing the risk of costly surprises.",
+        "href": "/contact/",
+        "linkLabel": "Book a consultation"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "users",
+        "title": "Subcontractor coordination",
+        "description": "No need to source and supervise trades yourself. We organise and oversee specialist crews, keeping the whole schedule on track.",
+        "href": "/contact/",
+        "linkLabel": "Free quote"
+      }
+    ]
+  }
+}

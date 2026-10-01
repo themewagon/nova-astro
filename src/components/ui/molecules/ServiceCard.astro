@@ -1,0 +1,109 @@
+---
+import Card from "@components/ui/atoms/Card.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import { formatInternalLink } from "@utils/url";
+
+// Why: shared service card molecule used by the template service blocks.
+// GLOBAL starter-kit STYLES: all colors go through brand tokens (text-brand-*,
+// bg-brand-*, border-brand-*), and hard rgba from shadows was replaced with color-mix
+// var(--color-brand-dark) to make the card react to changes in the design token palette.
+
+interface Props {
+  item: {
+    image: string;
+    icon: string;
+    title: string;
+    description: string;
+    href?: string;
+    linkLabel?: string;
+  };
+}
+
+const { item } = Astro.props;
+---
+
+<!-- Why: faithful visual copy from the client. Clip-path cutting off the top left
+     the corner (4.5rem) is the signature of this block. Card input supports global
+     system motion z Section.astro. -->
+<Card
+  variant="surface"
+  padding="none"
+  radius="xl"
+  elevation="none"
+  class="group flex h-full flex-col overflow-hidden service-card [clip-path:polygon(4.5rem_0,100%_0,100%_100%,0_100%,0_4.5rem)]"
+>
+  <div class="relative">
+    <!-- Why: a photo in fixed 16:9 aspect ratio with a slight gradient
+         from the bottom (bg-brand-light), which blends the image into the background of the card.-->
+    <div class="aspect-[16/9] overflow-hidden bg-brand-dark/5">
+      <SmartImage
+        src={item.image}
+        alt={item.title}
+        class="w-full h-full object-cover object-center origin-bottom transition-transform duration-700 group-hover:scale-105"
+        width={800}
+        height={600}
+        loading="lazy"
+        fetchpriority="low"
+      />
+
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-brand-light/90 via-brand-light/40 to-transparent"></div>
+    </div>
+
+    <!-- Why: double square icon (size-14 + size-11 inside),
+         moved to the bottom of the photo (absolute -bottom-5). Hover inverts colors
+         inner square (bg-brand-dark + text-brand-light).-->
+    <div class="absolute -bottom-5 left-6 inline-flex size-14 items-center justify-center rounded-[1.1rem] border border-brand-dark/15 bg-brand-light text-brand-dark shadow-[0_18px_36px_-18px_color-mix(in_oklab,var(--color-brand-dark)_28%,transparent)] transition-colors duration-300">
+      <span class="inline-flex size-11 items-center justify-center rounded-[0.8rem] bg-brand-dark/10 text-brand-dark transition-colors duration-300 group-hover:bg-brand-dark group-hover:text-brand-light">
+        <Icon name={item.icon} size={26} />
+      </span>
+    </div>
+  </div>
+
+  <div class="flex h-full flex-col px-6 pb-6 pt-10 sm:px-7 sm:pb-7 sm:pt-11">
+    <Heading level={3} variant="feature-title" class="text-brand-dark mb-3 text-lg font-bold font-heading sm:text-xl">
+      {item.title}
+    </Heading>
+
+    <Text variant="feature-body-sm" class="text-brand-dark/70 leading-relaxed">
+      {item.description}
+    </Text>
+
+    <!-- Why: link with animated underline (scale-x-0 -> scale-x-100)
+         and moving the arrow. formatInternalLink guarantees trailing slash
+         (SEO starter kit requirement). Fallback "/contact/" remains, but linkLabel
+         is replaced with data from JSON.-->
+    <div class="mt-auto pt-4">
+      <Text
+        tag="a"
+        href={formatInternalLink(item.href || "/kontakt/")}
+        variant="feature-body-sm"
+        class="group/cta inline-flex items-center gap-2 font-semibold text-brand-primary transition-colors duration-300 hover:text-brand-dark"
+      >
+        <span class="relative">
+          {item.linkLabel || "Umów konsultację"}
+          <span class="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-brand-primary transition-transform duration-300 ease-out group-hover/cta:scale-x-100"></span>
+        </span>
+        <span aria-hidden="true" class="transition-transform duration-300 ease-out group-hover/cta:translate-x-1">→</span>
+      </Text>
+    </div>
+  </div>
+</Card>
+
+<!-- Why: global tab styles (shadow and hover translateY) moved
+     from the client, but from hard rgba to color-mix brand-dark token, to
+     the shadow followed the template palette. is:global, because the card is sometimes rendered
+     in grids, and the .service-card classes are shared with the block.-->
+<style is:global>
+  .service-card {
+    box-shadow: 0 12px 28px -12px color-mix(in oklab, var(--color-brand-dark) 10%, transparent) !important;
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform;
+  }
+  .service-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 24px 48px -16px color-mix(in oklab, var(--color-brand-dark) 18%, transparent) !important;
+  }
+</style>

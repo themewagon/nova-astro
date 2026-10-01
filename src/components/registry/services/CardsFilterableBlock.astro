@@ -1,0 +1,361 @@
+---
+// Why: CardsFilterableBlock is a reusable "Support Areas" section
+// (category filter, grid/list view switcher, lazy load of cards via IntersectionObserver).
+// Client color tokens were replaced with global brand starter kit tokens, the client reveal
+// system was removed, and client data was replaced with generic PL/EN content in JSON.
+// JavaScript logic (filters, views, lazy load) has been fully preserved.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import FilterCard from "@components/ui/molecules/FilterCard.astro";
+import { formatInternalLink } from "@utils/url";
+import jsonData from "@data/sections/filterable-cards.json";
+
+interface Category {
+  id: string;
+  label: string;
+}
+
+interface FilterableItem {
+  title: string;
+  subtitle?: string;
+  image?: string;
+  initials?: string;
+  badge?: string;
+  bonus?: string;
+  rate?: string;
+  features?: string[];
+  description?: string;
+  cta?: { label: string; href: string };
+  category?: string;
+}
+
+interface Props {
+/** Full section data. The block reads the JSON fallback when omitted. */
+  data?: typeof jsonData;
+/** Content language from JSON: "pl" (default) or "en". */
+  locale?: "pl" | "en";
+  /** Id kotwicy sekcji. */
+  id?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+/** Additional section classes, for example from PageBuilder. */
+  class?: string;
+/** Content overrides. Props take precedence over JSON. */
+  heading?: string;
+  description?: string;
+  categories?: Category[];
+  items?: FilterableItem[];
+}
+
+const {
+  data,
+  locale = "pl",
+  id,
+  headingTag = "h2",
+  class: className = "",
+  heading,
+  description,
+  categories,
+  items,
+} = Astro.props as Props;
+
+// Why: the "props.data || jsonData[locale]" pattern (as in AboutLawBlock), so that the block
+// works independently with section data, and PageBuilder or CMS can overwrite the content
+// with props. When the date comes from outside, we select the language variant (pl/en), just
+// like JSON does.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+
+const resolvedHeading = heading || t.heading || "";
+const resolvedDescription = description || t.description || "";
+const resolvedCategories = categories ?? t.categories ?? [];
+const rawItems = items ?? t.items ?? [];
+
+// Why: formatInternalLink takes care of trailing slash and path cleanliness, instead of
+// client localizeHomeAnchor. Anchor links (/#...) are left untouched, and paths like /contact
+// get a trailing slash.
+const resolvedItems = rawItems.map((item) => ({
+  ...item,
+  cta: item.cta ? { ...item.cta, href: formatInternalLink(item.cta.href) } : undefined,
+}));
+
+const hasCategories = resolvedCategories.length > 0;
+// Why: Control labels are language dependent ("All" vs. "All" pattern).
+const allLabel = locale === "en" ? "All" : "Wszystkie";
+const emptyLabel = locale === "en" ? "No items in this category" : "Brak elementów w tej kategorii";
+const filtersLabel = locale === "en" ? "Category filter" : "Filtr kategorii";
+const viewLabel = locale === "en" ? "View" : "Widok";
+const gridTitle = locale === "en" ? "Grid view" : "Widok siatki";
+const listTitle = locale === "en" ? "List view" : "Widok listy";
+
+const filters = hasCategories
+  ? [{ id: "all", label: allLabel }, ...resolvedCategories]
+  : [{ id: "all", label: allLabel }];
+const hasItems = resolvedItems.length > 0;
+
+// Why: batch/cap constants control the gradual addition of cards in JS (lazy load via
+// IntersectionObserver on sentinel). Values ​​passed as data-* attributes at the root so that
+// the script does not have magic numbers.
+const BATCH_SIZE = 3;
+const AUTO_CAP_DESKTOP = 9;
+const AUTO_CAP_MOBILE = 4;
+const INITIAL_MOBILE = 2;
+---
+
+<Section id={id} class:list={["relative scroll-mt-[calc(var(--site-header-height,4rem)+0.75rem)]", className]}>
+  <Container>
+    <div class="mx-auto mb-12 max-w-2xl text-center md:mb-16">
+      {resolvedHeading && (
+        <Heading tag={headingTag} variant="section-heading-lg" class="text-balance">{resolvedHeading}</Heading>
+      )}
+      {resolvedDescription && (
+        <Text variant="lead" class="mt-4 text-pretty">{resolvedDescription}</Text>
+      )}
+    </div>
+
+    <!-- Why: data-view, data-batch and data-* caps are a JS contract.
+        The script reads them from the root dataset and controls the visibility of the cards. -->
+    <div id="filterable-root" class="filterable-root group/filterable" data-view="grid" data-batch={BATCH_SIZE} data-auto-cap-desktop={AUTO_CAP_DESKTOP} data-auto-cap-mobile={AUTO_CAP_MOBILE} data-initial-mobile={INITIAL_MOBILE}>
+      {hasCategories && (
+        <div class="mb-6 flex flex-wrap items-center justify-center gap-2 md:mb-8 md:justify-between">
+          <div class="w-full min-w-0 md:w-auto">
+            <div class="filterable-filters-scroll flex flex-nowrap items-center justify-start gap-2 overflow-x-auto overscroll-x-contain pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] md:flex-wrap md:justify-center md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden"
+              role="group" aria-label={filtersLabel}>
+              {filters.map(({ id: fid, label }) => (
+                <button type="button"
+                  class:list={[
+                    "filter-pill min-h-10 shrink-0 rounded-full border px-4 py-2 text-sm backdrop-blur-md",
+                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary",
+                    fid === "all" && "filter-pill--active",
+                  ]}
+                  data-filter-id={fid}
+                  aria-pressed={fid === "all" ? "true" : "false"}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+{/* Why: Why: view buttons use inline SVG instead of Icon,
+              bo phosphor-min.css starter-kita nie zawiera ikon grid/list,
+              and SVGs have 1:1 geometry with the customer's original.
+              Dlaczego: bazowy display to flex (mobile-first), a ukrycie do md
+              realizuje max-md:hidden zamiast klienckiego "hidden md:flex",
+              to pass the mobile-fi rst audit (no base display class).*/}
+          <div class="flex items-center gap-1.5 max-md:hidden" role="group" aria-label={viewLabel}>
+            <button type="button" class="view-btn flex h-9 w-9 items-center justify-center rounded-lg border transition-all duration-200" data-view="grid" aria-pressed="true" title={gridTitle}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" opacity="0.4"/><rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor" opacity="0.4"/><rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor" opacity="0.4"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" /></svg>
+            </button>
+            <button type="button" class="view-btn flex h-9 w-9 items-center justify-center rounded-lg border transition-all duration-200" data-view="list" aria-pressed="false" title={listTitle}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="3" rx="1" fill="currentColor" opacity="0.4"/><rect x="1" y="6.5" width="14" height="3" rx="1" fill="currentColor" opacity="0.4"/><rect x="1" y="12" width="14" height="3" rx="1" fill="currentColor" /></svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <Text variant="body" class:list={["text-center text-sm font-medium text-brand-dark/70", hasItems && "hidden"]} data-filterable-empty aria-live="polite">
+        {emptyLabel}
+      </Text>
+
+      <!-- Why: grid switches layout via group-data-[view=list]/filterable
+          driven data-view at root (group .group/filterable). -->
+      {hasItems && (
+        <div class="filterable-grid grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 group-data-[view=list]/filterable:grid-cols-1 group-data-[view=list]/filterable:gap-3"
+          data-filterable-grid>
+          {resolvedItems.map((item, i) => (
+            <div class="min-w-0 filterable-item" data-filterable-item data-category={item.category || ""}>
+              <FilterCard item={item} index={i} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Why: a sentinel is an invisible point observed by
+          IntersectionObserver, which adds subsequent batches of cards to the scroll. */}
+      <div data-filterable-sentinel class="pointer-events-none h-px w-full shrink-0" aria-hidden="true" />
+    </div>
+  </Container>
+</Section>
+
+<script>
+  // Why: all logic (filters, grid/list views, lazy load) remained
+  // Runs on #filterable-root and keeps filtering isolated to this block.
+  // and data-* attributes, regardless of color classes.
+  // Type annotations are necessary because Astro processes <script> as a TS module.
+
+  function initFilterable(root: HTMLElement) {
+    const BATCH = Number(root.dataset.batch) || 3;
+    const AUTO_CAP_DESKTOP = Number(root.dataset.autoCapDesktop) || 9;
+    const AUTO_CAP_MOBILE = Number(root.dataset.autoCapMobile) || 4;
+    const INITIAL_MOBILE = Number(root.dataset.initialMobile) || 2;
+
+    const grid = root.querySelector("[data-filterable-grid]");
+    const sentinel = root.querySelector("[data-filterable-sentinel]");
+    const empty = root.querySelector("[data-filterable-empty]");
+    const pills = root.querySelectorAll("[data-filter-id]");
+    const viewBtns = root.querySelectorAll(".view-btn");
+    const allItems = Array.from(root.querySelectorAll<HTMLElement>("[data-filterable-item]"));
+    if (!grid || allItems.length === 0) return;
+
+    const mdQuery = window.matchMedia("(min-width: 768px)");
+
+    function autoCap() { return mdQuery.matches ? AUTO_CAP_DESKTOP : AUTO_CAP_MOBILE; }
+    function initialCount(matched: number) {
+      if (matched === 0) return 0;
+      return mdQuery.matches ? Math.min(AUTO_CAP_DESKTOP, matched) : Math.min(INITIAL_MOBILE, matched);
+    }
+
+    let activeFilter = "all";
+    let revealedCount = initialCount(allItems.length);
+    let sentinelObserver: IntersectionObserver | null = null;
+
+    function matchingItems() {
+      return allItems.filter(el => {
+        const cat = el.getAttribute("data-category") || "";
+        return activeFilter === "all" || cat === activeFilter;
+      });
+    }
+
+    function syncVisibility() {
+      const matched = matchingItems();
+
+      allItems.forEach(el => {
+        const cat = el.getAttribute("data-category") || "";
+        const matches = activeFilter === "all" || cat === activeFilter;
+        if (!matches) { el.classList.add("hidden"); return; }
+        const idx = matched.indexOf(el);
+        const show = idx < revealedCount;
+        el.classList.toggle("hidden", !show);
+        el.style.setProperty("--reveal-delay", `${idx * 40}ms`);
+      });
+
+      if (empty) empty.classList.toggle("hidden", matched.length > 0);
+
+      const cap = autoCap();
+      const canAuto = matched.length > 0 && revealedCount < matched.length && revealedCount < cap;
+      // Why: showLoadMore retained from the original as a "blueprint" for an eventual one
+      // "show more" button (client had the same variable, unused).
+      const showLoadMore = matched.length > 0 && revealedCount < matched.length && revealedCount >= cap;
+
+      if (sentinel) {
+        sentinel.classList.toggle("hidden", !canAuto);
+        sentinelObserver?.disconnect();
+        sentinelObserver = null;
+        if (canAuto) {
+          sentinelObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
+            if (!entries[0]?.isIntersecting) return;
+            const m = matchingItems();
+            if (revealedCount >= m.length) return;
+            if (revealedCount >= autoCap()) return;
+            revealedCount = Math.min(revealedCount + BATCH, m.length, autoCap());
+            syncVisibility();
+          }, { root: null, rootMargin: "280px 0px 280px 0px", threshold: 0 });
+          sentinelObserver.observe(sentinel);
+        }
+      }
+    }
+
+    pills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        const id = pill.getAttribute("data-filter-id") || "all";
+        activeFilter = id;
+        pills.forEach(b => {
+          const pid = b.getAttribute("data-filter-id");
+          const on = pid === id;
+          b.setAttribute("aria-pressed", on ? "true" : "false");
+          b.classList.toggle("filter-pill--active", on);
+        });
+        revealedCount = initialCount(matchingItems().length);
+        syncVisibility();
+      });
+    });
+
+    viewBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (!mdQuery.matches) return;
+        const view = btn.getAttribute("data-view");
+        if (!view) return;
+        viewBtns.forEach(b => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        root.dataset.view = view;
+      });
+    });
+
+    syncVisibility();
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>(".filterable-root").forEach(root => {
+      if (root.classList.contains("is-initialized")) return;
+      root.classList.add("is-initialized");
+      initFilterable(root);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll, { once: true });
+  } else {
+    initAll();
+  }
+</script>
+
+<style>
+  /* Why: client var(--color-outline) and var(--color-on-surface-variant)
+     converted into brand tokens by color-mix (starter-kit core.css pattern),
+     so that the styles respond to the active theme. */
+  .filter-pill {
+    position: relative;
+    font-weight: 500;
+    border-color: color-mix(in oklch, var(--color-brand-dark) 15%, transparent);
+    background: transparent;
+    color: color-mix(in oklch, var(--color-brand-dark) 70%, transparent);
+    transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+  }
+  .filter-pill:hover { border-color: var(--color-brand-primary); color: var(--color-brand-dark); transform: translateY(-1px); }
+  .filter-pill:active { transform: translateY(0) scale(0.97); }
+  .filter-pill--active {
+    border-color: var(--color-brand-primary);
+    background: var(--color-brand-primary);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 2px 12px -4px color-mix(in oklch, var(--color-brand-primary) 40%, transparent);
+  }
+  .filter-pill--active:hover { box-shadow: 0 4px 20px -6px color-mix(in oklch, var(--color-brand-primary) 50%, transparent); filter: brightness(1.04); }
+
+  .view-btn { border-color: color-mix(in oklch, var(--color-brand-dark) 15%, transparent); color: color-mix(in oklch, var(--color-brand-dark) 70%, transparent); background: transparent; cursor: pointer; }
+  .view-btn:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary); }
+  .view-btn[aria-pressed="true"] { border-color: var(--color-brand-primary); background: var(--color-brand-primary); color: #ffffff; }
+
+  @keyframes card-in {
+    0% { opacity: 0; transform: translate3d(0, 1.1rem, 0) scale(0.982); }
+    62% { opacity: 1; transform: translate3d(0, -0.09rem, 0) scale(1.004); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  }
+
+  @keyframes card-in-blur {
+    0% { opacity: 0; transform: translate3d(0, 1.1rem, 0) scale(0.982); filter: blur(5px); }
+    62% { opacity: 1; transform: translate3d(0, -0.09rem, 0) scale(1.004); filter: blur(1px); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+  }
+
+  .filterable-grid > .filterable-item:not(.hidden) {
+    opacity: 0;
+    transform: translate3d(0, 1.35rem, 0) scale(0.975);
+    animation: card-in 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  @media (min-width: 768px) {
+    .filterable-grid > .filterable-item:not(.hidden) {
+      animation-name: card-in-blur;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filter-pill { transition-duration: 0.01ms; }
+    .filter-pill:hover, .filter-pill:active, .filter-pill--active:hover { transform: none; filter: none; }
+    .filterable-grid > .filterable-item:not(.hidden) { opacity: 1; transform: none; animation: none; }
+  }
+</style>

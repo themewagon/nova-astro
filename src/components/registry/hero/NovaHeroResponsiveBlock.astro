@@ -1,0 +1,148 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import jsonData from "@data/sections/nova-hero-wireframe.json";
+import { ACTIVE_TEMPLATE } from "@config/template";
+
+type Stat = { value: string; label: string };
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  headingAccent?: string;
+  description?: string;
+  primaryCTA?: { label: string; href: string };
+  secondaryCTA?: { label: string; href: string };
+  trustedBy?: string;
+  trustItems?: string[];
+  image?: string;
+  imageAlt?: string;
+  stats?: Stat[];
+  sectionId?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const fallback = ACTIVE_TEMPLATE === "nova" ? undefined : jsonData;
+const eyebrow = props.eyebrow ?? fallback?.eyebrow;
+const heading = props.heading ?? fallback?.heading;
+const headingAccent = props.headingAccent ?? fallback?.headingAccent;
+const description = props.description ?? fallback?.description;
+const primaryCTA = props.primaryCTA ?? fallback?.primaryCTA;
+const secondaryCTA = props.secondaryCTA ?? fallback?.secondaryCTA;
+const trustedBy = props.trustedBy ?? fallback?.trustedBy;
+const trustItems = props.trustItems ?? fallback?.trustItems ?? [];
+const image = props.image ?? fallback?.image;
+const imageAlt = props.imageAlt ?? fallback?.imageAlt ?? "";
+const stats = props.stats ?? fallback?.stats ?? [];
+---
+
+<Section
+  id={props.sectionId ?? "hero"}
+  tone="page"
+  class:list={[
+    "hero-section nova-responsive-hero overflow-hidden pt-[calc(var(--site-header-height,5.75rem)+var(--hero-below-header-gap,0.75rem))] pb-0",
+    props.class,
+  ]}
+>
+  <Container class="w-full max-w-none px-0">
+    <div class="relative overflow-hidden rounded-t-xl bg-surface">
+      <div class="grid min-w-0 grid-cols-1 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:grid-cols-2">
+        <div class="flex min-w-0 flex-col justify-start px-[clamp(1.25rem,5vw,5rem)] pb-[clamp(3rem,9vw,6rem)] pt-[clamp(3rem,7vw,5rem)] md:min-h-[34rem] md:px-[clamp(1.5rem,4vw,3.5rem)] md:pb-8 md:pt-10 lg:grid lg:grid-rows-[1fr_auto] lg:px-[clamp(1.5rem,5vw,5rem)] lg:pb-[clamp(2rem,3vw,3rem)] lg:pt-[clamp(4rem,5vw,5rem)]">
+          <div class="flex min-w-0 flex-col justify-start gap-[clamp(1.25rem,4vw,2rem)] md:justify-center md:gap-5 lg:-translate-y-6 lg:gap-[clamp(1.25rem,2vw,2rem)]" data-motion-sequence="fade">
+            <Text tag="p" variant="accent-label" class="font-sans font-semibold tracking-[0.18em] md:text-[0.72rem] lg:text-[clamp(0.75rem,0.85vw,0.95rem)]">{eyebrow}</Text>
+            <Heading tag="h1" variant="hero" class="max-w-[42rem] font-bold leading-[0.96] tracking-[-0.065em] text-[clamp(2.5rem,10vw,3.75rem)] md:max-w-[42rem] md:text-[clamp(3rem,4.4vw,4.75rem)] lg:text-[clamp(3rem,4.4vw,4.75rem)]">
+              {heading}{' '}<span class="text-brand-accent">{headingAccent}</span>
+            </Heading>
+            <Text variant="lead" class="max-w-[38rem] md:max-w-[25rem] md:text-[clamp(1rem,1.45vw,1.2rem)] lg:max-w-[38rem] lg:text-[clamp(1.1rem,1.45vw,1.4rem)]">{description}</Text>
+            <div class="flex flex-wrap items-center gap-3">
+              {primaryCTA && <Button href={primaryCTA.href} variant="primary" size="lg" class="min-h-11 w-full font-semibold tracking-normal sm:w-auto md:text-[clamp(1rem,1.15vw,1.2rem)]">{primaryCTA.label}</Button>}
+              {secondaryCTA && <Button href={secondaryCTA.href} variant="outline" size="lg" class="min-h-11 w-full font-semibold tracking-normal sm:w-auto md:text-[clamp(1rem,1.15vw,1.2rem)]">{secondaryCTA.label}</Button>}
+            </div>
+          </div>
+          <div class="grid grid-cols-3 items-center gap-x-3 gap-y-4 pt-6 text-[color-mix(in_oklab,var(--color-on-surface)_40%,var(--color-surface))] md:gap-x-2 md:pt-6 lg:flex lg:w-full lg:flex-nowrap lg:justify-between lg:gap-x-4 lg:gap-y-3 lg:pt-4" data-motion="fade" style="--motion-delay: 480ms">
+            <Text tag="span" variant="feature-body-sm" class="text-[0.68rem] font-medium tracking-[0.06em] opacity-[0.78] md:text-[0.72rem] lg:text-[clamp(0.8rem,0.9vw,1rem)]">{trustedBy}</Text>
+            {trustItems.map((item, index) => (
+              <Text
+                tag="span"
+                variant="feature-body-sm"
+                class:list={[
+                  "font-heading text-[0.78rem] font-semibold tracking-[0.04em] opacity-[0.72] md:text-[0.88rem] lg:text-[clamp(1rem,1.1vw,1.15rem)]",
+                  index === 1 && "tracking-[0.12em]",
+                  index === 3 && "tracking-[0.08em]",
+                ]}
+              >{item}</Text>
+            ))}
+          </div>
+        </div>
+
+        <div class="relative min-w-0 mb-4 h-[clamp(22rem,92vw,31rem)] md:mb-0 md:h-[clamp(30rem,62vw,38rem)] md:pb-6 md:pr-6 lg:mb-[clamp(0.75rem,1vw,1rem)] lg:h-[clamp(36rem,45vw,48rem)] lg:pb-[clamp(1rem,2vw,2rem)] lg:pr-[clamp(1.25rem,3vw,3rem)]" data-motion="fade" style="--motion-delay: 120ms">
+          <svg class="pointer-events-none absolute inset-0 z-0 size-full overflow-hidden opacity-0 md:opacity-100" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <clipPath id="nova-responsive-photo-blob" clipPathUnits="objectBoundingBox">
+                <path d="M .22 .08 C .38 .02 .64 0 .84 .05 C .98 .09 1.02 .2 .98 .38 C .96 .52 .86 .58 .74 .66 C .62 .74 .57 .9 .43 .97 C .29 1.04 .15 .93 .1 .78 C .05 .62 .02 .48 .1 .34 C .14 .26 .16 .16 .22 .08 Z" />
+              </clipPath>
+            </defs>
+          </svg>
+          <figure class="relative z-10 grid h-full min-w-0 place-items-center overflow-hidden [clip-path:url(#nova-responsive-photo-blob)] md:grid-rows-[minmax(0,1fr)] md:[&_picture]:block md:[&_picture]:h-full md:[&_picture]:min-h-0 md:[&_picture]:w-full md:[&_img]:w-full">
+            <SmartImage src={image} alt={imageAlt} width={900} height={1125} loading="eager" class="block h-full min-h-0 w-full object-cover object-center md:object-[center_35%] lg:object-cover" />
+          </figure>
+        </div>
+      </div>
+
+      <div class="hero-stats grid grid-cols-2 rounded-t-[var(--rounded-lg)] bg-brand-dark px-[clamp(1rem,3vw,2.5rem)] py-[clamp(2rem,3vw,2.5rem)] text-brand-light md:grid-cols-4" data-motion-sequence="viewport" data-motion-profile="soft">
+        {stats.map((stat) => (
+          <div class="nova-stat relative flex flex-col items-center gap-[0.35rem] px-[clamp(0.75rem,2.5vw,2rem)] py-2 text-center md:py-0">
+            <Heading tag="strong" variant="section-heading-lg" class="text-brand-accent">{stat.value}</Heading>
+            <Text tag="span" variant="feature-body-sm" class="text-inherit">{stat.label}</Text>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  :global(.nova-responsive-hero) .nova-stat {
+    position: relative;
+  }
+
+  @media (max-width: 767px) {
+    :global(.nova-responsive-hero) .nova-stat:nth-child(even)::before {
+      position: absolute;
+      inset-block: 0.75rem;
+      left: 0;
+      width: 0.0625rem;
+      background-color: var(--color-brand-light);
+      content: "";
+      opacity: 0.35;
+    }
+
+    :global(.nova-responsive-hero) .nova-stat:nth-child(-n + 2)::after {
+      position: absolute;
+      right: 0.75rem;
+      bottom: 0;
+      left: 0.75rem;
+      height: 0.0625rem;
+      background-color: var(--color-brand-light);
+      content: "";
+      opacity: 0.35;
+    }
+  }
+
+  @media (min-width: 768px) {
+    :global(.nova-responsive-hero) .nova-stat + .nova-stat::before {
+      position: absolute;
+      inset-block: 25%;
+      left: 0;
+      width: 0.0625rem;
+      background-color: var(--color-brand-light);
+      content: "";
+      opacity: 0.35;
+    }
+  }
+</style>

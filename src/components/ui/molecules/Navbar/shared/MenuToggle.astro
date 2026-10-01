@@ -1,0 +1,24 @@
+---
+import { getNovaCopy, type NovaLocale } from "@utils/nova-i18n";
+
+interface Props {
+	mobileOnly?: boolean;
+	locale?: NovaLocale;
+}
+
+const { mobileOnly = true, locale = "pl" } = Astro.props;
+const headerData = getNovaCopy(locale).navigation;
+---
+
+<button
+	type="button"
+	data-navbar-toggle
+	class:list={["ui-nav-menu-toggle", mobileOnly && "lg:hidden"]}
+	aria-controls="site-nav-drawer"
+	aria-expanded="false"
+	aria-label={headerData.aria.menuOpen}
+>
+	<span class="ui-nav-menu-toggle__bar" aria-hidden="true"></span>
+	<span class="ui-nav-menu-toggle__bar" aria-hidden="true"></span>
+	<span class="ui-nav-menu-toggle__bar" aria-hidden="true"></span>
+</button>

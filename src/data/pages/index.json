@@ -1,0 +1,17 @@
+{
+  "seo": {
+    "title": "Nova, strony internetowe dla ambitnych marek",
+    "description": "Tworzymy nowoczesne strony internetowe, które wzmacniają wizerunek, przyciągają klientów i wspierają rozwój biznesu."
+  },
+  "heading": "Nowe możliwości dla ambitnych marek",
+  "sections": [
+    { "id": "navbar", "variant": "floating" },
+    { "id": "hero", "variant": "nova" },
+    { "id": "portfolio", "variant": "nova" },
+    { "id": "novaServices", "variant": "default" },
+    { "id": "novaTeam", "variant": "default" },
+    { "id": "faq3", "variant": "default" },
+    { "id": "testimonials", "variant": "v2" },
+    { "id": "footer", "variant": "nova" }
+  ]
+}

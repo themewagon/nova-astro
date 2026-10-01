@@ -1,0 +1,201 @@
+---
+// Why: FooterPromoBlock combines a classic column footer with a promotional block (CTA/newsletter). This allows you to place a featured element in the footer, e.g. a newsletter subscription form or a free quote.
+/**
+ * Footer - columns as in variant A + highlighted promotional block with a photo.
+ */
+import footerData from "@data/navigation/footer.json";
+import companyData from "@data/global/company.json";
+import Logo from "@components/ui/atoms/Logo.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import { getEnabledSocialLinks } from "@utils/socials";
+import { formatInternalLink } from "@utils/url";
+
+const company = companyData;
+
+interface Props {
+	id?: string;
+	class?: string;
+	contactTitle?: string;
+	promoTagline?: string;
+	promoTitle?: string;
+	promoDescription?: string;
+	promoCtaLabel?: string;
+	promoCtaHref?: string;
+	promoImageSrc?: string;
+	promoImageAlt?: string;
+	copyrightText?: string;
+	attributionLabel?: string;
+	/** Promotional section header tag: 'h2' by default, 'h1' when the block is the first section of a page without hero (SEO).*/
+	headingTag?: string;
+}
+
+const {
+	id,
+	class: className = "",
+	contactTitle = "",
+	promoTagline = "",
+	promoTitle = "",
+	promoDescription = "",
+	promoCtaLabel = "",
+	promoCtaHref = "",
+	promoImageSrc = "",
+	promoImageAlt = "",
+	copyrightText = "",
+	attributionLabel = "",
+	headingTag = "h2",
+} = Astro.props;
+---
+
+<footer
+	id={id}
+	transition:animate="none"
+	class:list={[
+		"relative overflow-hidden bg-brand-dark pb-12 pt-24 text-white",
+		className,
+	]}
+>
+	<div class="pointer-events-none absolute right-0 top-0 h-full w-1/3 bg-brand-primary/5 blur-[100px]" aria-hidden="true"></div>
+
+	<div class="ui-container relative z-10">
+		<div class="mb-12 grid gap-12 lg:grid-cols-12">
+			<div class="lg:col-span-4">
+				<a href={formatInternalLink("/")} class="inline-block outline-offset-4 focus-visible:rounded-md">
+					<Logo variant="light" className="mb-8" />
+				</a>
+				<Text variant="body" class="ui-text-on-dark-subtle mb-8 max-w-sm">
+					{footerData.about}
+				</Text>
+				<div class="flex flex-wrap items-center gap-4">
+					{
+						// Why: We only show social media enabled in company.json
+						// (one entry = platform + link + visibility switch).
+						getEnabledSocialLinks(company).map((social) => (
+							<a
+								href={social.href}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="flex h-11 min-w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:border-brand-accent/40 hover:bg-brand-accent hover:text-brand-dark"
+								aria-label={social.label}
+							>
+								<i
+									class:list={["ph text-xl", social.icon]}
+									aria-hidden="true"
+								/>
+							</a>
+						))
+					}
+				</div>
+			</div>
+
+			{
+				footerData.columns.map((col) => (
+					<div class="lg:col-span-2">
+						<nav aria-label={col.title}>
+							<Heading level={3} variant="feature-title" class="mb-6 text-white">{col.title}</Heading>
+							<ul class="space-y-3">
+								{col.links.map((link) => (
+									<li>
+										<a
+											href={formatInternalLink(link.href)}
+											class="ui-nav-bar-link ui-text-on-dark-subtle opacity-60 transition-colors hover:text-brand-accent hover:opacity-100"
+										>
+											{link.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						</nav>
+					</div>
+				))
+			}
+
+			<div class="lg:col-span-4">
+				<Heading level={3} variant="feature-title" class="mb-6 text-white">{contactTitle || footerData.contactTitle}</Heading>
+				<div class="space-y-6">
+					<div class="flex items-center gap-4">
+						<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-brand-accent">
+							<i class="ph ph-phone text-xl" aria-hidden="true"></i>
+						</div>
+						<a
+							href={`tel:${company.phone.replace(/\s/g, "")}`}
+							class="flex min-h-11 items-center text-lg font-bold leading-none transition-colors hover:text-brand-accent"
+						>
+							{company.phone}
+						</a>
+					</div>
+					<div class="flex items-center gap-4">
+						<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-brand-accent">
+							<i class="ph ph-envelope text-xl" aria-hidden="true"></i>
+						</div>
+						<a
+							href={`mailto:${company.email}`}
+							class="flex min-h-11 items-center text-lg font-bold leading-none transition-colors hover:text-brand-accent"
+						>
+							{company.email}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="mb-16 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+			<div class="flex flex-col md:flex-row">
+				<div class="relative aspect-video w-full shrink-0 md:aspect-auto md:w-[42%] md:min-h-[14rem]">
+					<SmartImage src={promoImageSrc || footerData.promo?.imageSrc} alt={promoImageAlt || footerData.promo?.imageAlt} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+					<div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent md:bg-gradient-to-r" aria-hidden="true"></div>
+				</div>
+				<div class="flex flex-col justify-center gap-4 px-6 py-8 md:flex-1 md:px-10 md:py-10">
+				<Text variant="accent-label" class="text-brand-accent">{promoTagline || footerData.promo?.tagline}</Text>
+				<Heading tag={headingTag} variant="section-title" class="text-white text-balance">
+					{promoTitle || footerData.promo?.title}
+				</Heading>
+					<Text variant="body" class="ui-text-on-dark-subtle max-w-xl text-pretty">
+						{promoDescription || footerData.promo?.description}
+					</Text>
+					<div class="pt-2">
+						<Button href={formatInternalLink(promoCtaHref || footerData.promo?.ctaHref)} variant="accent" class="min-h-11 px-8">
+							{promoCtaLabel || footerData.promo?.ctaLabel}
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
+			<Text variant="body" class="!text-xs font-medium text-white/30">
+				© {new Date().getFullYear()} {company.fullName}. {copyrightText || footerData.copyrightText}
+			</Text>
+			<nav aria-label={footerData.aria?.legalDocs}>
+				<ul class="flex flex-wrap items-center justify-center gap-6 md:justify-end md:gap-8">
+					{
+						footerData.legal.map((item) => (
+							<li>
+								<a
+									href={formatInternalLink(item.href)}
+									class="ui-nav-bar-link ui-text-on-dark-subtle opacity-40 transition-colors hover:text-white hover:opacity-100"
+								>
+									{item.label}
+								</a>
+							</li>
+						))
+					}
+					{footerData.attribution?.href ? (
+						<li>
+							<a
+								href={footerData.attribution.href}
+								target="_blank"
+								rel="noopener"
+								class="ui-nav-bar-link ui-text-on-dark-subtle opacity-40 transition-colors hover:text-brand-accent hover:opacity-100"
+							>
+								{attributionLabel || footerData.attribution?.label}
+							</a>
+						</li>
+					) : null}
+				</ul>
+			</nav>
+		</div>
+	</div>
+</footer>

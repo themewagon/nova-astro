@@ -1,0 +1,374 @@
+---
+import '@styles/global.css';
+// Full regular Phosphor set is generated from package version for development.
+// After build src/scripts/prune-phosphor-css.mjs removes unused rules from dist.
+import '@styles/.generated/phosphor.css';
+import { ClientRouter } from 'astro:transitions';
+import seo from '@data/global/seo.json';
+import company from '@data/global/company.json';
+import customCode from '@data/global/custom-code.json';
+import Schema from '@components/ui/atoms/Schema.astro';
+import Toast from '@components/ui/atoms/Toast.astro';
+import FloatingBar from '@components/ui/molecules/FloatingBar.astro';
+import CookieConsent from '@/components/ui/molecules/CookieConsent.astro';
+import ImageLightbox from '@/components/ui/molecules/ImageLightbox.astro';
+import MobileDrawer from '@components/ui/molecules/Navbar/shared/MobileDrawer.astro';
+import { SECTION_REGISTRY } from '@config/section-registry';
+import { ACTIVE_TEMPLATE } from '@/config/template';
+import { SITE_LOCALE } from '../../site.config.mjs';
+import Navbar from '@components/ui/molecules/Navbar.astro';
+import FooterColumnsBlock from '@components/registry/shell/FooterColumnsBlock.astro';
+import FooterMinimalBlock from '@components/registry/shell/FooterMinimalBlock.astro';
+import FooterPromoBlock from '@components/registry/shell/FooterPromoBlock.astro';
+import NovaFooterBlock from '@components/registry/shell/NovaFooterBlock.astro';
+import NovaDemoBanner from '@components/ui/molecules/NovaDemoBanner.astro';
+import type { NovaLocale } from '@utils/nova-i18n';
+
+
+interface Props {
+	title?: string;
+	description?: string;
+	ogImage?: string;
+	noIndex?: boolean;
+	/** Page language code used to keep document metadata aligned with the rendered locale. */
+	lang?: string;
+	locale?: NovaLocale;
+	theme?: string;
+	/** Optional `.ui-section` background pattern (Developer Studio). */
+	sectionPattern?: 'off' | 'repeat' | 'mesh' | 'noise';
+	/** JSON-LD set: `affiliate` = only WebSite (without LocalBusiness from global company). */
+	schemaTemplate?: 'default' | 'affiliate';
+	bodyClass?: string;
+	/** Navbar variant rendered globally (fallback: defaultVariant from registry). */
+	navbarVariant?: string;
+	/** Navbar theme (light/dark/transparent). */
+	navbarTheme?: 'light' | 'dark' | 'transparent';
+	/** Footer variant rendered globally (fallback: defaultVariant from registry). */
+	footerVariant?: string;
+	/** When true (floating navbar + hero), first section starts at top without compensation. */
+	fullBleedTop?: boolean;
+	/** Disables shell (navbar/footer), used in isolated iframe previews. */
+	showShell?: boolean;
+	/** Disables scripts and interactive elements for static iframe previews. */
+	clientRuntime?: boolean;
+	/** Enables Lenis smooth scroll only on pages that need it. */
+	enableLenis?: boolean;
+}
+
+// Staging/Netlify preview should be noindex even when seo.index = true.
+// Netlify sets NETLIFY='true' in build, STAGING is convenient override
+// for other environments (e.g. Vercel preview). Props noIndex always wins
+// because destructuring uses default only when prop is missing.
+// By default (seo.index = false in seo.json) site is noindex, follow;
+// client explicitly enables indexing by setting index to true.
+const isStaging = import.meta.env.NETLIFY === 'true' || import.meta.env.STAGING === 'true';
+const reviewApiUrl = import.meta.env.PUBLIC_REVIEW_API_URL || '';
+const reviewProject = import.meta.env.PUBLIC_REVIEW_PROJECT || '';
+
+const { 
+	title = seo.defaultTitle, 
+	description = seo.defaultDescription,
+	ogImage = seo.defaultOgImage,
+	noIndex = isStaging || !seo.index,
+	lang = SITE_LOCALE,
+	locale = SITE_LOCALE === 'en' ? 'en' : 'pl',
+	theme: themeProp,
+	sectionPattern = 'off',
+	schemaTemplate = 'default',
+	bodyClass = '',
+	navbarVariant = SECTION_REGISTRY.navbar.defaultVariant,
+	navbarTheme = 'light',
+	footerVariant = SECTION_REGISTRY.footer.defaultVariant,
+	fullBleedTop = false,
+	showShell = true,
+	clientRuntime = true,
+	enableLenis = true,
+} = Astro.props;
+
+// Meta robots value: noindex wins, for public pages follow from seo.json decides.
+const robotsContent = `${noIndex ? 'noindex' : 'index'}, ${seo.follow ? 'follow' : 'nofollow'}`;
+
+// Theme from props, URL param or default from active template
+const urlTheme = Astro.url.searchParams.get('theme');
+
+const theme = themeProp || urlTheme || (ACTIVE_TEMPLATE as string);
+
+// Why: siteUrl comes from company.json (SSOT of company data), Astro.site
+// (site.config.mjs) overrides it if set in build config.
+const publicSiteUrl = process.env.PUBLIC_SITE_URL || Astro.site || company.siteUrl;
+const configuredSitePath = new URL(publicSiteUrl).pathname;
+const basePath = process.env.PUBLIC_BASE_PATH
+	|| (configuredSitePath !== '/' ? configuredSitePath : import.meta.env.BASE_URL);
+const normalizedBasePath = basePath === '/'
+	? ''
+	: `/${basePath.replace(/^\/+|\/+$/g, '')}`;
+const assetBasePath = process.env.PUBLIC_BASE_PATH
+	|| (import.meta.env.DEV ? import.meta.env.BASE_URL : basePath);
+const normalizedAssetBasePath = assetBasePath === '/'
+	? ''
+	: `/${assetBasePath.replace(/^\/+|\/+$/g, '')}`;
+const publicAsset = (assetPath: string) => `${normalizedAssetBasePath}/${assetPath.replace(/^\/+/, '')}`;
+const siteOrigin = new URL(publicSiteUrl).origin;
+const canonicalPath = `${normalizedBasePath}${Astro.url.pathname === '/' ? '/' : Astro.url.pathname}`;
+const canonicalURL = new URL(canonicalPath, siteOrigin).href;
+
+// Why: og:image must be absolute URL (protocol + host) because Facebook,
+// LinkedIn and Twitter don't render relative paths like /og-image.png.
+// Normalize relative path to full address before rendering meta tags.
+const ogImageAbsolute = ogImage
+	? new URL(publicAsset(ogImage), siteOrigin).href
+	: undefined;
+
+// Why: the project data can provide optional custom code (pixels, chat widgets).
+// customHead goes to <head> (analytics, meta tags), customBodyEnd at page end
+// (chat widgets, scripts loaded at end). Both rendered with set:html
+// because it's raw HTML/Script, not content to escape.
+const customHead = customCode.customHead || "";
+const customBodyEnd = customCode.customBodyEnd || "";
+
+const componentToolBodyClasses = ['component-library', 'component-preview-page', 'component-frame'];
+const bodyClassNames = bodyClass.split(/\s+/);
+const isComponentToolPage = bodyClassNames.some((className) => componentToolBodyClasses.includes(className));
+// Iframe thumbnails must stay static to avoid running many observers
+// and animations at once. Full preview keeps hover, so we disable
+// motion only for thumbnails.
+const isComponentThumbnail = bodyClassNames.includes('component-frame-thumbnail');
+
+// Identyfikatory są publiczne, ale środowisko preview może podmienić je bez zapisywania ich w repozytorium.
+const resolveAnalyticsId = (environmentValue: unknown, configuredValue: unknown) => {
+  if (typeof environmentValue === 'string') return environmentValue.trim();
+  return typeof configuredValue === 'string' ? configuredValue.trim() : '';
+};
+
+// Analytics config injected only after cookie consent.
+// Object embedded as JSON literal (define:vars) under window.__ANALYTICS__.
+const analyticsConfig = {
+  googleAnalyticsId: resolveAnalyticsId(
+    import.meta.env.PUBLIC_GA4_MEASUREMENT_ID,
+    seo.analytics?.googleAnalyticsId,
+  ),
+  googleTagManagerId: seo.analytics?.googleTagManagerId || '',
+  facebookPixelId: seo.analytics?.facebookPixelId || '',
+  clarityId: resolveAnalyticsId(import.meta.env.PUBLIC_CLARITY_ID, seo.analytics?.clarityId),
+};
+const hasOptionalTracking = Object.values(analyticsConfig).some(Boolean);
+
+// Why: navbar and footer are GLOBAL. Layout renders them on every
+// page (fallback to defaultVariant from registry), so no subpage appears
+// without navigation or footer. Pages can override variant via props
+// (e.g. index: floating as overlay on hero). Unknown variant from config
+// also falls back to defaultVariant instead of rendering without shell.
+const navbarEntry = SECTION_REGISTRY.navbar;
+const navbarVariantKey = navbarEntry?.variants[navbarVariant] ? navbarVariant : navbarEntry?.defaultVariant;
+const navbarResolved = navbarEntry?.variants[navbarVariantKey]?.component
+	? { component: Navbar, layout: navbarVariantKey }
+	: null;
+
+const footerEntry = SECTION_REGISTRY.footer;
+const footerComponents: Record<string, any> = {
+	FooterColumnsBlock,
+	FooterMinimalBlock,
+	FooterPromoBlock,
+	NovaFooterBlock,
+};
+const footerComponentName = footerEntry?.variants[footerVariant]?.component;
+const footerResolved = footerComponentName && footerComponents[footerComponentName]
+	? { component: footerComponents[footerComponentName] }
+	: null;
+
+// Why: fixed navbar needs height compensation on <main>. Floating
+// navbar is transparent overlay on hero (fullBleedTop), so first
+// section must start at the very top.
+const mainPaddingStyle = fullBleedTop
+	? 'padding-top: 0'
+	: 'padding-top: calc(var(--site-header-height, 5.75rem) + var(--hero-below-header-gap, 0.75rem))';
+---
+
+<!DOCTYPE html>
+	<html
+		lang={lang}
+	data-theme={theme}
+	data-lenis={enableLenis ? 'true' : undefined}
+	data-motion-disabled={isComponentThumbnail ? '' : undefined}
+	{...(sectionPattern !== 'off' ? { 'data-section-pattern': sectionPattern } : {})}
+>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		{theme === 'nova' && (
+			<>
+				<!-- Nova uses these local fonts above the fold; preload prevents fallback text from changing the layout. -->
+				<link rel="preload" as="font" type="font/woff2" href={publicAsset('/fonts/QGYvz_MVcBeNP4NJuktqQ4E.woff2')} crossorigin />
+				<link rel="preload" as="font" type="font/woff2" href={publicAsset('/fonts/QGYvz_MVcBeNP4NJtEtq.woff2')} crossorigin />
+				<link rel="preload" as="font" type="font/woff2" href={publicAsset('/fonts/satoshi-400.woff2')} crossorigin />
+				<link rel="preload" as="font" type="font/woff2" href={publicAsset('/fonts/satoshi-500.woff2')} crossorigin />
+				<link rel="preload" as="font" type="font/woff2" href={publicAsset('/fonts/satoshi-700.woff2')} crossorigin />
+				<link rel="preload" as="font" type="font/woff2" href={publicAsset('/fonts/satoshi-900.woff2')} crossorigin />
+			</>
+		)}
+		{import.meta.env.DEV && (
+			<>
+				<script is:inline>
+					(function () {
+					var fontStorageKey = 'fst-active';
+					var allowedFontValues = ['default', 'classic', 'editorial', 'minimal'];
+					var themeStorageKey = 'starter-theme-preview';
+					var allowedThemeValues = ['nova'];
+
+					try {
+						var savedFontValue = window.localStorage.getItem(fontStorageKey);
+						if (allowedFontValues.indexOf(savedFontValue) !== -1) {
+							document.documentElement.setAttribute('data-font-set', savedFontValue);
+						}
+
+						// Strona z domyślnym motywem może mieć zapisany podgląd innej palety.
+						// Trzeba ustawić ją przed pierwszym renderem, aby uniknąć przeskoku stylów.
+						var serverTheme = document.documentElement.getAttribute('data-theme');
+						var savedThemeValue = window.localStorage.getItem(themeStorageKey);
+						if (serverTheme === 'default' && allowedThemeValues.indexOf(savedThemeValue) !== -1) {
+							document.documentElement.setAttribute('data-theme', savedThemeValue);
+						}
+					} catch (error) {
+						// Brak dostępu do localStorage nie może blokować renderowania strony.
+					}
+					})();
+				</script>
+			</>
+		)}
+		{
+			// Why: project data can provide a custom favicon
+			// (company.branding.favicon). Fallback to default favicon set.
+			company.branding.favicon ? (
+				<link rel="icon" type="image/png" href={company.branding.favicon} />
+			) : (
+				<>
+					<link rel="icon" type="image/svg+xml" href={publicAsset('/favicon.svg')} />
+					<link rel="apple-touch-icon" href={publicAsset('/apple-touch-icon.png')} />
+					<link rel="shortcut icon" href={publicAsset('/favicon.svg')} />
+				</>
+			)
+		}
+		<meta name="generator" content={Astro.generator} />
+		<script is:inline>
+			if (
+				document.documentElement.hasAttribute('data-motion-disabled') ||
+				document.documentElement.hasAttribute('data-motion-static')
+			) {
+				document.documentElement.removeAttribute('data-motion-ready');
+			} else {
+				document.documentElement.setAttribute('data-motion-ready', '');
+				// Why: hidden state is set by CSS immediately, revealed only by motion.js.
+				// If script fails to load (network error, 404), content would stay
+				// at opacity: 0. After timeout we remove data-motion-ready; if it
+				// arrives later anyway, reveal has no visual effect and nothing breaks.
+				setTimeout(function () {
+					if (!window.__webscaleFadeMotion) {
+						document.documentElement.removeAttribute('data-motion-ready');
+					}
+				}, 3000);
+			}
+		</script>
+		{clientRuntime && <ClientRouter />}
+		<Schema template={schemaTemplate} />
+		<!-- Content Security Policy -->
+		<meta http-equiv="Content-Security-Policy" content="
+			default-src 'self';
+			script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://unpkg.com https://www.clarity.ms https://scripts.clarity.ms https://static.cloudflareinsights.com http://localhost:8400;
+			style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com;
+			font-src 'self' data: https://fonts.gstatic.com https://unpkg.com;
+			img-src 'self' data: blob: https://www.google-analytics.com https://www.google.pl https://www.facebook.com https://images.unsplash.com https://i.pravatar.cc;
+			connect-src 'self' https://www.google-analytics.com https://region1.analytics.google.com https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms http://localhost:8400;
+			frame-src 'self' https://open.spotify.com https://www.youtube.com https://www.google.com https://maps.google.com https://www.openstreetmap.org;
+			form-action 'self';
+			base-uri 'self';
+		" />
+		<meta http-equiv="X-Content-Type-Options" content="nosniff" />
+		<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="robots" content={robotsContent} />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImageAbsolute} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={title} />
+		<meta property="og:locale" content={lang === 'en' ? 'en_US' : lang === 'de' ? 'de_DE' : lang === 'pl' ? 'pl_PL' : `${lang}_${lang.toUpperCase()}`} />
+
+		<!-- Twitter/X: without twitter:card links get no card preview -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageAbsolute} />
+
+		<!-- SEO Best Practices -->
+		<link rel="canonical" href={canonicalURL} />
+		{
+			// Custom code from client (pixels, meta, analytics scripts).
+			customHead && <Fragment set:html={customHead} />
+		}
+
+	</head>
+	<body
+		class:list={['min-h-screen flex flex-col ui-bg-page font-sans text-brand-dark antialiased selection:bg-brand-primary/10 selection:text-brand-primary', bodyClass]}
+		data-review-api={reviewApiUrl || undefined}
+		data-review-project={reviewProject || undefined}
+	>
+		{clientRuntime && <MobileDrawer locale={locale} />}
+		{showShell && theme === 'nova' && <NovaDemoBanner locale={locale} />}
+		{showShell && navbarResolved && (
+			<div class:list={theme === 'nova' ? ['relative'] : []}>
+				<navbarResolved.component layout={navbarResolved.layout} theme={navbarTheme} locale={locale} />
+			</div>
+		)}
+		<!-- Why: without transition:animate on main, view transitions can leave stale layout state
+		     (ClientRouter + zero directives). Astro swaps DOM without fading
+		     main, and scroll is reset by lenis.js after after-swap (behavior:instant),
+		     so there is no "scroll up" effect when navigating from mid-page. -->
+		<main class="flex-1 flex flex-col" style={mainPaddingStyle}>
+			<slot />
+		</main>
+		{showShell && footerResolved && <footerResolved.component locale={locale} />}
+
+		<!-- Scripts -->
+		<slot name="scripts" />
+
+		{/* The motion engine owns all reveal timing and reinitializes after View Transitions. */}
+		{clientRuntime && <script is:inline data-astro-rerun src="/js/motion.js" defer></script>}
+		<!-- Fix page "sliding": global scroll-behavior:smooth (core.css) causes
+		     View Transition to ANIMATE scroll to top instead of jumping after
+		     inserting new page. We disable smooth only during transition and
+		     restore after (anchors /#section still scroll smoothly). -->
+		{clientRuntime && <script is:inline>
+			document.addEventListener('astro:before-swap', function () {
+				document.documentElement.style.scrollBehavior = 'auto';
+			});
+			document.addEventListener('astro:page-load', function () {
+				document.documentElement.style.scrollBehavior = '';
+			});
+		</script>}
+		{clientRuntime && <script is:inline data-astro-rerun src="/js/navbar.js" defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src="/js/form-handler.js" defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src="/js/accordion.js" defer></script>}
+		<!-- Lenis aktywny, inicjalizacja w public/js/lenis.js z guardem data-astro-rerun -->
+		{clientRuntime && enableLenis && <script is:inline src="/js/lenis-lib.min.js" defer></script>}
+		{clientRuntime && enableLenis && <script is:inline src="/js/lenis.js" defer></script>}
+
+		{clientRuntime && <script is:inline data-astro-rerun define:vars={{ analyticsConfig }}>window.__ANALYTICS__ = analyticsConfig;</script>}
+		<!-- Analytics must not delay first render, defer keeps cookie consent compatibility. -->
+		{clientRuntime && <script is:inline data-astro-rerun src="/js/analytics.js" defer></script>}
+		{clientRuntime && <script is:inline data-astro-rerun src="/js/theme-switcher.js" defer></script>}
+		{clientRuntime && hasOptionalTracking && <CookieConsent />}
+	        {clientRuntime && <Toast />}
+	        {clientRuntime && <FloatingBar />}
+	        {clientRuntime && <ImageLightbox />}
+	{
+		// Custom code from client at page end (chat widgets, scripts loaded at end).
+		customBodyEnd && <Fragment set:html={customBodyEnd} />
+	}
+</body>
+</html>

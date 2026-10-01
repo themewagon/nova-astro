@@ -1,0 +1,76 @@
+---
+// Dlaczego: FooterMinimalBlock to minimalistyczny wariant stopki dla malych stron lub landing page. Zawiera tylko copyright i najwazniejsze linki, co zmniejsza rozpraszalnosc i skupia uwage na CTA.
+/**
+ * Footer - minimal variant (copyright + most important links).
+ */
+import Text from "@components/ui/atoms/Text.astro";
+import footerData from "@data/navigation/footer.json";
+import companyData from "@data/global/company.json";
+import { formatInternalLink } from "@utils/url";
+
+const company = companyData;
+
+interface Props {
+	id?: string;
+	class?: string;
+	copyrightText?: string;
+	attributionPrefix?: string;
+}
+
+const {
+	id,
+	class: className = "",
+	copyrightText = "",
+	attributionPrefix = "",
+} = Astro.props;
+
+const quickLinks = footerData.columns[0]?.links.slice(0, 4) ?? [];
+---
+
+<footer id={id} transition:animate="none" class:list={["border-t border-white/10 bg-brand-dark py-10 text-white", className]}>
+	<div class="ui-container">
+		<div class="flex flex-col items-center gap-6 text-center md:flex-row md:items-center md:justify-between md:gap-8 md:text-left">
+			<Text variant="body" class="shrink-0 !text-xs font-medium text-white/45">
+				© {new Date().getFullYear()} {company.fullName}
+			</Text>
+
+			<nav aria-label={footerData.aria?.quickNav} class="min-w-0 flex-1">
+				<ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:justify-end">
+					{
+						quickLinks.map((link) => (
+							<li>
+								<a
+									href={formatInternalLink(link.href)}
+									class="ui-nav-bar-link relative inline-block text-sm text-white/65 underline-offset-4 transition-colors duration-200 hover:text-brand-accent after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-brand-accent after:transition-[width] after:duration-300 after:ease-out hover:after:w-full"
+								>
+									{link.label}
+								</a>
+							</li>
+						))
+					}
+					{
+						footerData.legal.map((item) => (
+							<li>
+								<a
+									href={formatInternalLink(item.href)}
+									class="ui-nav-bar-link relative inline-block text-xs text-white/40 underline-offset-4 transition-colors duration-200 hover:text-white/75 after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-white/75 after:transition-[width] after:duration-300 after:ease-out hover:after:w-full"
+								>
+									{item.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+		</div>
+
+		<div class="mt-6 border-t border-white/[0.06] pt-5 md:mt-8 md:pt-6">
+			<Text variant="disclaimer" class="text-center text-white/30 md:text-start">
+				{company.fullName}. {copyrightText || footerData.copyrightText}
+			</Text>
+			<Text variant="disclaimer" class="mt-1.5 text-center text-[10px] text-white/20 md:text-start">
+				{(attributionPrefix || footerData.attribution?.prefix)} <a href={footerData.attribution?.href} target="_blank" rel="follow" class="text-white/30 relative inline-block underline decoration-transparent underline-offset-2 transition-colors duration-200 hover:text-brand-accent after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-brand-accent after:transition-[width] after:duration-300 after:ease-out hover:after:w-full">{footerData.attribution?.linkLabel}</a>
+			</Text>
+		</div>
+	</div>
+</footer>

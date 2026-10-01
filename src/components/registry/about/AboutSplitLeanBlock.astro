@@ -1,0 +1,94 @@
+---
+// Why: AboutSplitLeanBlock is a visual copy of the "WHO WE ARE"
+// section from a reference about page (split 2 columns: text + image
+// with gradient overlay). Client color tokens (border-outline,
+// --color-primary-container) were replaced with GLOBAL brand tokens of
+// starter-kit, and content entrance was taken over by global motion. Client photo
+// was replaced with a library placeholder.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { formatInternalLink } from "@utils/url";
+import jsonData from "@data/sections/about-split-lean.json";
+
+type AboutSplitLeanData = (typeof jsonData)["pl"];
+
+export interface Props {
+  /** Section content; overrides default JSON (pattern "props || json"). */
+  data?: AboutSplitLeanData;
+  /** Content language from JSON. PL is the default, EN is the English equivalent. */
+  locale?: "pl" | "en";
+  /** Section anchor id. */
+  id?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when block is first section without hero (SEO). */
+  headingTag?: string;
+  /** Additional classes for the section (e.g. from PageBuilder). */
+  class?: string;
+}
+
+const { data, locale = "pl", id, headingTag = "h2", class: className = "" } = Astro.props as Props;
+
+// Why: "props || json" pattern (as in AboutLawBlock), so the block works
+// standalone with section data, and PageBuilder or CMS can override content.
+const t: AboutSplitLeanData = (data ?? jsonData[locale]) ?? jsonData.pl;
+const headingLines = t.headingLines ?? [];
+const paragraphs = t.paragraphs ?? [];
+---
+
+<Section id={id} tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="text-center lg:text-left">
+        {t.eyebrow && (
+          <Text variant="accent-label" tag="p" class="!font-extrabold !tracking-[0.26em] !text-brand-primary">
+            {t.eyebrow}
+          </Text>
+        )}
+        {headingLines.length > 0 && (
+          <Heading tag={headingTag} class="mt-4 !font-extrabold !text-[clamp(1.5rem,3.5vw,2.8rem)] !leading-[1.1]">
+            {headingLines.map((line, i) => (
+              <Fragment>
+                {i > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
+          </Heading>
+        )}
+        {paragraphs.map((p) => (
+          <Text variant="body" class="mt-6 !font-semibold !leading-8">
+            {p}
+          </Text>
+        ))}
+        <div class="mx-auto mt-6 h-px w-14 bg-brand-primary/40 lg:mx-0" aria-hidden="true"></div>
+        {t.ctaLabel && t.ctaHref && (
+          <div class="mt-8 flex justify-center lg:justify-start">
+            <Button href={formatInternalLink(t.ctaHref)} variant="primary" class="!min-h-[52px]">
+              {t.ctaLabel}
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Why: image with gradient overlay (135deg, primary-container/70
+          in client -> brand-primary/70 token in kit), aspect-[4/3] 1:1. */}
+      <div class="relative overflow-hidden rounded-xl border border-brand-dark/10 shadow-soft">
+        <img
+          src={t.imageSrc}
+          alt={t.imageAlt}
+          class="aspect-[4/3] w-full object-cover"
+          loading="lazy"
+          decoding="async"
+          width="640"
+          height="480"
+        />
+        <div
+          class="absolute inset-0"
+          style="background: linear-gradient(135deg, color-mix(in oklab, var(--color-brand-primary) 70%, transparent), transparent 50%);"
+          aria-hidden="true"
+        ></div>
+      </div>
+    </div>
+  </Container>
+</Section>

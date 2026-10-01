@@ -1,0 +1,26 @@
+{
+  "pl": {
+    "eyebrow": "Kim jesteśmy",
+    "headingLines": ["Inżynieria procesów", "dla Twojej firmy"],
+    "paragraphs": [
+      "Specjalizujemy się w usprawnianiu procesów biznesowych poprzez doradztwo i szkolenia. Współpracujemy zarówno z kadrą zarządzającą, jak i zespołami operacyjnymi, wdrażając konkretne rozwiązania dopasowane do rzeczywistych potrzeb przedsiębiorstw.",
+      "Nasze działania obejmują warstwę strategiczną i operacyjną, od projektowania procesów, przez analizę efektywności, po wsparcie we wdrożeniach i szkoleniach. Dzięki temu osiągamy trwałe efekty: redukcję kosztów, poprawę jakości i większą elastyczność."
+    ],
+    "ctaLabel": "Porozmawiajmy o procesach",
+    "ctaHref": "/kontakt/",
+    "imageSrc": "/assets/placeholders/image-landscape.svg",
+    "imageAlt": "Tablica procesów w środowisku przemysłowym"
+  },
+  "en": {
+    "eyebrow": "Who we are",
+    "headingLines": ["Process engineering", "for your company"],
+    "paragraphs": [
+      "We specialize in improving business processes through consulting and training. We work with both management and operational teams, implementing concrete solutions tailored to real business needs.",
+      "Our work covers the strategic and operational layer, from process design, through efficiency analysis, to implementation support and training. This delivers lasting results: lower costs, better quality and greater flexibility."
+    ],
+    "ctaLabel": "Let's talk about processes",
+    "ctaHref": "/contact/",
+    "imageSrc": "/assets/placeholders/image-landscape.svg",
+    "imageAlt": "Process board in an industrial environment"
+  }
+}

@@ -1,0 +1,196 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import jsonData from "@data/sections/nova-projects.json";
+import { ACTIVE_TEMPLATE } from "@config/template";
+
+type Project = { category: string; title: string; image: string; alt: string };
+interface Props { title?: string; description?: string; linkLabel?: string; linkHref?: string; items?: Project[]; class?: string; }
+const props = Astro.props as Props;
+const fallback = ACTIVE_TEMPLATE === "nova" ? undefined : jsonData;
+const title = props.title ?? fallback?.title;
+const description = props.description ?? fallback?.description;
+const linkLabel = props.linkLabel ?? fallback?.linkLabel;
+const linkHref = props.linkHref ?? fallback?.linkHref;
+const items = props.items ?? fallback?.items ?? [];
+---
+
+<Section id="realizacje" tone="page" class:list={["relative z-[1] -mt-4 rounded-t-[var(--rounded-lg)] pb-16", props.class]}>
+  <Container class="w-full max-w-none px-[clamp(1.5rem,5vw,5rem)]">
+    <div class="projects-intro">
+      <div>
+        <Heading tag="h2" variant="section-title">{title}</Heading>
+      </div>
+      <div>
+        <Text variant="lead">{description}</Text>
+        <a class="projects-link group" href={linkHref}>
+          <Text tag="span" variant="body" class="transition-transform duration-300 ease-out group-hover:-translate-x-1 motion-reduce:transition-none">{linkLabel}</Text>
+          <span class="inline-flex size-5 items-center justify-center leading-none transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="projects-grid">
+      {items.map((item) => (
+        <a class="project-card__link group" href={linkHref}>
+          <article class="project-card">
+          <figure>
+            <SmartImage src={item.image} alt={item.alt} width={1280} height={800} loading="lazy" class="transition-transform duration-[1200ms] ease-out group-hover:scale-[1.02] motion-reduce:transition-none" />
+            <figcaption class="project-card__overlay">
+              <Heading tag="h3" variant="feature-title" class="project-card__title">{item.title}</Heading>
+              <span class="project-card__arrow overflow-hidden" aria-hidden="true">
+                <span class="relative flex size-5 items-center justify-center leading-none">
+                  <span class="absolute inset-0 flex items-center justify-center leading-none transition-transform duration-300 ease-out group-hover:translate-x-[140%] group-hover:-translate-y-[140%] motion-reduce:transition-none">↗</span>
+                  <span class="absolute inset-0 flex items-center justify-center leading-none -translate-x-[140%] translate-y-[140%] transition-transform duration-300 ease-out group-hover:translate-x-0 group-hover:translate-y-0 motion-reduce:transition-none">↗</span>
+                </span>
+              </span>
+            </figcaption>
+          </figure>
+          </article>
+        </a>
+      ))}
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .projects-intro {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .projects-intro > div:first-child {
+    min-width: 0;
+  }
+
+  .projects-intro > div:last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .projects-intro :global(.ui-type-section-title) {
+    max-width: 37rem;
+  }
+
+  .projects-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-brand-dark);
+    text-decoration: none;
+  }
+
+  .projects-link:hover,
+  .projects-link:focus-visible {
+    color: var(--color-brand-accent);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .project-card {
+    min-width: 0;
+  }
+
+  .project-card__link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .project-card__link:focus-visible {
+    outline: 2px solid var(--color-brand-accent);
+    outline-offset: 3px;
+  }
+
+  .project-card figure {
+    position: relative;
+    display: grid;
+    aspect-ratio: 3 / 2;
+    margin: 0;
+    overflow: hidden;
+    place-items: center;
+    border-radius: var(--ui-radius-lg);
+    background: var(--color-surface-container-low);
+  }
+
+  .project-card figure :global(picture),
+  .project-card figure :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-card figure :global(img) {
+    object-fit: cover;
+  }
+
+  .project-card__overlay {
+    position: absolute;
+    inset: auto 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 0.72) 100%);
+    color: var(--color-surface);
+  }
+
+  .project-card__title {
+    max-width: 75%;
+    margin: 0;
+    color: inherit;
+    text-align: left;
+  }
+
+  .project-card__arrow {
+    display: grid;
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 0.45);
+    border-radius: 999px;
+    background: var(--color-brand-accent);
+    color: var(--color-brand-dark);
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  @media (min-width: 48rem) {
+    .projects-intro {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.75rem;
+    }
+
+    .projects-intro > div:last-child {
+      align-self: end;
+      align-items: flex-end;
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .projects-grid {
+      grid-template-columns: 1.38fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .project-card figure {
+      height: clamp(22rem, 34vw, 32rem);
+      aspect-ratio: auto;
+    }
+  }
+</style>

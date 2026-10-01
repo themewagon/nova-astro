@@ -1,0 +1,61 @@
+---
+interface MarqueeItem {
+  name: string;
+  icon?: string;
+  initials?: string;
+}
+
+interface Props {
+  id?: string;
+  class?: string;
+  items?: MarqueeItem[];
+  embedded?: boolean;
+}
+
+const { id, class: className = "", items = [], embedded = false } = Astro.props;
+
+// Why: 2 identical tracks (PortfolioMarquee pattern) fill section width
+// so the static row looks complete on every screen.
+const displayItems = items;
+const Wrapper = embedded ? "div" : "section";
+const wrapperProps = embedded
+  ? { id, class: `pointer-events-none z-10 w-full shrink-0 py-4 ${className}`, "aria-hidden": true }
+  : { id, class: `relative overflow-hidden py-8 ui-bg-page ${className}`, "aria-label": "Logotypy partnerów" };
+---
+
+<Wrapper {...wrapperProps}>
+  <div class="ui-container">
+    <div style="mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);">
+      <div class="flex">
+        <div class="flex gap-5">
+          {displayItems.map((item) => (
+            <span class="flex shrink-0 items-center gap-2.5 rounded-full bg-white/65 px-4 py-2 shadow-sm backdrop-blur-sm">
+              {item.icon ? (
+                <i class={`ph ph-${item.icon} text-brand-primary`} />
+              ) : (
+                <span class="flex size-7 items-center justify-center text-[10px] font-bold text-brand-primary">
+                  {item.initials || item.name.charAt(0)}
+                </span>
+              )}
+              <span class="whitespace-nowrap text-sm font-medium text-on-surface-variant/85">{item.name}</span>
+            </span>
+          ))}
+        </div>
+        <div class="flex gap-5" aria-hidden="true">
+          {displayItems.map((item) => (
+            <span class="flex shrink-0 items-center gap-2.5 rounded-full bg-white/65 px-4 py-2 shadow-sm backdrop-blur-sm">
+              {item.icon ? (
+                <i class={`ph ph-${item.icon} text-brand-primary`} />
+              ) : (
+                <span class="flex size-7 items-center justify-center text-[10px] font-bold text-brand-primary">
+                  {item.initials || item.name.charAt(0)}
+                </span>
+              )}
+              <span class="whitespace-nowrap text-sm font-medium text-on-surface-variant/85">{item.name}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</Wrapper>

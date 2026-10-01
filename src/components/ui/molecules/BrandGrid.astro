@@ -1,0 +1,76 @@
+---
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+
+interface Brand {
+    src: string;
+    alt: string;
+}
+
+interface Props {
+	brands: Brand[];
+    columns?: number;
+    variant?: 'grid' | 'flex';
+    size?: 'normal' | 'small';
+    class?: string;
+}
+
+const { 
+    brands, 
+    columns = 5, 
+    variant = 'grid',
+    size = 'normal',
+    class: className = "" 
+} = Astro.props;
+
+// Mapowanie kolumn dla grida
+const gridCols = {
+    4: 'lg:grid-cols-4',
+    5: 'lg:grid-cols-5',
+    6: 'lg:grid-cols-6'
+};
+
+const colClass = gridCols[columns as keyof typeof gridCols] || 'lg:grid-cols-5';
+
+const logoSizeClasses = {
+    normal: 'max-h-12',
+    small: 'max-h-9'
+};
+const logoClass = logoSizeClasses[size as keyof typeof logoSizeClasses] || logoSizeClasses.normal;
+---
+
+{variant === 'grid' ? (
+    <div
+        class:list={[
+            "relative items-center max-w-lg mx-auto grid grid-cols-4 gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:max-w-5xl opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500",
+            colClass,
+            className
+        ]}
+    >
+        {brands.map((brand) => (
+            <div class="col-span-2 lg:col-span-1 flex justify-center items-center">
+                <SmartImage
+                    src={brand.src}
+                    alt={brand.alt}
+                    class:list={[logoClass, "w-full object-contain"]}
+                    width={158}
+                    height={48}
+                />
+            </div>
+        ))}
+    </div>
+) : (
+    <div class:list={[
+        "flex flex-wrap justify-center items-center gap-x-12 gap-y-10 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500",
+        className
+    ]}>
+        {brands.map((brand) => (
+            <SmartImage
+                src={brand.src}
+                alt={brand.alt}
+                class:list={[logoClass, "object-contain w-auto"]}
+                width={120}
+                height={48}
+            />
+        ))}
+    </div>
+)}

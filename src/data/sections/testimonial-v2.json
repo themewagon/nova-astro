@@ -1,0 +1,16 @@
+{
+  "title": "Opinie, które mówią więcej",
+  "description": "Zobacz, jak współpraca z nami przełożyła się na lepszy wizerunek i wyniki naszych klientów.",
+  "avatarAltPrefix": "Zdjęcie",
+  "items": [
+    { "quote": "Nowa strona uporządkowała naszą komunikację i od pierwszego tygodnia zaczęła przyciągać lepsze zapytania.", "author": "Anna Kowalska", "initials": "AK", "role": "Założycielka marki premium", "avatar": "https://i.pravatar.cc/150?u=anna-kowalska" },
+    { "quote": "Proces był konkretny, sprawny i bardzo dobrze prowadzony. Dostaliśmy stronę, która naprawdę pasuje do naszej marki.", "author": "Michał Nowak", "initials": "MN", "role": "Dyrektor operacyjny", "avatar": "https://i.pravatar.cc/150?u=michal-nowak" },
+    { "quote": "W końcu możemy pokazać nasze realizacje w sposób, który oddaje ich jakość. Klienci od razu to zauważyli.", "author": "Karolina Wójcik", "initials": "KW", "role": "Właścicielka studia", "avatar": "https://i.pravatar.cc/150?u=karolina-wojcik" },
+    { "quote": "Największą wartością była umiejętność połączenia estetyki z jasnym celem biznesowym. To nie jest tylko ładna strona.", "author": "Piotr Zieliński", "initials": "PZ", "role": "CEO firmy technologicznej", "avatar": "https://i.pravatar.cc/150?u=piotr-zielinski" },
+    { "quote": "Współpraca pomogła nam jasno pokazać, czym różnimy się od konkurencji. Strona pracuje na naszą korzyść każdego dnia.", "author": "Magdalena Król", "initials": "MK", "role": "Wspólniczka firmy doradczej", "avatar": "https://i.pravatar.cc/150?u=magdalena-krol" },
+    { "quote": "Otrzymaliśmy nie tylko atrakcyjny projekt, ale też uporządkowany sposób prezentowania oferty. Klienci szybciej rozumieją, co robimy.", "author": "Jakub Lis", "initials": "JL", "role": "Founder marki technologicznej", "avatar": "https://i.pravatar.cc/150?u=jakub-lis" },
+    { "quote": "Najbardziej doceniam dbałość o szczegóły. Każdy element ma swoje miejsce i wspiera cel, z którym przyszliśmy do zespołu.", "author": "Natalia Mazur", "initials": "NM", "role": "Dyrektorka marketingu", "avatar": "https://i.pravatar.cc/150?u=natalia-mazur" },
+    { "quote": "Dzięki nowej stronie łatwiej prowadzimy rozmowy sprzedażowe. Potencjalni klienci przychodzą już z konkretnymi pytaniami.", "author": "Paweł Wrona", "initials": "PW", "role": "Właściciel pracowni architektonicznej", "avatar": "https://i.pravatar.cc/150?u=pawel-wrona" },
+    { "quote": "To była jedna z niewielu współprac, w których strategia, design i wdrożenie od początku mówiły jednym głosem.", "author": "Weronika Bąk", "initials": "WB", "role": "Brand managerka", "avatar": "https://i.pravatar.cc/150?u=weronika-bak" }
+  ]
+}

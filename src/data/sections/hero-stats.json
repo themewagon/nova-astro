@@ -1,0 +1,22 @@
+{
+  "pl": {
+    "eyebrow": "O nas",
+    "heading": "Liczby mówią same za siebie",
+    "description": "Od lat pomagamy klientom osiągać konkretne rezultaty. Poniżej kilka liczb, które najlepiej opisują nasze doświadczenie i zaangażowanie.",
+    "stats": [
+      { "value": "15+", "label": "Lat doświadczenia" },
+      { "value": "100+", "label": "Zrealizowanych projektów" },
+      { "value": "99%", "label": "Zadowolonych klientów" }
+    ]
+  },
+  "en": {
+    "eyebrow": "About us",
+    "heading": "Numbers speak for themselves",
+    "description": "We have been helping clients achieve tangible results for years. Here are a few numbers that best describe our experience and commitment.",
+    "stats": [
+      { "value": "15+", "label": "Years of experience" },
+      { "value": "100+", "label": "Projects delivered" },
+      { "value": "99%", "label": "Satisfied clients" }
+    ]
+  }
+}

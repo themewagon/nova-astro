@@ -1,0 +1,48 @@
+---
+interface Props {
+  name?: string;
+  id?: string;
+  required?: boolean;
+  checked?: boolean;
+  class?: string;
+  [key: string]: any;
+}
+
+const { 
+  name, 
+  id, 
+  required = false, 
+  checked = false,
+  class: className,
+  ...rest 
+} = Astro.props;
+---
+
+<label class:list={["ui-form-checkbox-container", className]}>
+  <input
+    type="checkbox"
+    name={name}
+    id={id}
+    required={required}
+    checked={checked}
+    class="ui-form-checkbox"
+    {...rest}
+  />
+  <svg 
+    class="ui-form-checkbox-icon" 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-width="4" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+  {Astro.slots.has('default') && (
+    <span class="text-sm text-brand-dark/70">
+      <slot />
+    </span>
+  )}
+</label>

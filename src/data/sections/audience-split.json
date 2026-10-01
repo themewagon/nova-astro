@@ -1,0 +1,48 @@
+{
+  "pl": {
+    "eyebrow": "Dla kogo pracujemy",
+    "heading": "Pomagamy firmom, w których proces powinien działać lepiej",
+    "description": "Wielkość i branża nie mają znaczenia. Szukamy miejsc, w których lepszy przepływ pracy przekłada się na oszczędności i spokojniejszą organizację.",
+    "groups": [
+      {
+        "title": "Producenci",
+        "description": "Zakłady, które chcą ograniczyć straty, przestoje i poprawić terminowość realizacji."
+      },
+      {
+        "title": "Dystrybutorzy",
+        "description": "Firmy potrzebujące lepszego przepływu towarów i informacji w łańcuchu dostaw."
+      },
+      {
+        "title": "Firmy usługowe",
+        "description": "Organizacje, które chcą stabilizować standardy i skracać czas obsługi klienta."
+      },
+      {
+        "title": "Startupy",
+        "description": "Młode zespoły, które potrzebują prostych procesów, żeby rosnąć bez chaosu."
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "Who we work with",
+    "heading": "We help companies where processes should work better",
+    "description": "Size and industry do not matter. We look for places where a better workflow translates into savings and calmer operations.",
+    "groups": [
+      {
+        "title": "Manufacturers",
+        "description": "Plants that want to cut losses, reduce downtime and improve delivery reliability."
+      },
+      {
+        "title": "Distributors",
+        "description": "Companies that need a better flow of goods and information across the supply chain."
+      },
+      {
+        "title": "Service companies",
+        "description": "Organizations that want to stabilize standards and shorten customer response times."
+      },
+      {
+        "title": "Startups",
+        "description": "Young teams that need simple processes to grow without chaos."
+      }
+    ]
+  }
+}

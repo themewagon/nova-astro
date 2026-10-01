@@ -1,0 +1,20 @@
+{
+  "title": "Pomysły zamieniamy w realne efekty",
+  "description": "Łączymy strategiczne myślenie, dopracowany design i nowoczesne technologie, aby tworzyć strony, które nie tylko wyglądają dobrze, ale przede wszystkim działają.",
+  "linkLabel": "Zobacz realizacje",
+  "linkHref": "/realizacje/",
+  "items": [
+    {
+      "category": "Strony internetowe",
+      "title": "Marka premium z nową stroną",
+      "image": "/assets/images/t001-nova/t001-nova-project-laptop.webp",
+      "alt": "Laptop z projektem strony internetowej"
+    },
+    {
+      "category": "Wizerunek marki",
+      "title": "Nowy wizerunek dla ambitnej marki",
+      "image": "/assets/images/t001-nova/t001-nova-project-building.webp",
+      "alt": "Nowoczesny budynek jako przykład realizacji"
+    }
+  ]
+}

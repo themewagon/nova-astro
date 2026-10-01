@@ -1,0 +1,184 @@
+.gooey-search-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 4rem;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: visible;
+}
+
+.gooey-search-filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.gooey-search-content {
+  position: relative;
+  width: min(100%, 18rem);
+  height: 3.125rem;
+  overflow: visible;
+}
+
+.gooey-search-content-inner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: visible;
+  filter: url(#goo-effect);
+}
+
+.gooey-search-button {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 3.125rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--color-brand-dark);
+  color: var(--ui-bg-page);
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  overflow: hidden;
+  padding: 0;
+  transform-origin: center;
+  transition: box-shadow 300ms ease;
+}
+
+.gooey-search-button:focus-visible {
+  box-shadow: 0 0 0 0.1875rem color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
+}
+
+.gooey-search-label {
+  white-space: nowrap;
+  padding-inline: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  transition: opacity 180ms ease;
+}
+
+.gooey-search-label.is-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gooey-search-input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0 0.75rem 0 1.125rem;
+  white-space: nowrap;
+  transition: opacity 180ms ease;
+}
+
+.gooey-search-input.is-collapsed {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gooey-search-input::placeholder {
+  color: color-mix(in srgb, var(--ui-bg-page) 68%, transparent);
+}
+
+.gooey-search-icon {
+  position: absolute;
+  z-index: 3;
+  right: 0.2rem;
+  display: flex;
+  width: 2.55rem;
+  height: 2.55rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-brand-dark);
+  color: var(--ui-bg-page);
+  pointer-events: none;
+}
+
+.gooey-search-icon svg {
+  display: block;
+}
+
+.gooey-search-results {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gooey-search-result {
+  position: absolute;
+  right: 0;
+  display: flex;
+  width: 10rem;
+  height: 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand-dark) 12%, transparent);
+  border-radius: 0.75rem;
+  background: var(--ui-bg-page);
+  box-shadow: var(--ui-elevation-soft);
+  color: var(--color-brand-dark);
+  font-size: 0.75rem;
+  padding-inline: 0.75rem;
+}
+
+.info-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  color: var(--color-brand-primary);
+}
+
+.loading-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: gooey-search-spin 900ms linear infinite;
+  color: var(--color-brand-dark);
+}
+
+@keyframes gooey-search-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.no-goo .gooey-search-content-inner {
+  filter: none;
+}
+
+@media (max-width: 40rem) {
+  .gooey-search-wrapper {
+    justify-content: stretch;
+  }
+
+  .gooey-search-content {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gooey-search-button,
+  .gooey-search-label,
+  .gooey-search-input,
+  .loading-icon {
+    transition: none;
+    animation: none;
+  }
+}

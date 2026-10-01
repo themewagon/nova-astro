@@ -1,0 +1,43 @@
+---
+import Button from '@components/ui/atoms/Button.astro';
+
+interface FilterItem {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  items?: FilterItem[];
+  activeId?: string;
+  label?: string;
+  class?: string;
+}
+
+const {
+  items = [],
+  activeId,
+  label = 'Filtry',
+  class: className,
+} = Astro.props;
+---
+
+<nav class:list={['flex gap-2 overflow-x-auto pb-2', className]} aria-label={label}>
+  <div class="flex min-w-max gap-2" role="tablist" aria-label={label}>
+    {items.map((item) => {
+      const isActive = item.id === activeId;
+
+      return (
+        <Button
+          type="button"
+          variant={isActive ? 'primary' : 'outline'}
+          size="sm"
+          role="tab"
+          aria-selected={isActive}
+          data-filter-tab={item.id}
+        >
+          {item.label}
+        </Button>
+      );
+    })}
+  </div>
+</nav>

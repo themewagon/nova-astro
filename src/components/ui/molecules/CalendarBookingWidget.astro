@@ -1,0 +1,176 @@
+---
+// Why: CalendarBookingWidget integrates with external booking systems (Cal.com, Calendly, Microsoft Bookings) via iframe. This allows clients to schedule meetings without leaving the site while retaining full control over the design.
+import Text from "@components/ui/atoms/Text.astro";
+import calendarData from "@data/sections/calendar.json";
+
+interface Props {
+	/** URL iframe z panelu dostawcy (Cal.com „embed", Calendly, itd.). */
+	embedSrc?: string;
+	embedTitle?: string;
+	/** Link to the same booking page in a new tab, always worth providing alongside iframe. */
+	bookingFallbackUrl?: string;
+	class?: string;
+	noEmbedMessage?: string;
+	errorMessage?: string;
+	openInNewTabLabel?: string;
+	errorHint?: string;
+	openCalendarLabel?: string;
+	privacyNote?: string;
+	setupHint?: string;
+	consentMessage?: string;
+	cookieSettingsLabel?: string;
+}
+
+// Why: widget texts are read from sections/calendar.json as default values,
+// because the component does not receive props from PageBuilder. Client edits them in CMS.
+const {
+	embedSrc = "",
+	embedTitle = calendarData.embedTitle,
+	bookingFallbackUrl,
+	class: className = "",
+	noEmbedMessage = calendarData.noEmbedMessage,
+	errorMessage = calendarData.errorMessage,
+	openInNewTabLabel = calendarData.openInNewTabLabel,
+	errorHint = calendarData.errorHint,
+	openCalendarLabel = calendarData.openCalendarLabel,
+	privacyNote = calendarData.privacyNote,
+	setupHint = calendarData.setupHint,
+	consentMessage = calendarData.consentMessage,
+	cookieSettingsLabel = calendarData.cookieSettingsLabel,
+} = Astro.props;
+
+const src = embedSrc.trim();
+const hasEmbed = src.length > 0;
+---
+
+<div class:list={["calendar-booking-widget", className]}>
+	{
+		hasEmbed ? (
+			<>
+				<div data-calendar-root class="flex flex-col gap-3">
+					<div class="relative min-h-[min(36rem,70vh)] overflow-hidden rounded-2xl border border-brand-dark/10 bg-brand-dark/[0.03]">
+						<iframe
+							data-calendar-iframe
+							data-calendar-src={src}
+							title={embedTitle}
+							class="absolute inset-0 h-full min-h-[min(36rem,70vh)] w-full border-0"
+							loading="lazy"
+							referrerpolicy="no-referrer-when-downgrade"
+							allow="camera; microphone; fullscreen; payment"
+						/>
+						<div data-calendar-consent class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-brand-dark/[0.04] px-6 text-center">
+							<p class="max-w-md text-sm text-brand-dark/70">{consentMessage}</p>
+							<button data-calendar-settings type="button" class="font-semibold text-brand-primary underline underline-offset-2">{cookieSettingsLabel}</button>
+						</div>
+						<div
+							data-calendar-skeleton
+							class="pointer-events-none absolute inset-0 bg-brand-dark/10"
+							aria-hidden="true"
+						/>
+					</div>
+					<div
+						data-calendar-timeout-msg
+						hidden
+						role="alert"
+                        class="rounded-xl border border-brand-accent/35 bg-brand-accent/10 px-4 py-3 text-sm text-brand-dark"
+					>
+						{errorMessage}
+						{bookingFallbackUrl ? (
+							<>
+								{" "}
+								<a
+									href={bookingFallbackUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="font-semibold text-brand-primary underline-offset-2 hover:underline"
+								>
+									{openInNewTabLabel}
+								</a>
+								.
+							</>
+						) : (
+							<> {errorHint}</>
+						)}
+					</div>
+					{bookingFallbackUrl && (
+						<p class="text-center text-sm">
+							<a
+								href={bookingFallbackUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="font-semibold text-brand-primary underline-offset-2 hover:underline"
+							>
+								{openCalendarLabel}
+							</a>
+						</p>
+					)}
+					<Text variant="feature-body-sm" class="text-brand-dark/55 max-w-3xl text-pretty">
+						{privacyNote}
+					</Text>
+				</div>
+				<script>
+					function setupCalendarRoots() {
+						document.querySelectorAll("[data-calendar-root]:not([data-calendar-inited])").forEach((root) => {
+							root.setAttribute("data-calendar-inited", "");
+							const iframe = root.querySelector("[data-calendar-iframe]");
+							const timeoutEl = root.querySelector("[data-calendar-timeout-msg]");
+							const skeleton = root.querySelector("[data-calendar-skeleton]");
+							const consent = root.querySelector("[data-calendar-consent]");
+							const settings = root.querySelector("[data-calendar-settings]");
+							if (!(iframe instanceof HTMLIFrameElement) || !(timeoutEl instanceof HTMLElement)) return;
+
+							const getStatus = () => {
+								try { return window.localStorage.getItem("cookie-consent-status"); } catch { return null; }
+							};
+							const loadCalendar = () => {
+								if (iframe.src) return;
+								iframe.src = iframe.dataset.calendarSrc || "";
+								consent?.classList.add("hidden");
+							};
+							if (!window.WebScaleCookies || getStatus() === "accepted") loadCalendar();
+							else settings?.addEventListener("click", () => window.WebScaleCookies?.openSettings());
+							window.addEventListener("cookie-consent-accepted", loadCalendar);
+
+							let loaded = false;
+							const hideSkeleton = () => skeleton?.classList.add("hidden");
+
+							const onLoad = () => {
+								loaded = true;
+								window.clearTimeout(timer);
+								hideSkeleton();
+								timeoutEl.setAttribute("hidden", "");
+							};
+
+							iframe.addEventListener("load", onLoad);
+							// Why: timeout 12s prevents the iframe from loading
+							// (e.g. cookies blocked, network problem). When the time is exceeded, it displays
+							// an error message appears with a fallback link.
+							const timer = window.setTimeout(() => {
+								if (!loaded) {
+									timeoutEl.removeAttribute("hidden");
+									hideSkeleton();
+								}
+							}, 12000);
+						});
+					}
+
+					if (document.readyState === "loading") {
+						document.addEventListener("DOMContentLoaded", setupCalendarRoots);
+					} else {
+						setupCalendarRoots();
+					}
+				</script>
+			</>
+		) : (
+			<div
+				class="flex min-h-[min(24rem,55vh)] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-brand-dark/20 bg-brand-dark/[0.02] px-6 py-12 text-center"
+				role="status"
+			>
+				<p class="font-heading text-lg font-bold text-brand-dark">{noEmbedMessage}</p>
+				<Text variant="feature-body-sm" class="text-brand-dark/60 max-w-md text-pretty">
+					{setupHint}
+				</Text>
+			</div>
+		)
+	}
+</div>

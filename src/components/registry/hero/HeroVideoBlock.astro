@@ -1,0 +1,245 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+
+// Why: texts (heading, subheading, CTA) are in props instead of in the code.
+// This is SSOT (Single Source of Truth) - texts come from JSON (src/data/sections),
+// not from the component. Changing the content does not require changing the code, but the component is the same
+// can render different versions of hero from video for different clients.
+export interface Props {
+  sectionId?: string;
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  trustItems?: { text: string }[];
+  /** Full hero background video. Loaded only after requestIdleCallback (deferred loading).*/
+  video?: {
+    sources: string[];
+    /** A static image visible immediately, before the video loads (and instead of a video on mobile).*/
+    poster?: string;
+    /** Gdy true, wideo jest odbarwione (filter: grayscale(1)). */
+    grayscale?: boolean;
+  };
+  /** Header tag (default h1, other sections may use h2).*/
+  headingTag?: string;
+}
+
+const {
+  sectionId = "hero-video",
+  title = "",
+  subtitle = "",
+  tagline,
+  primaryCta,
+  secondaryCta,
+  trustItems = [],
+  video,
+  headingTag = "h1",
+} = Astro.props as Props;
+
+// Why: videoSources normalizes props so as not to check further in the template
+// repeatedly whether the source array exists, following the shared hero pattern.
+const videoSources = Array.isArray(video?.sources) ? video.sources : [];
+const hasVideo = !!video && videoSources.length > 0;
+const poster = video?.poster;
+const grayscale = video?.grayscale === true;
+const heading = headingTag || "h1";
+
+// Why: The MIME type is determined by the file extension, so the CMS editor only provides paths
+// (sources: string[]), and the component itself selects the correct type attribute on <source>.
+const mimeForSource = (src: string): string => {
+  const ext = src.split(".").pop()?.toLowerCase();
+  const mime: Record<string, string> = { mp4: "video/mp4", webm: "video/webm", ogg: "video/ogg" };
+  return mime[ext ?? ""] ?? "video/mp4";
+};
+---
+
+<!-- Dlaczego: Section i Container to layout atomics z Atomic Design (wzorzec z HeroBlock).
+     min-h taking into account the height of the sticky navbar makes the video fill the whole
+     first screen and the content is vertically centered by flex on the Container.-->
+<Section
+  id={sectionId}
+  tone="page"
+  class="relative flex min-h-[calc(100svh-var(--site-header-height,5.75rem))] flex-col overflow-hidden"
+>
+  <!-- Background media layer (absolute inset-0). aria-hidden, because it's decoration, not content.-->
+  <div class="absolute inset-0" aria-hidden="true">
+    <!-- Dlaczego: poster dla mobile jako osobny <img>. Na ekranach do 767px wideo jest
+         hidden (lower priority - saving transfer and battery), and instead of it
+         widoczny jest statyczny obraz. Ukrywanie/pokazywanie pilnuje style is:inline
+         (ochrona FOUC), nie klasy Tailwind. -->
+    {poster && (
+      <img
+        id="hero-video-poster-mobile"
+        src={poster}
+        alt=""
+        width="1600"
+        height="900"
+        class="absolute inset-0 size-full object-cover"
+        loading="eager"
+      />
+    )}
+
+    <!-- Why: video has preload="none" and sources in data-src (not in src) - browser
+         It does NOT start downloading the video on page startup. The script below replaces src
+         only after requestIdleCallback and calls load(). Until then, you can see the poster.-->
+    {hasVideo && (
+      <video
+        id="hero-video-media"
+        class:list={["absolute inset-0 size-full object-cover", { grayscale }]}
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="none"
+        poster={poster}
+        data-hero-video
+        style={grayscale ? "filter: grayscale(1);" : undefined}
+      >
+        {videoSources.map((src) => (
+          <source data-src={src} type={mimeForSource(src)} />
+        ))}
+      </video>
+    )}
+
+    <!-- Why: A dark gradient under the content ensures the readability of white text
+         regardless of the brightness of the video frames. -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/80"></div>
+  </div>
+
+  <Container class="relative z-10 flex flex-1 flex-col justify-center">
+    <div class="mx-auto flex w-full max-w-3xl flex-col items-center py-16 text-center md:py-24">
+      {tagline && (
+        <Text variant="accent-label" tag="span" class="mb-4 uppercase tracking-wider text-white/70">
+          {tagline}
+        </Text>
+      )}
+
+      <Heading tag={heading} variant="hero" class="whitespace-pre-line text-white">
+        {title}
+      </Heading>
+
+      {subtitle && (
+        <Text variant="lead" class="mx-auto mt-4 max-w-xl text-white/80">
+          {subtitle}
+        </Text>
+      )}
+
+      <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+        {primaryCta && (
+          <Button href={primaryCta.href} variant="primary" size="lg" class="min-h-11">
+            {primaryCta.label}
+          </Button>
+        )}
+        {secondaryCta && (
+          <Button href={secondaryCta.href} variant="outline" size="lg" class="min-h-11">
+            {secondaryCta.label}
+          </Button>
+        )}
+      </div>
+
+      <!-- Why: trust items is a simple bar of trustworthiness signals (e.g. "No hidden
+           costs"). This time, each item is text only, without an icon - an advantage
+           section is video, so the bar needs to remain discreet.-->
+      {trustItems && trustItems.length > 0 && (
+        <ul class="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 border-t border-white/15 pt-8">
+          {trustItems.map((item) => (
+            <li class="flex items-center gap-2.5 text-sm text-white/70">
+              <svg class="size-4 shrink-0 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </Container>
+</Section>
+
+<script>
+  // Why: the normal <script> in Astro is the TS module in which declare merging for
+  // Global Window not working. So the one-time registration flag lands on
+  // rozszerzonym globalThis, przez co TypeScript zna jej typ.
+  const globalScope = globalThis as typeof globalThis & { __heroVideoDeferredBound?: boolean };
+
+  // Why: video hero is the site's heaviest resource. We are only loading them
+  // when the browser is idle (requestIdleCallback), and not immediately at
+  // clash. Until then, the poster (static image) is visible - thanks to this
+  // LCP nie czeka na wideo, a transfer na mobile jest minimalny. Wzorzec pochodzi
+  // Shared video behavior with mobile playback disabled.
+  const initHeroVideo = () => {
+    if (document.documentElement.classList.contains('component-frame-thumbnail')) return;
+
+    const video = document.querySelector("[data-hero-video]");
+    if (!(video instanceof HTMLVideoElement) || video.dataset.loaded === "1") return;
+
+    // Mobile: the video is hidden by CSS (FOUC protection), so we don't run it
+    // in general - on small screens only the poster remains. We check the condition after
+    // possible rotation of the device by the matchMedia listener in the init section.
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
+    const startVideo = () => {
+      if (video.dataset.loaded === "1") return;
+      video.dataset.loaded = "1";
+      // We change the sources from data-src to src only now so that the browser
+      // did not start downloading earlier (preload="none" + no src = zero transfer).
+      video.querySelectorAll("source[data-src]").forEach((source) => {
+        const src = source.getAttribute("data-src");
+        if (src) source.setAttribute("src", src);
+      });
+      video.load();
+      // play() returns Promise - we ignore the error (e.g. when the video is out of view),
+      // bo autoplay to jedynie ulepszenie, a nie funkcja krytyczna.
+      void video.play().catch(() => {});
+    };
+
+    const deferStart = () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(startVideo, { timeout: 900 });
+        return;
+      }
+      // Fallback for browsers without requestIdleCallback (older Safari/WebView).
+      // Note: we do not use window.setTimeout here because the "in" operator narrows the window
+      // do never in the else branch, which TypeScript reports as an error.
+      setTimeout(startVideo, 650);
+    };
+
+    if (document.readyState === "complete") {
+      deferStart();
+    } else {
+      window.addEventListener("load", deferStart, { once: true });
+    }
+  };
+
+  // We register the handler once per session. For SPA navigation (astro:page-load) function
+  // checks dataset.loaded, so the video will not start a second time. Listener matchMedia
+  // allows you to start the video after turning the phone (mobile -> desktop).
+  if (!globalScope.__heroVideoDeferredBound) {
+    globalScope.__heroVideoDeferredBound = true;
+    document.addEventListener("astro:page-load", initHeroVideo);
+    window.matchMedia("(min-width: 768px)").addEventListener("change", initHeroVideo);
+  }
+
+  initHeroVideo();
+</script>
+
+<!-- Why: inline style prevents FOUC - video and poster are appropriate
+     hidden/showed immediately before the full Tailwind CSS is loaded
+     (hidden md:block are classes from the sheet that work only after loading).
+     Without this, on mobile you can see the video next to the poster for a moment and the media "skips"
+     on refresh. Shared mobile hero pattern. -->
+<style is:inline>
+  #hero-video-media { display: none; }
+  #hero-video-poster-mobile { display: none; }
+  @media (min-width: 768px) {
+    #hero-video-media { display: block; }
+  }
+  @media (max-width: 767px) {
+    #hero-video-poster-mobile { display: block; }
+  }
+</style>

@@ -1,0 +1,60 @@
+{
+  "pl": {
+    "heading": "Jak pracujemy",
+    "steps": [
+      {
+        "num": 1,
+        "title": "Diagnoza",
+        "description": "Analizujemy aktualny stan i identyfikujemy obszary wymagające poprawy oraz ich przyczyny.",
+        "icon": "diagnose"
+      },
+      {
+        "num": 2,
+        "title": "Plan",
+        "description": "Przygotowujemy konkretny plan działania z priorytetami i mierzalnymi celami.",
+        "icon": "plan"
+      },
+      {
+        "num": 3,
+        "title": "Wdrożenie",
+        "description": "Realizujemy plan krok po kroku, angażując zespół na każdym etapie zmian.",
+        "icon": "implement"
+      },
+      {
+        "num": 4,
+        "title": "Monitoring",
+        "description": "Śledzimy wyniki i korygujemy działania, aby efekty były trwałe.",
+        "icon": "monitor"
+      }
+    ]
+  },
+  "en": {
+    "heading": "How we work",
+    "steps": [
+      {
+        "num": 1,
+        "title": "Diagnosis",
+        "description": "We analyze the current state and identify areas for improvement and their root causes.",
+        "icon": "diagnose"
+      },
+      {
+        "num": 2,
+        "title": "Plan",
+        "description": "We prepare a concrete action plan with priorities and measurable goals.",
+        "icon": "plan"
+      },
+      {
+        "num": 3,
+        "title": "Implementation",
+        "description": "We execute the plan step by step, engaging the team at every stage of change.",
+        "icon": "implement"
+      },
+      {
+        "num": 4,
+        "title": "Monitoring",
+        "description": "We track results and adjust actions to keep the effects lasting.",
+        "icon": "monitor"
+      }
+    ]
+  }
+}

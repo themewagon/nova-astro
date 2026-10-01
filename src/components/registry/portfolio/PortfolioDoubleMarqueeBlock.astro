@@ -1,0 +1,126 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import portfolioData from "@data/sections/portfolio.json";
+
+interface PortfolioItem {
+	title: string;
+	category: string;
+	img: string;
+	span?: string;
+	height?: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+  tagline?: string;
+  items?: PortfolioItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+  }
+
+const {
+class: className = "",
+title = "",
+description = "",
+tagline = "",
+headingTag = "h2",
+items
+} = Astro.props;
+
+const allItems = items && items.length > 0 ? items : portfolioData.items;
+
+const itemsTop = allItems.slice(0, 3);
+const itemsBottom = allItems.slice(3, 6);
+---
+
+<Section class:list={["ui-bg-page overflow-hidden", className]}>
+	<div class="ui-container mb-12" data-lightbox-group>
+		<SectionHeader 
+title={title || portfolioData.title || portfolioData.variants.doubleMarquee.title}
+description={description || portfolioData.description || portfolioData.variants.doubleMarquee.description}
+tagline={tagline || portfolioData.tagline || portfolioData.variants.doubleMarquee.tagline}
+titleTag={headingTag}
+align="center"
+/>
+	</div>
+
+    <!-- Why: Two implementation tracks (top and bottom) give the portfolio section a distinct rhythm -->
+    <div class="relative flex flex-col gap-6 overflow-x-hidden" style="mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);">
+        <div class="flex overflow-hidden">
+            <div class="flex gap-6 px-3">
+                {itemsTop.map((item) => (
+                    <div class="w-72 md:w-80 shrink-0 relative group ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in aspect-[4/3] md:aspect-[3/4]" data-lightbox data-href={item.img} data-title={item.title}>
+                        <SmartImage 
+                            src={item.img} 
+                            alt={item.title} 
+                            class="ui-media-zoom"
+                        />
+                        <div class="ui-media-overlay"></div>
+                        <div class="absolute inset-x-0 bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">{item.category}</Text>
+                            <Heading level={3} variant="feature-title" class="text-white">{item.title}</Heading>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div class="flex gap-6 px-3" aria-hidden="true">
+                {itemsTop.map((item) => (
+                    <div class="w-72 md:w-80 shrink-0 relative group ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in aspect-[4/3] md:aspect-[3/4]" data-lightbox data-href={item.img} data-title={item.title}>
+                        <SmartImage 
+                            src={item.img} 
+                            alt={item.title} 
+                            class="ui-media-zoom"
+                        />
+                        <div class="ui-media-overlay"></div>
+                        <div class="absolute inset-x-0 bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">{item.category}</Text>
+                            <Heading level={3} variant="feature-title" class="text-white">{item.title}</Heading>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        {/* Bottom Track */}
+        <div class="flex overflow-hidden">
+            <div class="flex gap-6 px-3">
+                {itemsBottom.map((item) => (
+                    <div class="w-72 md:w-80 shrink-0 relative group ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in aspect-[4/3] md:aspect-[3/4]" data-lightbox data-href={item.img} data-title={item.title}>
+                        <SmartImage 
+                            src={item.img} 
+                            alt={item.title} 
+                            class="ui-media-zoom"
+                        />
+                        <div class="ui-media-overlay"></div>
+                        <div class="absolute inset-x-0 bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">{item.category}</Text>
+                            <Heading level={3} variant="feature-title" class="text-white">{item.title}</Heading>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <div class="flex gap-6 px-3" aria-hidden="true">
+                {itemsBottom.map((item) => (
+                    <div class="w-72 md:w-80 shrink-0 relative group ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in aspect-[4/3] md:aspect-[3/4]" data-lightbox data-href={item.img} data-title={item.title}>
+                        <SmartImage 
+                            src={item.img} 
+                            alt={item.title} 
+                            class="ui-media-zoom"
+                        />
+                        <div class="ui-media-overlay"></div>
+                        <div class="absolute inset-x-0 bottom-0 p-5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">{item.category}</Text>
+                            <Heading level={3} variant="feature-title" class="text-white">{item.title}</Heading>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</Section>

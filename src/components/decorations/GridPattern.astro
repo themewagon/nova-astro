@@ -1,0 +1,55 @@
+---
+interface Props {
+  color?: string;
+  size?: string;
+  opacity?: string;
+  fade?: boolean;
+  class?: string;
+}
+
+const {
+  color = 'var(--color-brand-primary)',
+  size = '2.5rem',
+  opacity = '0.16',
+  fade = true,
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'pointer-events-none absolute inset-0 select-none',
+    fade && 'decoration-grid-pattern-fade',
+    className,
+  ]}
+  style={{
+    '--decoration-grid-color': color,
+    '--decoration-grid-size': size,
+    '--decoration-grid-opacity': opacity,
+  }}
+  aria-hidden="true"
+  data-decoration="grid-pattern"
+></div>
+
+<style>
+  [data-decoration='grid-pattern'] {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--decoration-grid-color) 55%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--decoration-grid-color) 55%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: var(--decoration-grid-size) var(--decoration-grid-size);
+    opacity: var(--decoration-grid-opacity);
+  }
+
+  [data-decoration='grid-pattern'].decoration-grid-pattern-fade {
+    mask-image: linear-gradient(to bottom, black, transparent 92%);
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent 92%);
+  }
+</style>

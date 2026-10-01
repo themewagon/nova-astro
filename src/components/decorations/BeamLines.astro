@@ -1,0 +1,27 @@
+---
+interface Props {
+  color?: string;
+  opacity?: string;
+  angle?: number;
+  spacing?: string;
+  class?: string;
+}
+
+const {
+  color = 'var(--color-brand-primary)',
+  opacity = '0.12',
+  angle = 135,
+  spacing = '4rem',
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class:list={['pointer-events-none absolute inset-0 select-none', className]}
+  style={{
+    opacity,
+    backgroundImage: `repeating-linear-gradient(${angle}deg, color-mix(in srgb, ${color} 52%, transparent) 0 1px, transparent 1px ${spacing})`,
+  }}
+  aria-hidden="true"
+  data-decoration="beam-lines"
+></div>

@@ -1,0 +1,120 @@
+{
+  "pl": {
+    "eyebrow": "Specjalizacje",
+    "heading": "Obsługa prawna w pełnym zakresie",
+    "description": "Wspieramy w sprawach cywilnych, gospodarczych i rodzinnych. Wybierz obszar, który Cię dotyczy, i poznaj szczegóły współpracy.",
+    "ctaLabel": "Wszystkie specjalizacje",
+    "ctaHref": "/specjalizacje/",
+    "featured": [
+      {
+        "title": "Obsługa kompleksowa",
+        "description": "Jeden partner prawny dla całej działalności: od założenia firmy, przez umowy, po spory sądowe. Stała opieka i szybka reakcja na Twoje sprawy.",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "briefcase",
+        "href": "/specjalizacje/",
+        "cta": {
+          "label": "Poznaj szczegóły",
+          "hoverText": "Zobacz więcej",
+          "href": "/kontakt/"
+        }
+      }
+    ],
+    "items": [
+      {
+        "icon": "scales",
+        "title": "Prawo cywilne",
+        "description": "Umowy, odszkodowania i roszczenia, reprezentacja przed sądami.",
+        "href": "/specjalizacje/prawo-cywilne/"
+      },
+      {
+        "icon": "briefcase",
+        "title": "Prawo gospodarcze",
+        "description": "Obsługa firm, spółek i negocjacji umów handlowych.",
+        "href": "/specjalizacje/prawo-gospodarcze/"
+      },
+      {
+        "icon": "users",
+        "title": "Prawo rodzinne",
+        "description": "Rozwody, podział majątku, władza rodzicielska i alimenty.",
+        "href": "/specjalizacje/prawo-rodzinne/"
+      },
+      {
+        "icon": "house",
+        "title": "Nieruchomości",
+        "description": "Umowy sprzedaży, najmu, służebności i sprawy własności.",
+        "href": "/specjalizacje/prawo-nieruchomosci/"
+      },
+      {
+        "icon": "scroll",
+        "title": "Prawo spadkowe",
+        "description": "Testamenty, dziedziczenie ustawowe i dział spadku.",
+        "href": "/specjalizacje/prawo-spadkowe/"
+      },
+      {
+        "icon": "gavel",
+        "title": "Prawo karne",
+        "description": "Obrona w postępowaniu karnym i reprezentacja pokrzywdzonego.",
+        "href": "/specjalizacje/prawo-karne/"
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "Specializations",
+    "heading": "Full-scope legal support",
+    "description": "We assist in civil, commercial and family matters. Choose the area that concerns you and learn the details of cooperation.",
+    "ctaLabel": "All specializations",
+    "ctaHref": "/en/specializations/",
+    "featured": [
+      {
+        "title": "Full legal service",
+        "description": "One legal partner for your entire business: from company formation, through contracts, to court disputes. Ongoing support and fast response to your matters.",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "briefcase",
+        "href": "/en/specializations/",
+        "cta": {
+          "label": "View details",
+          "hoverText": "See more",
+          "href": "/en/contact/"
+        }
+      }
+    ],
+    "items": [
+      {
+        "icon": "scales",
+        "title": "Civil law",
+        "description": "Contracts, damages and claims, representation before courts.",
+        "href": "/en/specializations/civil-law/"
+      },
+      {
+        "icon": "briefcase",
+        "title": "Commercial law",
+        "description": "Support for companies, partnerships and commercial contract negotiations.",
+        "href": "/en/specializations/commercial-law/"
+      },
+      {
+        "icon": "users",
+        "title": "Family law",
+        "description": "Divorces, division of property, parental authority and alimony.",
+        "href": "/en/specializations/family-law/"
+      },
+      {
+        "icon": "house",
+        "title": "Real estate",
+        "description": "Sales and lease agreements, easements and ownership matters.",
+        "href": "/en/specializations/real-estate/"
+      },
+      {
+        "icon": "scroll",
+        "title": "Inheritance law",
+        "description": "Wills, statutory succession and division of estate.",
+        "href": "/en/specializations/inheritance-law/"
+      },
+      {
+        "icon": "gavel",
+        "title": "Criminal law",
+        "description": "Defense in criminal proceedings and representation of the injured party.",
+        "href": "/en/specializations/criminal-law/"
+      }
+    ]
+  }
+}

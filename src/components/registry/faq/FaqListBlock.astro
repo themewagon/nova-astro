@@ -1,0 +1,100 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import faqData from "@data/sections/faq.json";
+
+// Dlaczego: FaqListBlock to wariant FAQ z accordion i pogrupowaniem wg kategorii.
+// It is one of several FAQ variants (list, simple, grid, grouped, flat).
+// Each variant has a different aesthetic, but the data comes from the same JSON.
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+	/** Section header tag: 'h2' by default, 'h1' when the block is the first section of a page without hero (SEO).*/
+	headingTag?: string;
+}
+
+const { 
+	class: className = "", 
+	title = faqData.title, 
+	description = faqData.description,
+	tagline = faqData.tagline,
+	headingTag = "h2"
+} = Astro.props;
+
+// Dlaczego: categories z faqData.categories. Klient definiuje kategorie w JSON,
+// a komponent renderuje je dynamicznie z accordion.
+const categories = faqData.categories || [];
+const cta = faqData.cta;
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container">
+		<SectionHeader 
+			title={title}
+			description={description}
+			tagline={tagline}
+			titleTag={headingTag}
+			align="center"
+		/>
+
+		<div class="max-w-3xl mx-auto mt-16 space-y-20">
+			{categories.map((cat) => (
+				<div>
+					<div class="flex min-w-0 flex-col justify-between pb-4 border-b border-brand-dark/10 lg:flex-row lg:items-end mb-6">
+						<Heading level={3} variant="feature-heading-md" class="ui-text-on-light">
+							{cat.title}
+						</Heading>
+						{cat.moreLink && cat.moreLink !== '#' && (
+							<a href={cat.moreLink} class="group flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-primary hover:opacity-80 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand-primary/50 transition-opacity mt-2 lg:mt-0"> <!-- mobile-audit-ignore: focus-visible fallback and 44px touch target are present -->
+								Więcej pytań
+								<svg xmlns="http://www.w3.org/2000/svg" class="size-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+								</svg>
+							</a>
+						)}
+					</div>
+					<div class="divide-y divide-brand-dark/5" data-accordion>
+						{cat.items.map((item) => (
+							<details class="group cursor-pointer">
+								<summary class="flex min-w-0 items-center justify-between w-full py-5 text-left list-none select-none">
+									<Heading level={4} variant="feature-title" class="pr-8 ui-text-on-light">
+										{item.q}
+									</Heading>
+									<div class="transition-transform duration-300 group-open:-rotate-45 text-brand-primary shrink-0">
+										<svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+										</svg>
+									</div>
+								</summary>
+								<div class="pb-6">
+									<Text variant="body" class="ui-text-on-light-subtle">
+										{item.a}
+									</Text>
+								</div>
+							</details>
+						))}
+					</div>
+				</div>
+			))}
+		</div>
+
+		{cta && (
+			<div class="max-w-3xl mx-auto mt-24 p-12 ui-bg-surface ui-radius-xl ui-elevation-soft border border-brand-dark/5 text-center">
+				<Heading level={3} variant="feature-heading-md" class="ui-text-on-light mb-4">
+					{cta.title}
+				</Heading>
+				<Text variant="body" class="ui-text-on-light-subtle mb-8 max-w-md mx-auto">
+					{cta.description}
+				</Text>
+				<Button href={cta.buttonHref} variant="outline" size="md" class="min-h-11">
+					{cta.buttonLabel}
+				</Button>
+			</div>
+		)}
+	</div>
+</Section>

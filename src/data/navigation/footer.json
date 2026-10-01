@@ -1,0 +1,54 @@
+{
+  "about": "Digital solutions specialists. We create modern websites and applications.",
+  "contactTitle": "Contact",
+  "copyrightText": "All rights reserved.",
+  "attribution": {
+    "label": "Design and development by WebScale",
+    "href": "https://webscale.pl",
+    "prefix": "Built by:",
+    "linkLabel": "WebScale"
+  },
+  "aria": {
+    "quickNav": "Quick links and documents",
+    "legalDocs": "Legal documents"
+  },
+  "promo": {
+    "tagline": "For investors",
+    "title": "Free estimate",
+    "description": "Send an inquiry and we will prepare a no-obligation cost estimate and timeline.",
+    "ctaLabel": "Request a quote",
+    "ctaHref": "#studio-section-contact-form",
+    "imageSrc": "/assets/placeholders/image-landscape.svg",
+    "imageAlt": "Promotional section image placeholder"
+  },
+  "columns": [
+    {
+      "title": "Quick Links",
+      "links": [
+        { "label": "About", "href": "/about/" },
+        { "label": "Services", "href": "/services/" },
+        { "label": "Pricing", "href": "/pricing/" },
+        { "label": "Blog", "href": "/blog/" }
+      ]
+    },
+    {
+      "title": "Important Links",
+      "links": [
+        { "label": "Privacy Policy", "href": "/privacy-policy/" },
+        { "label": "Terms of Service", "href": "/terms/" },
+        { "label": "Cookies", "href": "/cookies/" }
+      ]
+    }
+  ],
+  "newsletter": {
+      "title": "Newsletter",
+      "description": "Subscribe to get promotions and news updates.",
+      "placeholder": "Your email address",
+      "consent": "I agree to the terms and privacy policy."
+  },
+  "legal": [
+    { "label": "Privacy Policy", "href": "/privacy-policy/" },
+    { "label": "Terms of Service", "href": "/terms/" },
+    { "label": "Cookies", "href": "/cookies/" }
+  ]
+}

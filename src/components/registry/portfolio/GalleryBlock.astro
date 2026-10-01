@@ -1,0 +1,200 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import galleryData from "@data/sections/gallery.json";
+
+type GalleryImage = {
+  src?: string;
+  thumb?: string;
+  alt?: string;
+};
+
+type GalleryData = {
+  title?: string;
+  description?: string;
+  images?: GalleryImage[];
+};
+
+export interface Props {
+  sectionId?: string;
+  title?: string;
+  description?: string;
+  images?: GalleryImage[];
+  ariaPrevPhoto?: string;
+  ariaNextPhoto?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+}
+
+const { sectionId = "galeria", title = "", description = "", images: rawImages = [], ariaPrevPhoto = "", ariaNextPhoto = "", headingTag = "h2" } = Astro.props;
+const content = { title, description };
+const images = Array.isArray(rawImages) ? rawImages.filter((image: GalleryImage) => image?.src) : [];
+const firstImage = images[0];
+// Why: Thumbnails are loaded lazily by SmartImage. Preloading several thumbnails increases
+// the transfer even when the user does not open the gallery.
+---
+
+<Section id={sectionId} tone="page">
+  <Container>
+    <div class="space-y-4">
+      {content.title && (
+        <Heading tag={headingTag} variant="section-title">
+          {content.title}
+        </Heading>
+      )}
+
+      {content.description && (
+        <Text variant="body">
+          {content.description}
+        </Text>
+      )}
+    </div>
+
+    {/* Why: the gallery is separate from the portfolio because it is used to present photos in various applications (projects, events, products) */}
+    {images.length > 0 ? (
+      <div class="mt-10 space-y-4" data-gallery>
+        <div
+          class="group relative overflow-hidden rounded-2xl ui-bg-base"
+          data-gallery-frame
+          data-lightbox
+          data-href={firstImage?.src || ""}
+          data-title={firstImage?.alt || ""}
+          data-lightbox-gallery={JSON.stringify(images.map((image) => ({ src: image.src, title: image.alt || "", alt: image.alt || "" })))}
+        >
+          {/* The main image uses an existing lightbox and changes the source via JS. */}
+          <SmartImage
+            src={firstImage?.src}
+            alt={firstImage?.alt || ""}
+            width={1600}
+            height={1000}
+            loading="eager"
+            class="h-[400px] w-full cursor-zoom-in object-cover transition-transform duration-700 ease-out group-hover:scale-105 md:h-[500px]"
+          />
+
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                data-gallery-prev
+                class="absolute left-4 top-1/2 z-10 flex h-10 w-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-0 transition-all duration-200 hover:bg-black/65 group-hover:opacity-100 focus:opacity-100"
+                aria-label={ariaPrevPhoto || galleryData.ariaPrevPhoto}
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M15 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                data-gallery-next
+                class="absolute right-4 top-1/2 z-10 flex h-10 w-10 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-0 transition-all duration-200 hover:bg-black/65 group-hover:opacity-100 focus:opacity-100"
+                aria-label={ariaNextPhoto || galleryData.ariaNextPhoto}
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
+
+        <div class="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-thin">
+          {images.map((image, index) => (
+            <button
+              type="button"
+              data-gallery-thumb
+              data-index={index}
+              data-src={image.src}
+              class="shrink-0 snap-start overflow-hidden rounded-xl border-2 border-transparent transition-all duration-200 hover:border-brand-primary focus:border-brand-primary focus:outline-none aria-selected:border-brand-primary aria-selected:shadow-md"
+              aria-label={`Pokaż zdjęcie ${index + 1}`}
+              aria-selected={index === 0 ? "true" : "false"}
+            >
+              <SmartImage
+                src={image.thumb || image.src}
+                alt={image.alt || ""}
+                width={220}
+                height={220}
+                class="h-20 w-20 object-cover md:h-24 md:w-24"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="mt-10 rounded-2xl py-20 text-center ui-bg-base">
+        <Text variant="body" class="text-brand-dark/50">
+          {galleryData.emptyText}
+        </Text>
+      </div>
+    )}
+  </Container>
+</Section>
+
+<script is:inline>
+  (() => {
+    function setupGallery(root) {
+      if (!(root instanceof HTMLElement)) return;
+
+      const frame = root.querySelector("[data-gallery-frame]");
+      const thumbs = Array.from(root.querySelectorAll("[data-gallery-thumb]"));
+      const prev = root.querySelector("[data-gallery-prev]");
+      const next = root.querySelector("[data-gallery-next]");
+      const main = frame instanceof HTMLElement ? frame.querySelector("img") : null;
+
+      if (!(frame instanceof HTMLElement) || !(main instanceof HTMLImageElement) || thumbs.length === 0) return;
+
+      let currentIndex = 0;
+
+      // We only keep the active state in the thumbnails, and update the main image with their attributes.
+      function updateGallery(index) {
+        const thumb = thumbs[index];
+        if (!(thumb instanceof HTMLButtonElement)) return;
+
+        const nestedImage = thumb.querySelector("img");
+        const src = thumb.dataset.src || "";
+        const alt = nestedImage?.getAttribute("alt") || "";
+
+        if (!src) return;
+
+        main.src = src;
+        main.alt = alt;
+        frame.setAttribute("data-href", src);
+        frame.setAttribute("data-title", alt);
+        currentIndex = index;
+
+        thumbs.forEach((item, itemIndex) => {
+          if (item instanceof HTMLButtonElement) {
+            item.setAttribute("aria-selected", itemIndex === index ? "true" : "false");
+          }
+        });
+      }
+
+      thumbs.forEach((thumb, index) => {
+        if (!(thumb instanceof HTMLButtonElement)) return;
+
+        thumb.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          updateGallery(index);
+        });
+      });
+
+      prev?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        updateGallery((currentIndex - 1 + thumbs.length) % thumbs.length);
+      });
+
+      next?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        updateGallery((currentIndex + 1) % thumbs.length);
+      });
+    }
+
+    document.querySelectorAll("[data-gallery]").forEach(setupGallery);
+  })();
+</script>

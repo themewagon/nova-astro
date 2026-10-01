@@ -1,0 +1,12 @@
+{
+  "title": "Nasze usługi",
+  "description": "Kompleksowe wsparcie na każdym etapie, od koncepcji po wdrożenie i dalszy rozwój.",
+  "linkLabel": "Zobacz wszystkie",
+  "linkHref": "/uslugi/",
+  "items": [
+    { "number": "01.", "icon": "palette", "title": "UX/UI Design", "description": "Nowoczesny i funkcjonalny design dopasowany do Twojej marki. Projektujemy doświadczenia, które są intuicyjne i wspierają cele biznesowe." },
+    { "number": "02.", "icon": "browser", "title": "Strony internetowe", "description": "Szybkie, responsywne i zoptymalizowane rozwiązania dla biznesu. Tworzymy strony, które dobrze wyglądają i skutecznie prowadzą do kontaktu." },
+    { "number": "03.", "icon": "paint-brush", "title": "Identyfikacja wizualna", "description": "Spójny wizerunek, który wyróżnia markę i buduje zaufanie. Łączymy strategię, typografię i detale w jeden rozpoznawalny kierunek." },
+    { "number": "04.", "icon": "lifebuoy", "title": "Wsparcie i rozwój", "description": "Stała opieka i rozwój strony po uruchomieniu projektu. Pomagamy utrzymać stronę aktualną, sprawną i gotową na kolejne etapy." }
+  ]
+}

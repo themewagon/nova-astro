@@ -1,0 +1,57 @@
+---
+---
+
+<div
+  id="toast-root"
+  class="fixed bottom-4 right-4 left-4 z-[2000] flex w-auto flex-col gap-4 pointer-events-none sm:bottom-6 sm:left-auto sm:right-6 sm:w-full sm:max-w-sm"
+  style="padding-bottom: env(safe-area-inset-bottom)"
+  aria-label="Komunikaty"
+></div>
+
+<style is:global>
+  #toast-root [data-toast-id] {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid color-mix(in oklab, var(--color-brand-dark) 12%, transparent);
+    border-radius: 0.75rem;
+    background: var(--color-brand-light);
+    box-shadow: var(--ui-elevation-strong, 0 1rem 2.5rem color-mix(in oklab, var(--color-brand-dark) 16%, transparent));
+    pointer-events: auto;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    animation: toast-slide-in 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  #toast-root [data-toast-id].toast-removing {
+    opacity: 0;
+    transform: translateY(0.5rem) translateX(0.25rem);
+    animation: none !important;
+  }
+
+  #toast-root [data-toast-icon] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+  }
+
+  #toast-root [data-toast-type="success"] [data-toast-icon] { background: var(--color-success-container); color: var(--color-success); }
+  #toast-root [data-toast-type="error"] [data-toast-icon] { background: var(--color-error-container); color: var(--color-error); }
+  #toast-root [data-toast-type="info"] [data-toast-icon] { background: var(--color-info-container); color: var(--color-info); }
+  #toast-root [data-toast-content] { min-width: 0; flex: 1; }
+  #toast-root [data-toast-title] { margin: 0; color: var(--color-brand-dark); font: 700 0.875rem/1.25 var(--font-heading, inherit); }
+  #toast-root [data-toast-description] { margin: 0.25rem 0 0; color: color-mix(in oklab, var(--color-brand-dark) 60%, transparent); font-size: 0.75rem; line-height: 1.5; }
+  #toast-root [data-toast-close] { align-self: center; }
+  @keyframes toast-slide-in { from { opacity: 0; transform: translateY(0.75rem); } to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    #toast-root [data-toast-id] { animation: none; transition: none; }
+  }
+</style>
+
+<!-- Toast is used only after user action, so it should not block the first render. -->
+<script is:inline src="/js/toast.js" defer></script>

@@ -1,0 +1,50 @@
+---
+interface Props {
+  count?: 1 | 2 | 3;
+  size?: string;
+  color?: string;
+  opacity?: string;
+  class?: string;
+}
+
+const {
+  count = 2,
+  size = '30rem',
+  color = 'var(--color-brand-primary)',
+  opacity = '0.04',
+  class: className,
+} = Astro.props;
+
+const rings = Array.from({ length: count }, (_, i) => {
+  const scale = 1 - i * 0.25;
+  const strokeW = Math.max(1, 2 - i * 0.5);
+  return { scale, strokeW, index: i };
+});
+---
+
+<div
+  class:list={['pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none', className]}
+  style={{ width: size, height: size, opacity }}
+  aria-hidden="true"
+>
+  <div class="relative size-full">
+    {
+      rings.map((ring) => (
+        <svg
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ width: `${ring.scale * 100}%`, height: `${ring.scale * 100}%` }}
+          viewBox="0 0 200 200"
+          fill="none"
+        >
+          <circle
+            cx="100" cy="100" r="80"
+            stroke={color}
+            stroke-width={ring.strokeW}
+            stroke-dasharray={ring.index === 2 ? '8 8' : 'none'}
+            fill="none"
+          />
+        </svg>
+      ))
+    }
+  </div>
+</div>

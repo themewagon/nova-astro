@@ -1,0 +1,79 @@
+---
+// Why: Button is a reusable atom with multiple visual variants. Nine variants (primary, accent, outline, ghost, secondary, success, warning, error, info) allow matching any UI context without creating new components.
+import { formatInternalLink } from '@utils/url';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'accent' | 'outline' | 'ghost' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
+  full?: boolean;
+  class?: string;
+  disabled?: boolean;
+  hoverText?: string; // opcjonalny tekst hover; gdy pusty, roll pokazuje ten sam label
+  [key: string]: any;
+}
+
+const { 
+  href: rawHref, 
+  variant = 'primary', 
+  size = 'md',
+  full = false,
+  disabled = false,
+  hoverText = '',
+  class: className,
+  ...rest
+} = Astro.props;
+
+// Why: Dynamic Tag choice (a vs button) allows the same component to work as a link and as a button.
+const href = rawHref ? formatInternalLink(rawHref) : undefined;
+const Tag = href ? 'a' : 'button';
+
+const variantClasses: Record<string, string> = {
+  primary: 'ui-button-primary',
+  outline: 'ui-button-outline',
+  ghost: 'ui-button-ghost',
+  accent: 'ui-button-accent',
+  secondary: 'ui-button-secondary',
+  success: 'ui-button-success',
+  warning: 'ui-button-warning',
+  error: 'ui-button-error',
+  info: 'ui-button-info',
+};
+
+const sizeClasses: Record<string, string> = {
+  sm: 'h-9 px-4 text-xs sm:text-sm [&_svg]:size-3.5',
+  md: 'h-10 sm:h-11 px-4 sm:px-5 text-sm sm:text-base [&_svg]:size-4.5',
+  lg: 'h-11 sm:h-12 px-5 sm:px-8 text-sm sm:text-lg [&_svg]:size-5',
+  icon: 'size-10 sm:size-11 [&_svg]:size-4.5',
+};
+
+const disabledClasses = disabled ? 'pointer-events-none opacity-50' : '';
+const focusClasses = 'focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand-primary/50';
+---
+
+<Tag 
+  href={href} 
+  class:list={[
+    // Dlaczego: radius jest sterowany przez token motywu, aby kształt CTA był zgodny z aktywnym template'em.
+    'ui-button ui-type-cta-label group inline-flex items-center justify-center gap-1.5 whitespace-nowrap transition-all font-semibold',
+    variantClasses[variant] || variantClasses.primary,
+    sizeClasses[size] || sizeClasses.md,
+    full ? 'w-full' : '',
+    focusClasses,
+    disabledClasses,
+    className
+  ]} 
+  {...(Tag === 'button' ? { disabled } : { 'aria-disabled': disabled })}
+  {...rest}
+>
+  <slot name="icon-left" />
+  <!-- Why: text swap is default for every Button (text roll on hover, CSS in components.css). When hoverText is missing, hover-span repeats the same slot, so the effect is a pure roll without content change. aria-hidden prevents reading the text twice by screen readers. -->
+  <span class="ui-button-text-wrap">
+    <span class="ui-button-text-default"><slot /></span>
+    <span
+      class="ui-button-text-hover"
+      aria-hidden="true"
+    >{hoverText || <slot />}</span>
+  </span>
+  <slot name="icon-right" />
+</Tag>

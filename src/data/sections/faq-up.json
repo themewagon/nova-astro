@@ -1,0 +1,60 @@
+{
+  "pl": {
+    "eyebrow": "FAQ",
+    "heading": "Najczęściej zadawane pytania",
+    "items": [
+      {
+        "question": "Kiedy rozpoczyna się rekrutacja?",
+        "answer": "Rekrutacja rozpoczyna się <strong>1 czerwca</strong> i trwa do <strong>10 września</strong>. Zachęcamy do wcześniejszego składania dokumentów."
+      },
+      {
+        "question": "Jakie dokumenty są wymagane?",
+        "answer": "Potrzebujesz świadectwa dojrzałości, podania o przyjęcie generowanego w systemie oraz dowodu osobistego. Szczegółowa lista dostępna jest w systemie e-rekrutacji."
+      },
+      {
+        "question": "Czy mogę aplikować na więcej niż jeden kierunek?",
+        "answer": "Tak, możesz aplikować na wiele kierunków jednocześnie. Każdy kierunek wymaga osobnego zgłoszenia w systemie e-rekrutacyjnym."
+      },
+      {
+        "question": "Czy studia są płatne?",
+        "answer": "Studia stacjonarne są <strong>bezpłatne</strong>. Opłaty dotyczą wyłącznie studiów niestacjonarnych i podyplomowych."
+      },
+      {
+        "question": "Jak wygląda życie studenckie?",
+        "answer": "Czekają na Ciebie koła naukowe, organizacje studenckie, wydarzenia kulturalne i kluby sportowe. Kampus znajduje się w centrum miasta."
+      }
+    ],
+    "ctaLabel": "Zobacz wszystkie pytania",
+    "ctaHoverLabel": "Przeglądaj FAQ",
+    "ctaHref": "/#faq"
+  },
+  "en": {
+    "eyebrow": "FAQ",
+    "heading": "Frequently asked questions",
+    "items": [
+      {
+        "question": "When does enrollment start?",
+        "answer": "Enrollment starts <strong>June 1</strong> and lasts until <strong>September 10</strong>. We encourage you to submit your documents early."
+      },
+      {
+        "question": "What documents are required?",
+        "answer": "You will need your secondary school certificate, an application generated in the system and an ID card. A detailed list is available in the e-recruitment system."
+      },
+      {
+        "question": "Can I apply to more than one field of study?",
+        "answer": "Yes, you can apply to multiple fields at once. Each field requires a separate application in the e-recruitment system."
+      },
+      {
+        "question": "Are the studies paid?",
+        "answer": "Full-time studies are <strong>free of charge</strong>. Fees apply only to part-time and postgraduate studies."
+      },
+      {
+        "question": "What is student life like?",
+        "answer": "You will find scientific clubs, student organizations, cultural events and sports clubs. The campus is located in the city center."
+      }
+    ],
+    "ctaLabel": "View all questions",
+    "ctaHoverLabel": "Browse FAQ",
+    "ctaHref": "/#faq"
+  }
+}

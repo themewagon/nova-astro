@@ -1,0 +1,14 @@
+@import "./fonts.css";
+@import "./themes.css";
+@import "./tailwind-bridge.css";
+@import "./foundations.css";
+@import "./components.css";
+@import "./navigation.css";
+@import "./section-patterns.css";
+@import "./ui-theme.css";
+@import "./patterns.css";
+@import "./motion.css";
+@import "./accordion.css";
+/* Override'y per-theme na koncu: najpierw musi wladowac sie root Tailwinda,
+   zeby kolejnosc warstw (theme, base, components, utilities) byla wlasciwa. */
+@import "./theme-overrides.css";

@@ -1,0 +1,29 @@
+{
+  "menu": [
+    { "label": "O nas", "href": "/o-nas/" },
+    {
+      "label": "Usługi",
+      "href": "/uslugi/",
+      "children": [
+        { "label": "Strony internetowe", "href": "/uslugi/strony-internetowe/" },
+        { "label": "Sklepy internetowe", "href": "/uslugi/sklepy/" },
+        { "label": "SEO i marketing", "href": "/uslugi/seo/" }
+      ]
+    },
+    { "label": "Realizacje", "href": "/realizacje/" },
+    { "label": "Opinie", "href": "/opinie/" }
+  ],
+  "cta": {
+    "label": "Rozpocznij projekt",
+    "href": "/kontakt/",
+    "prefix": "",
+    "hoverLabel": "Porozmawiajmy"
+  },
+  "aria": {
+    "menuOpen": "Navigation menu",
+    "menuClose": "Close menu",
+    "menuExpand": "Expand subpages",
+    "navMain": "Main navigation",
+    "drawer": "Navigation menu"
+  }
+}

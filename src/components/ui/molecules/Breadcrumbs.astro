@@ -1,0 +1,53 @@
+---
+import breadcrumbsData from "@data/navigation/breadcrumbs.json";
+
+interface Props {
+    className?: string;
+}
+
+const { className = "" } = Astro.props;
+
+// Why: breadcrumb labels are read from breadcrumbs.json (editable in CMS),
+// to change them in the panel without touching code. JSON is SSOT, no fallback.
+const homeLabel = breadcrumbsData.homeLabel || "";
+const ariaLabel = breadcrumbsData.ariaLabel || "";
+
+const pathname = Astro.url.pathname.replace(/\/$/, "");
+const segments = pathname.split("/").filter(s => s);
+
+const breadcrumbs = [
+    { label: homeLabel, href: "/" },
+    ...segments.map((segment, index) => {
+        const href = `/${segments.slice(0, index + 1).join("/")}/`;
+        const label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
+        return { label, href };
+    })
+];
+---
+
+{breadcrumbs.length > 1 && (
+    <nav aria-label={ariaLabel} class={`flex ${className}`}>
+        <ol class="flex items-center gap-3">
+            {breadcrumbs.map((crumb, index) => (
+                <li class="flex items-center gap-3">
+                    {index > 0 && (
+                        <i class="ph ph-caret-right text-[10px] text-brand-dark/20"></i>
+                    )}
+                    
+                    {index === breadcrumbs.length - 1 ? (
+                        <span class="text-xs font-bold text-brand-primary tracking-widest uppercase">
+                            {crumb.label}
+                        </span>
+                    ) : (
+                        <a 
+                            href={crumb.href} 
+                            class="text-xs font-bold text-brand-dark/40 hover:text-brand-dark transition-colors tracking-widest uppercase"
+                        >
+                            {crumb.label}
+                        </a>
+                    )}
+                </li>
+            ))}
+        </ol>
+    </nav>
+)}

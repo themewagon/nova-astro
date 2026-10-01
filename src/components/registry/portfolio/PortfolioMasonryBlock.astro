@@ -1,0 +1,77 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import portfolioData from "@data/sections/portfolio.json";
+
+interface PortfolioItem {
+	title: string;
+	category: string;
+	img: string;
+	span?: string;
+	height?: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+  tagline?: string;
+  items?: PortfolioItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+  }
+
+const {
+class: className = "",
+title = "",
+description = "",
+tagline = "",
+headingTag = "h2",
+items
+} = Astro.props;
+
+const list = items && items.length > 0 ? items : portfolioData.items;
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container" data-lightbox-group>
+		<SectionHeader 
+title={title || portfolioData.title || portfolioData.variants.masonry.title}
+description={description || portfolioData.description || portfolioData.variants.masonry.description}
+tagline={tagline || portfolioData.tagline || portfolioData.variants.masonry.tagline}
+titleTag={headingTag}
+align="center"
+/>
+
+		<!-- Why: masonry layout for different aspect ratios, columns-3 gives 3 columns on desktop with automatic layout -->
+		<div class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 mt-12">
+			{list.map((item) => (
+				<div class="break-inside-avoid relative group ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in" data-lightbox data-href={item.img} data-title={item.title}>
+					<div class={`w-full ${item.height}`}>
+						<SmartImage 
+							src={item.img} 
+							alt={item.title} 
+							class="ui-media-zoom"
+						/>
+					</div>
+					
+					{/* Gradient Overlay */}
+					<div class="ui-media-overlay"></div>
+					
+					{/* Content */}
+					<div class="absolute inset-x-0 bottom-0 p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+						<Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">
+							{item.category}
+						</Text>
+						<Heading level={3} variant="feature-title" class="text-white">
+							{item.title}
+						</Heading>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</Section>

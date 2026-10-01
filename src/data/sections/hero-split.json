@@ -1,0 +1,37 @@
+{
+  "image": "/assets/placeholders/image-landscape.svg",
+  "pl": {
+    "label": "Strony internetowe",
+    "title": "Nowoczesne strony internetowe",
+    "description": "Projektujemy nowoczesne i szybkie strony www, od pierwszego szkicu po wdrożenie. Ty zajmujesz się biznesem, a my dbamy o każdy detal.",
+    "primaryCTA": { "label": "Bezpłatna wycena", "href": "#kontakt", "hoverText": "Umów termin" },
+    "secondaryCTA": { "label": "Zobacz nasze usługi", "href": "#uslugi", "hoverText": "Poznaj ofertę" },
+    "stats": [
+      { "value": "150+", "label": "zrealizowanych\nprojektów" },
+      { "value": "10 lat", "label": "doświadczenie\nw branży" }
+    ],
+    "trustBar": [
+      "Umowa na piśmie",
+      "Przejrzyste koszty",
+      "Gwarancja wykonania"
+    ],
+    "googleRating": { "rating": 5.0, "count": 120, "label": "opinii" }
+  },
+  "en": {
+    "label": "Web design",
+    "title": "Modern websites",
+    "description": "We design modern, fast websites, from the first sketch to launch. You focus on your business, we take care of every detail.",
+    "primaryCTA": { "label": "Free quote", "href": "#kontakt", "hoverText": "Book a call" },
+    "secondaryCTA": { "label": "See our services", "href": "#uslugi", "hoverText": "View offer" },
+    "stats": [
+      { "value": "150+", "label": "completed\nprojects" },
+      { "value": "10 years", "label": "industry\nexperience" }
+    ],
+    "trustBar": [
+      "Written contract",
+      "Transparent pricing",
+      "Work guarantee"
+    ],
+    "googleRating": { "rating": 5.0, "count": 120, "label": "reviews" }
+  }
+}

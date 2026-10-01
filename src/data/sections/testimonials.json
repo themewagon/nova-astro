@@ -1,0 +1,24 @@
+{
+  "title": "Zaufali nam innowatorzy",
+  "description": "Zobacz, dlaczego tysiące firm wybiera nasze rozwiązania.",
+  "testimonials": [
+    { "quote": "Nasza firma przyspieszyła cykl od projektu do produkcji. Komponenty są niezawodne i łatwe w personalizacji.", "author": "Tomasz K.", "role": "Twórca", "avatar": "https://i.pravatar.cc/150?u=tomasz2" },
+    { "quote": "Integracja była bezproblemowa, a my od razu zauważyliśmy poprawę wydajności i konwersji.", "author": "Marta D.", "role": "Deweloperka", "avatar": "https://i.pravatar.cc/150?u=marta" },
+    { "quote": "Narzędzia pozwoliły naszemu małemu zespołowi dostarczyć dopracowany produkt w połowie czasu.", "author": "Piotr W.", "role": "Założyciel", "avatar": "https://i.pravatar.cc/150?u=piotr" },
+    { "quote": "Odświeżenie naszych landing pageów pomogło zwiększyć zaangażowanie w kampaniach.", "author": "Katarzyna L.", "role": "Designerka", "avatar": "https://i.pravatar.cc/150?u=katarzyna" },
+    { "quote": "Przejrzysta dokumentacja i atomowa struktura ułatwiły wdrożenie nowych deweloperów.", "author": "Anna M.", "role": "CTO", "avatar": "https://i.pravatar.cc/150?u=anna" },
+    { "quote": "Najlepszy zwrot z inwestycji w toolkit UI, jaki widziałem.", "author": "Marcin Z.", "role": "Product Lead", "avatar": "https://i.pravatar.cc/150?u=marcin" }
+  ],
+  "marquee": {
+    "title": "Zaufali nam innowatorzy",
+    "description": "Zobacz, dlaczego tysiące firm wybiera nasze rozwiązania.",
+    "testimonials": [
+      { "quote": "Nasza firma przyspieszyła cykl od projektu do produkcji. Komponenty są niezawodne i łatwe w personalizacji.", "author": "Tomasz K.", "role": "Twórca", "avatar": "https://i.pravatar.cc/150?u=tomasz2" },
+      { "quote": "Integracja była bezproblemowa, a my od razu zauważyliśmy poprawę wydajności i konwersji.", "author": "Marta D.", "role": "Deweloperka", "avatar": "https://i.pravatar.cc/150?u=marta" },
+      { "quote": "Narzędzia pozwoliły naszemu małemu zespołowi dostarczyć dopracowany produkt w połowie czasu.", "author": "Piotr W.", "role": "Założyciel", "avatar": "https://i.pravatar.cc/150?u=piotr" },
+      { "quote": "Odświeżenie naszych landing pageów pomogło zwiększyć zaangażowanie w kampaniach.", "author": "Katarzyna L.", "role": "Designerka", "avatar": "https://i.pravatar.cc/150?u=katarzyna" },
+      { "quote": "Przejrzysta dokumentacja i atomowa struktura ułatwiły wdrożenie nowych deweloperów.", "author": "Anna M.", "role": "CTO", "avatar": "https://i.pravatar.cc/150?u=anna" },
+      { "quote": "Najlepszy zwrot z inwestycji w toolkit UI, jaki widziałem.", "author": "Marcin Z.", "role": "Product Lead", "avatar": "https://i.pravatar.cc/150?u=marcin" }
+    ]
+  }
+}

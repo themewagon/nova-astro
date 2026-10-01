@@ -1,0 +1,70 @@
+{
+  "pl": {
+    "title": "Nasze usługi",
+    "description": "Kompleksowe wsparcie na każdym etapie, od koncepcji po wdrożenie i dalszy rozwój.",
+    "items": [
+      {
+        "icon": "paint-roller",
+        "title": "UX/UI Design",
+        "description": "Nowoczesny i funkcjonalny design dopasowany do Twojej marki.",
+        "href": "/kontakt/",
+        "linkLabel": "Poznaj usługę"
+      },
+      {
+        "icon": "wrench",
+        "title": "Strony internetowe",
+        "description": "Szybkie, responsywne i zoptymalizowane rozwiązania dla Twojego biznesu.",
+        "href": "/kontakt/",
+        "linkLabel": "Poznaj usługę"
+      },
+      {
+        "icon": "pencil",
+        "title": "Identyfikacja wizualna",
+        "description": "Spójny wizerunek, który wyróżnia markę i buduje zaufanie.",
+        "href": "/kontakt/",
+        "linkLabel": "Poznaj usługę"
+      },
+      {
+        "icon": "chat",
+        "title": "Wsparcie i rozwój",
+        "description": "Stała opieka i rozwój Twojej strony po uruchomieniu projektu.",
+        "href": "/kontakt/",
+        "linkLabel": "Poznaj usługę"
+      }
+    ]
+  },
+  "en": {
+    "title": "Our services",
+    "description": "End-to-end interior support, from design to a home ready to move in. Pick a service and get a free quote.",
+    "items": [
+      {
+        "icon": "paint-roller",
+        "title": "Turnkey Fit-Outs",
+        "description": "We deliver complete interiors, from the first measurement and material sourcing to a finished home.",
+        "href": "/contact/",
+        "linkLabel": "Free quote"
+      },
+      {
+        "icon": "wrench",
+        "title": "Renovations",
+        "description": "General renovations and modernisations of flats and houses with the highest quality of workmanship.",
+        "href": "/contact/",
+        "linkLabel": "Free quote"
+      },
+      {
+        "icon": "pencil",
+        "title": "Interior Design",
+        "description": "Interior projects with visualisations, material lists and design supervision at every stage.",
+        "href": "/contact/",
+        "linkLabel": "Free quote"
+      },
+      {
+        "icon": "chat",
+        "title": "Consulting",
+        "description": "Practical advice on buying property, technical handovers and planning a renovation without the stress.",
+        "href": "/contact/",
+        "linkLabel": "Free quote"
+      }
+    ]
+  }
+}

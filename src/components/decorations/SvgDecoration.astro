@@ -1,0 +1,50 @@
+---
+interface Props {
+  name: string;
+  size?: string;
+  color?: string;
+  opacity?: string;
+  rotation?: string;
+  class?: string;
+}
+
+const {
+  name,
+  size = 'clamp(4rem, 12vw, 9rem)',
+  color = 'var(--color-brand-primary)',
+  opacity = '0.2',
+  rotation = '0deg',
+  class: className,
+} = Astro.props;
+
+const assetPath = `/assets/decorations/svg/${name}.svg`;
+---
+
+<span
+  class:list={['decoration-svg', className]}
+  style={{
+    '--decoration-svg-size': size,
+    '--decoration-svg-color': color,
+    '--decoration-svg-opacity': opacity,
+    '--decoration-svg-rotation': rotation,
+    '--decoration-svg-image': `url(${assetPath})`,
+  }}
+  aria-hidden="true"
+  data-decoration="svg"
+  data-decoration-name={name}
+></span>
+
+<style>
+  [data-decoration='svg'] {
+    display: block;
+    width: var(--decoration-svg-size);
+    aspect-ratio: 1;
+    background: var(--decoration-svg-color);
+    opacity: var(--decoration-svg-opacity);
+    transform: rotate(var(--decoration-svg-rotation));
+    -webkit-mask: var(--decoration-svg-image) center / contain no-repeat;
+    mask: var(--decoration-svg-image) center / contain no-repeat;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>

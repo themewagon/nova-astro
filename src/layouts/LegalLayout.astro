@@ -1,0 +1,99 @@
+---
+import Layout from "./Layout.astro";
+import Heading from "@/components/ui/atoms/Heading.astro";
+import Text from "@/components/ui/atoms/Text.astro";
+import legalData from "@data/global/legal.json";
+import { getNovaNavigationPath, type NovaLocale } from "@utils/nova-i18n";
+
+interface Props {
+  title: string;
+  description?: string;
+  lastUpdated: string;
+  locale?: NovaLocale;
+}
+
+const { title, description, lastUpdated, locale = "en" } = Astro.props;
+const legalCopy = legalData[locale] ?? legalData.en;
+const homeHref = getNovaNavigationPath("/", locale);
+const contactHref = getNovaNavigationPath(legalCopy.legalContactHref, locale);
+---
+
+<!-- Why: legal pages reuse the homepage shell; main content still receives
+     header spacing because the floating navbar overlays the page background. -->
+<Layout
+  title={title}
+  description={description}
+  navbarVariant="floating"
+  footerVariant="nova"
+  locale={locale}
+  lang={locale}
+>
+  <div class="bg-brand-light pb-16 lg:pb-24">
+    <div class="px-4 mx-auto max-w-4xl">
+      <div class="mb-12 border-b border-brand-dark/10 pb-8">
+        <a href={homeHref} class="inline-flex items-center gap-2 text-sm font-medium text-brand-dark/60 hover:text-brand-primary transition-colors mb-8">
+          <i class="ph ph-arrow-left"></i>
+          {legalCopy.legalBackLabel}
+        </a>
+        <Heading level={1} variant="section-heading-xl" class="mb-4">{title}</Heading>
+        <Text class="text-brand-dark/60 italic">{legalCopy.updatedLabel} {lastUpdated}</Text>
+      </div>
+
+      <div class="legal-content prose prose-brand max-w-none">
+        <slot />
+      </div>
+
+      <div class="mt-16 rounded-3xl bg-brand-primary/5 p-8 border border-brand-primary/10">
+        <Text class="font-bold mb-4">{legalCopy.legalFaqTitle}</Text>
+        <Text class="mb-6">{legalCopy.legalFaqText}</Text>
+        <a href={contactHref} class="inline-flex items-center gap-2 font-bold text-brand-dark hover:text-brand-primary transition-colors">
+          <i class="ph ph-envelope"></i>
+          {legalCopy.legalContactCta}
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  .legal-content h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-brand-dark, #0a0a0a);
+    letter-spacing: -0.02em;
+  }
+
+  .legal-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    color: rgba(10, 10, 10, 0.8);
+    font-size: 1.0625rem;
+  }
+
+  .legal-content ul {
+    margin-bottom: 2rem;
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .legal-content li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: rgba(10, 10, 10, 0.8);
+  }
+
+  .legal-content li::before {
+    content: "•";
+    color: var(--color-brand-primary);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+
+  .legal-content section {
+    scroll-margin-top: 100px;
+  }
+</style>

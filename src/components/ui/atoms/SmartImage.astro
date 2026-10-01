@@ -1,0 +1,221 @@
+---
+import { Image, Picture } from 'astro:assets';
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface Props {
+  src?: any;
+  alt?: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: "lazy" | "eager";
+  decoding?: "async" | "sync" | "auto";
+  fetchpriority?: "high" | "low" | "auto";
+  sizes?: string;
+  folder?: string;
+  placeholder?: boolean;
+}
+
+const {
+  src: rawSrc,
+  alt = "",
+  width,
+  height,
+  class: className,
+  loading = "lazy",
+  decoding = "async",
+  fetchpriority = "auto",
+  sizes,
+  folder,
+  placeholder = false,
+} = Astro.props;
+
+// 1. Extracting the correct path (handling legacy format { url: '...' })
+let src = rawSrc;
+if (rawSrc && typeof rawSrc === 'object' && 'url' in rawSrc) {
+  src = rawSrc.url;
+}
+
+// 2. Handling remote images (HTTP/HTTPS)
+const isRemote = typeof src === 'string' && (src.startsWith('http') || src.startsWith('//'));
+
+// 3. Handling local images (dynamic imports)
+// Glob covers only content directories. We do not add the whole src/assets,
+// because Vite could bundle the original demo assets into the build,
+// even when no ready-made page renders them.
+const images = import.meta.glob<{ default: ImageMetadata }>([
+  '/src/content/sections/**/*.{jpeg,jpg,png,gif,webp,svg}',
+  '/src/data/**/*.{jpeg,jpg,png,gif,webp,svg}'
+]);
+
+let resolvedImage = null;
+
+if (!isRemote && typeof src === 'string') {
+  // Trying to match the path
+  // If the path is relative (e.g. ./assets/...), we try to append it to the folder
+  let fullPath = src;
+  
+  if (src.startsWith('.')) {
+    // If a folder is provided (e.g. template name), we search in a specific location
+    if (folder) {
+      const basePath = `/src/content/sections/${folder}/`;
+      fullPath = new URL(src, `http://localhost${basePath}`).pathname;
+    } else {
+      // Trying to guess or searching for path suffix match
+      // This is a fallback if we do not know the section folder
+      const fileName = src.split('/').pop();
+      const match = Object.keys(images).find(key => key.endsWith(src.replace('./', '/')) || (fileName && key.endsWith(fileName)));
+      if (match) fullPath = match;
+    }
+  }
+
+  if (images[fullPath]) {
+    const mod = await images[fullPath]();
+    resolvedImage = mod.default;
+  }
+} else if (typeof src === 'object') {
+  // If Astro has already processed it (rare in JSONs, but possible)
+  resolvedImage = src;
+}
+
+const isResolved = !!resolvedImage;
+const showPlaceholder = placeholder || !src;
+
+// For imports from src/ Astro knows the real dimensions. We use them as defaults,
+// because arbitrary 800x600 could reserve a wrong aspect ratio and cause CLS.
+const displayWidth = width ?? (resolvedImage && 'width' in resolvedImage ? resolvedImage.width : 800);
+const displayHeight = height ?? (resolvedImage && 'height' in resolvedImage ? resolvedImage.height : 600);
+
+const PUBLIC_VARIANT_WIDTHS = [220, 480, 640, 800, 1080, 1280, 1600, 1920];
+const PUBLIC_VARIANT_SUFFIXES: Record<number, string> = {
+  220: '@220',
+  480: '@480',
+  640: '@640',
+  800: '',
+  1080: '@1080',
+  1280: '@1280',
+  1600: '@1600',
+  1920: '@1920',
+};
+
+function slugify(text: string): string {
+  const chars: Record<string, string> = {
+    ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z',
+    Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ź: 'z', Ż: 'z',
+  };
+  return text.split('').map((character) => chars[character] || character).join('')
+    .toLowerCase().replace(/[^a-z0-9.]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+function getPublicDerivativeBase(sourcePath: string): string | undefined {
+  const cleanPath = sourcePath.split(/[?#]/, 1)[0];
+  const match = cleanPath.match(/^\/assets\/(images|uploads)\/(.*)\/([^/]+)\.([a-z0-9]+)$/i);
+  const rootMatch = cleanPath.match(/^\/assets\/(images|uploads)\/([^/]+)\.([a-z0-9]+)$/i);
+  const parts = match ?? rootMatch;
+  if (!parts) return undefined;
+
+  const collection = parts[1];
+  const directory = match ? `${match[2]}/` : '';
+  const filename = match ? match[3] : parts[2];
+  const derivativeRoot = collection === 'uploads' ? '/assets/upload-derivatives/' : '/assets/images/';
+  return `${derivativeRoot}${directory}${slugify(filename)}`;
+}
+
+// Public images from the pipeline have several width variants. We build the list
+// only from files that actually exist, so missing derivatives do not create 404s.
+const isOptimizedPublicImage = typeof src === 'string'
+  && /^\/assets\/(images|uploads)\//.test(src)
+  && !/@(?:220|480|640|1080|1280|1600|1920)\.[a-z0-9]+(?:[?#].*)?$/i.test(src);
+const derivativeBase = isOptimizedPublicImage && typeof src === 'string'
+  ? getPublicDerivativeBase(src)
+  : undefined;
+
+const publicVariants = derivativeBase
+  ? PUBLIC_VARIANT_WIDTHS.map((variantWidth) => {
+      const suffix = PUBLIC_VARIANT_SUFFIXES[variantWidth];
+      const webp = `${derivativeBase}${suffix}.webp`;
+      const avif = `${derivativeBase}${suffix}.avif`;
+      const webpFile = path.join(process.cwd(), 'public', webp.replace(/^\//, ''));
+      const avifFile = path.join(process.cwd(), 'public', avif.replace(/^\//, ''));
+      return {
+        width: variantWidth,
+        webp: fs.existsSync(webpFile) ? webp : undefined,
+        avif: fs.existsSync(avifFile) ? avif : undefined,
+      };
+    })
+  : [];
+const availableWebp = publicVariants.filter((variant) => variant.webp);
+const availableAvif = publicVariants.filter((variant) => variant.avif);
+const publicSrcSet = availableWebp.length > 0
+  ? availableWebp.map((variant) => `${variant.webp} ${variant.width}w`).join(', ')
+  : undefined;
+const avifSrcSet = availableAvif.length > 0
+  ? availableAvif.map((variant) => `${variant.avif} ${variant.width}w`).join(', ')
+  : undefined;
+const optimizedFallback = availableWebp.find((variant) => variant.width === 800)?.webp;
+const imageSrc = optimizedFallback || src;
+const imageSizes = sizes || `(max-width: ${displayWidth}px) 100vw, ${displayWidth}px`;
+const resolvedFormat = resolvedImage && 'format' in resolvedImage ? resolvedImage.format : undefined;
+const isVector = resolvedFormat === 'svg';
+---
+
+{showPlaceholder ? (
+  <div class:list={["aspect-video flex items-center justify-center bg-brand-dark/5 rounded-xl", className]}>
+    <svg class="w-10 h-10 text-brand-dark/20" fill="none" stroke="currentColor" viewBox="0 0 256 256">
+      <path d="M216 40H40a16 16 0 00-16 16v144a16 16 0 0016 16h176a16 16 0 0016-16V56a16 16 0 00-16-16zm0 160H40V56h176v144zm-24-88a16 16 0 11-16-16 16 16 0 0116 16zm-110.1 98.3l39.6-52.4a8 8 0 0112.6-.1l26.1 30.6 10.8-14.2a8 8 0 0112.4-.2l28.2 36.1H48a8 8 0 01-6.1-12.8z" stroke-width="12"/>
+    </svg>
+  </div>
+) : isResolved ? (
+  isVector ? (
+    <Image
+      src={resolvedImage}
+      alt={alt}
+      width={displayWidth}
+      height={displayHeight}
+      layout="constrained"
+      sizes={imageSizes}
+      class={className}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+    />
+  ) : (
+    <Picture
+      src={resolvedImage}
+      alt={alt}
+      formats={['avif', 'webp']}
+      fallbackFormat="webp"
+      width={displayWidth}
+      height={displayHeight}
+      layout="constrained"
+      sizes={imageSizes}
+      class={className}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+    />
+  )
+) : isRemote || typeof src === 'string' ? (
+  <picture>
+    {avifSrcSet && <source srcset={avifSrcSet} sizes={imageSizes} type="image/avif" />}
+    <img
+      src={imageSrc}
+      alt={alt}
+      class={className}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+      width={displayWidth}
+      height={displayHeight}
+      srcset={publicSrcSet}
+      sizes={publicSrcSet ? imageSizes : undefined}
+    />
+  </picture>
+) : (
+  <div class:list={["aspect-video flex items-center justify-center bg-brand-dark/5 rounded-xl", className]}>
+    <svg class="w-10 h-10 text-brand-dark/20" fill="none" stroke="currentColor" viewBox="0 0 256 256">
+      <path d="M216 40H40a16 16 0 00-16 16v144a16 16 0 0016 16h176a16 16 0 0016-16V56a16 16 0 00-16-16zm0 160H40V56h176v144zm-24-88a16 16 0 11-16-16 16 16 0 0116 16zm-110.1 98.3l39.6-52.4a8 8 0 0112.6-.1l26.1 30.6 10.8-14.2a8 8 0 0112.4-.2l28.2 36.1H48a8 8 0 01-6.1-12.8z" stroke-width="12"/>
+    </svg>
+  </div>
+)}

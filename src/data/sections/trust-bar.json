@@ -1,0 +1,19 @@
+{
+  "eyebrow": "Nasi partnerzy",
+  "items": [
+    { "value": "15+", "label": "lat doświadczenia" },
+    { "value": "320", "label": "zrealizowanych projektów" },
+    { "value": "98%", "label": "zadowolonych klientów" },
+    { "value": "24h", "label": "średni czas odpowiedzi" },
+    { "value": "40+", "label": "branż obsługiwanych" },
+    { "value": "12", "label": "nagród branżowych" }
+  ],
+  "partners": [
+    { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Placeholder logo 1" },
+    { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Placeholder logo 2" },
+    { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Placeholder logo 3" },
+    { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Placeholder logo 4" },
+    { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Placeholder logo 5" },
+    { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Placeholder logo 6" }
+  ]
+}

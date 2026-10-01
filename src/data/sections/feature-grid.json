@@ -1,0 +1,44 @@
+{
+  "pl": {
+    "heading": "Co oferujemy",
+    "intro": "Kompleksowe wsparcie w realizacji celów, od planowania po wdrożenie i stałą poprawę.",
+    "items": [
+      {
+        "icon": "gear",
+        "title": "Strategia i wykonanie",
+        "description": "Planujemy działania na poziomie strategicznym i operacyjnym, a potem wdrażamy je w praktyce, krok po kroku."
+      },
+      {
+        "icon": "arrow-up-right",
+        "title": "Trwałe efekty",
+        "description": "Koncentrujemy się na wynikach, które utrzymują się długo po zakończeniu współpracy, nie tylko w prezentacji."
+      },
+      {
+        "icon": "check-circle",
+        "title": "Sprawdzone metody",
+        "description": "Działamy według sprawdzonych, powtarzalnych procedur, które gwarantują jakość i terminowość."
+      }
+    ]
+  },
+  "en": {
+    "heading": "What we offer",
+    "intro": "End-to-end support in reaching your goals, from planning to implementation and continuous improvement.",
+    "items": [
+      {
+        "icon": "gear",
+        "title": "Strategy and execution",
+        "description": "We plan at the strategic and operational level, then implement step by step in real-world conditions."
+      },
+      {
+        "icon": "arrow-up-right",
+        "title": "Lasting results",
+        "description": "We focus on outcomes that last long after the engagement ends, not just on the slides."
+      },
+      {
+        "icon": "check-circle",
+        "title": "Proven methods",
+        "description": "We follow proven, repeatable procedures that guarantee quality and on-time delivery."
+      }
+    ]
+  }
+}

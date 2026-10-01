@@ -1,0 +1,32 @@
+{
+  "imageSrc": "/assets/placeholders/image-portrait.svg",
+  "imageAlt": "Portret eksperta",
+  "pl": {
+    "eyebrow": "Twój partner Lean",
+    "name": "Imię i nazwisko eksperta",
+    "role": "Konsultant Lean Management",
+    "bio": "Łączymy wiedzę inżynierską z doświadczeniem w biznesie, żeby zmiany działały w praktyce, nie tylko w prezentacji. Projektujemy rozwiązania pod konkretną firmę, a nie gotowe schematy.",
+    "checks": [
+      "Doświadczenie zdobywane w firmach produkcyjnych",
+      "Projekty w produkcji, logistyce i jakości",
+      "Praktyk, trener i mentor liderów"
+    ],
+    "tags": ["VSM", "Kaizen", "5S", "SMED", "TPM"],
+    "linkedinLabel": "in",
+    "linkedinUrl": "https://linkedin.com/"
+  },
+  "en": {
+    "eyebrow": "Your Lean partner",
+    "name": "Expert name and surname",
+    "role": "Lean Management Consultant",
+    "bio": "We combine engineering knowledge with business experience so that changes work in practice, not just in a presentation. We design solutions for a specific company, not ready-made schemes.",
+    "checks": [
+      "Experience gained in manufacturing companies",
+      "Projects in production, logistics and quality",
+      "Practitioner, trainer and mentor for leaders"
+    ],
+    "tags": ["VSM", "Kaizen", "5S", "SMED", "TPM"],
+    "linkedinLabel": "in",
+    "linkedinUrl": "https://linkedin.com/"
+  }
+}

@@ -1,0 +1,122 @@
+---
+// Why: ProcessIconStepsBlock is a visual copy of the "PROCESS" section (header "How we work" +
+// grid of 4 steps with icons and arrows) from a reference project (index.astro, section
+// id="process"). Customer color tokens were converted into GLOBAL brand starter-kita tokens
+// (border-outline/70 -> border-brand-dark/10), and the content input was taken over by the global
+// motion system. The contents are general PL/EN without customer data.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import data from "@data/sections/process-icon-steps.json";
+
+// Why: Icons are custom stroke SVGs (not Phosphor), so we keep them as const in the component, and
+// in JSON only the icon name. This eliminates the risk of XSS: paths come ONLY from closed code
+// (1:1 copy from the client's LcIcon), and data from JSON never goes to set:html.
+export const ICON_PATHS = {
+  // Diagnosis: frame with corners, circle and magnifying glass
+  diagnose:
+    '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/>',
+  // Plan: exchange rate chart (broken line between two points)
+  plan: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+  // Implementation: rack (settings) with a wheel in the middle
+  implement:
+    '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  // Monitoring: graph bars on the coordinate axis
+  monitor:
+    '<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+} as const;
+
+export type IconName = keyof typeof ICON_PATHS;
+
+type Step = {
+  num: number;
+  title: string;
+  description: string;
+  icon: IconName;
+};
+
+type ProcessContent = (typeof data)["pl"];
+
+export interface Props {
+  /* * Section Anchor Id (default "process"). */
+  sectionId?: string;
+  /* * Content language from JSON. PL is the default language, EN is the English equivalent. */
+  locale?: "pl" | "en";
+  /** Localized section content. Props override JSON. */
+  data?: ProcessContent;
+  /* * Section header tag: 'h2' by default, 'h1' when the block is the first section of the page without hero (SEO). */
+  headingTag?: string;
+  /* * Additional classes per section (e.g. with PageBuilder). */
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const sectionId = props.sectionId ?? "proces";
+const locale = props.locale ?? "pl";
+const headingTag = props.headingTag ?? "h2";
+// Why: the "props || json" pattern (as in AboutLawBlock), so that the block works independently
+// with the section data, and PageBuilder or CMS can overwrite the content.
+const t: ProcessContent = props.data ?? data[locale] ?? data.pl;
+const steps = (t.steps ?? []) as Step[];
+---
+
+<Section id={sectionId} tone="page" class:list={["border-t border-brand-dark/10", props.class ?? ""]}>
+  <Container>
+    <div class="mx-auto max-w-4xl text-center">
+      <Heading tag={headingTag} variant="section-heading-lg" class="!font-extrabold">{t.heading}</Heading>
+      {/* Why: Why: the customer hid the bar (hidden) and showed it only after the animation
+          reveal. Client animations are removed in the kit,
+          so the line is immediately visible so that it is not a dead element. */}
+      <div class="mx-auto mt-5 h-0.5 w-14 bg-brand-primary" aria-hidden="true"></div>
+    </div>
+    <div class="mt-14 grid gap-10 lg:grid-cols-4 lg:gap-8">
+      {steps.map((step, i) => (
+        <article class="relative text-center">
+          {/* Why: Why: The dashed arrow links steps 1-3, never the last (and < steps.length - 1).
+              Only visible on desktop (lg:flex). border-brand-primary/40 to token
+              brand instead of customer var(--color-brand-primary). */}
+          {i < steps.length - 1 && (
+            <div class="pointer-events-none absolute right-0 top-8 z-10 hidden w-8 -translate-y-1/2 items-center lg:flex">
+              <span class="h-0 w-full border-t-2 border-dashed border-brand-primary/40"></span>
+              <svg
+                class="absolute -right-1 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+            </div>
+          )}
+          {/* Why: Why: the icon rendered by set:html is SAFE because they hit
+              only static paths with ICON_PATHS (const in component code),
+              and JSON only passes the icon name. Size and stroke-width 1.65
+              correspond to the client LcIcon size="lg" + class .lc-icon. */}
+          <svg
+            class="mx-auto block h-16 w-16 text-brand-primary"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.65"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <Fragment set:html={ICON_PATHS[step.icon] ?? ""} />
+          </svg>
+          <Heading level={3} variant="feature-title" class="mt-6 !font-extrabold">
+            {/* Why: Why: step number with leading zero (01.) as customer,
+                color from the text-brand-accent token. */}
+            <span class="text-brand-accent">{String(step.num).padStart(2, "0")}.</span> {step.title}
+          </Heading>
+          <Text variant="feature-body-sm" class="mt-3 !font-semibold leading-7">{step.description}</Text>
+        </article>
+      ))}
+    </div>
+  </Container>
+</Section>

@@ -1,0 +1,284 @@
+{
+  "pl": {
+    "page": {
+      "title": "Nova, strony internetowe dla ambitnych marek",
+      "description": "Tworzymy nowoczesne strony internetowe, które wzmacniają wizerunek, przyciągają klientów i wspierają rozwój biznesu.",
+      "heading": "Nowe możliwości dla ambitnych marek"
+    },
+    "demoBanner": {
+      "label": "Ten template został zaprojektowany i wdrożony przez WebScale.",
+      "downloadLabel": "Pobierz template",
+      "downloadHref": "https://github.com/Wiktorkulas51/template-t001-nova",
+      "customizeLabel": "Zamów customizację",
+      "customizeHref": "https://webscale.pl/?utm_source=nova-demo&utm_medium=banner&utm_campaign=t001-nova-custom"
+    },
+    "navigation": {
+      "menu": [
+        { "label": "O nas", "href": "#zespol" },
+        { "label": "Usługi", "href": "#uslugi" },
+        { "label": "Realizacje", "href": "#realizacje" },
+        { "label": "Opinie", "href": "#opinie" }
+      ],
+      "cta": {
+        "label": "Rozpocznij projekt",
+        "hoverLabel": "Porozmawiajmy",
+        "href": "#kontakt"
+      },
+      "aria": {
+        "menuOpen": "Otwórz menu nawigacji",
+        "menuClose": "Zamknij menu",
+        "menuExpand": "Rozwiń podmenu",
+        "navMain": "Nawigacja główna",
+        "drawer": "Menu nawigacji"
+      },
+      "languageLabel": "Wybierz język"
+    },
+    "sections": {
+      "nova-hero-wireframe": {
+        "eyebrow": "STRATEGIA / DESIGN / TECHNOLOGIA",
+        "heading": "Nowe możliwości dla",
+        "headingAccent": "ambitnych marek",
+        "description": "Tworzymy nowoczesne strony internetowe, które wzmacniają wizerunek, przyciągają klientów i realnie wspierają rozwój biznesu.",
+        "primaryCTA": { "label": "Rozpocznij projekt", "href": "#kontakt" },
+        "secondaryCTA": { "label": "Poznaj nas", "href": "#zespol" },
+        "trustedBy": "Zaufali nam",
+        "trustItems": ["MODO", "LUMI", "KOVO", "NOMA", "ASPEKT"],
+        "image": "/assets/images/t001-nova/t001-nova-hero.webp",
+        "imageAlt": "Strateg pracujący przy laptopie",
+        "stats": [
+          { "value": "2000+", "label": "Zrealizowanych projektów" },
+          { "value": "10+", "label": "Lat doświadczenia" },
+          { "value": "800+", "label": "Godzin pracy nad produktem" },
+          { "value": "150M+", "label": "Przychodu u naszych klientów" }
+        ]
+      },
+      "nova-projects": {
+        "title": "Pomysły zamieniamy w realne efekty",
+        "description": "Łączymy strategiczne myślenie, dopracowany design i nowoczesne technologie, aby tworzyć strony, które nie tylko wyglądają dobrze, ale przede wszystkim działają.",
+        "linkLabel": "Zobacz realizacje",
+        "linkHref": "#realizacje",
+        "items": [
+          { "category": "Strony internetowe", "title": "Marka premium z nową stroną", "image": "/assets/images/t001-nova/t001-nova-project-laptop.webp", "alt": "Laptop z projektem strony internetowej" },
+          { "category": "Wizerunek marki", "title": "Nowy wizerunek dla ambitnej marki", "image": "/assets/images/t001-nova/t001-nova-project-building.webp", "alt": "Nowoczesny budynek jako przykład realizacji" }
+        ]
+      },
+      "nova-services": {
+        "title": "Nasze usługi",
+        "description": "Kompleksowe wsparcie na każdym etapie, od koncepcji po wdrożenie i dalszy rozwój.",
+        "linkLabel": "Zobacz wszystkie",
+        "linkHref": "#uslugi",
+        "items": [
+          { "number": "01.", "icon": "palette", "title": "UX/UI Design", "description": "Nowoczesny i funkcjonalny design dopasowany do Twojej marki. Projektujemy doświadczenia, które są intuicyjne i wspierają cele biznesowe." },
+          { "number": "02.", "icon": "browser", "title": "Strony internetowe", "description": "Szybkie, responsywne i zoptymalizowane rozwiązania dla biznesu. Tworzymy strony, które dobrze wyglądają i skutecznie prowadzą do kontaktu." },
+          { "number": "03.", "icon": "paint-brush", "title": "Identyfikacja wizualna", "description": "Spójny wizerunek, który wyróżnia markę i buduje zaufanie. Łączymy strategię, typografię i detale w jeden rozpoznawalny kierunek." },
+          { "number": "04.", "icon": "lifebuoy", "title": "Wsparcie i rozwój", "description": "Stała opieka i rozwój strony po uruchomieniu projektu. Pomagamy utrzymać stronę aktualną, sprawną i gotową na kolejne etapy." }
+        ]
+      },
+      "nova-team": {
+        "title": "Ludzie, którzy tworzą wartość",
+        "description": "Jesteśmy zespołem specjalistów, którzy łączą pasję do technologii z wyczuciem dobrego designu. Każdy projekt dopasowujemy do marki, jej celów i odbiorców.",
+        "image": "/assets/images/t001-nova/t001-nova-about-team.webp",
+        "imageAlt": "Zespół Nova podczas pracy nad projektem",
+        "checks": ["Strategiczne podejście", "Indywidualne podejście", "Realne wsparcie"],
+        "teamCount": "10+",
+        "teamLabel": "specjalistów w zespole",
+        "teamAriaLabel": "Nasz zespół",
+        "teamAvatars": [
+          { "src": "/assets/images/t001-nova/t001-nova-avatar-01@220.webp", "alt": "Członkini zespołu Nova" },
+          { "src": "/assets/images/t001-nova/t001-nova-avatar-02@220.webp", "alt": "Członek zespołu Nova" },
+          { "src": "/assets/images/t001-nova/t001-nova-avatar-03@220.webp", "alt": "Członkini zespołu Nova" }
+        ],
+        "buttonLabel": "Poznaj zespół",
+        "buttonHref": "#zespol"
+      },
+      "faq3": {
+        "title": "Najczęściej zadawane pytania",
+        "description": "Najważniejsze informacje o współpracy, procesie i efektach, które mogą Państwa interesować przed rozpoczęciem projektu.",
+        "tagline": "FAQ",
+        "items": [
+          { "q": "Ile trwa przygotowanie nowej strony internetowej?", "a": "Standardowy projekt realizujemy zwykle w ciągu 2 do 4 tygodni. Termin zależy od zakresu strony, liczby podstron oraz szybkości przekazania materiałów." },
+          { "q": "Czy pomagacie w przygotowaniu treści i zdjęć?", "a": "Tak. Możemy uporządkować istniejące materiały, przygotować strukturę treści oraz wskazać kierunek dla zdjęć i grafik, aby całość była spójna z marką." },
+          { "q": "Czy strona będzie dobrze działać na telefonie?", "a": "Tak. Projektujemy od początku z myślą o telefonach, tabletach i komputerach. Każdy kluczowy widok sprawdzamy w kilku szerokościach ekranu." },
+          { "q": "Czy po publikacji mogę samodzielnie edytować stronę?", "a": "Tak. Przygotowujemy strukturę tak, aby najważniejsze treści można było później łatwo aktualizować. Po wdrożeniu przekazujemy również krótką instrukcję obsługi." }
+        ]
+      },
+      "testimonial-v2": {
+        "title": "Opinie, które mówią więcej",
+        "description": "Zobacz, jak współpraca z nami przełożyła się na lepszy wizerunek i wyniki naszych klientów.",
+        "tagline": "Opinie klientów",
+        "avatarAltPrefix": "Zdjęcie",
+        "items": [
+          { "quote": "Nowa strona uporządkowała naszą komunikację i od pierwszego tygodnia zaczęła przyciągać lepsze zapytania.", "author": "Anna Kowalska", "initials": "AK", "role": "Założycielka marki premium", "avatar": "https://i.pravatar.cc/150?u=anna-kowalska" },
+          { "quote": "Proces był konkretny, sprawny i bardzo dobrze prowadzony. Dostaliśmy stronę, która naprawdę pasuje do naszej marki.", "author": "Michał Nowak", "initials": "MN", "role": "Dyrektor operacyjny", "avatar": "https://i.pravatar.cc/150?u=michal-nowak" },
+          { "quote": "W końcu możemy pokazać nasze realizacje w sposób, który oddaje ich jakość. Klienci od razu to zauważyli.", "author": "Karolina Wójcik", "initials": "KW", "role": "Właścicielka studia", "avatar": "https://i.pravatar.cc/150?u=karolina-wojcik" }
+        ]
+      }
+    },
+    "footer": {
+      "eyebrow": "Twoja marka zasługuje na więcej",
+      "heading": "Zacznijmy tworzyć razem",
+      "description": "Porozmawiajmy o Twoim projekcie i sprawdźmy, jak możemy pomóc w rozwoju Twojej marki.",
+      "primaryLabel": "Skontaktuj się",
+      "primaryHref": "#kontakt",
+      "secondaryLabel": "Poznaj ofertę",
+      "secondaryHref": "#uslugi",
+      "legalLinks": [
+        { "label": "Polityka prywatności", "href": "/polityka-prywatnosci/" },
+        { "label": "Cookies", "href": "/cookies/" }
+      ],
+      "footerLinks": [
+        { "label": "O nas", "href": "#zespol" },
+        { "label": "Usługi", "href": "#uslugi" },
+        { "label": "Realizacje", "href": "#realizacje" },
+        { "label": "Opinie", "href": "#opinie" }
+      ],
+      "ariaLegal": "Dokumenty prawne",
+      "ariaNavigation": "Nawigacja stopki",
+      "copyright": "Wszelkie prawa zastrzeżone.",
+      "attributionPrefix": "Projekt i wdrożenie: ",
+      "attributionLinkLabel": "WebScale",
+      "attributionLinkHref": "https://webscale.pl"
+    }
+  },
+  "en": {
+    "page": {
+      "title": "Nova, websites for ambitious brands",
+      "description": "We create modern websites that strengthen your image, attract clients and support business growth.",
+      "heading": "New possibilities for ambitious brands"
+    },
+    "demoBanner": {
+      "label": "This template was designed and built by WebScale.",
+      "downloadLabel": "Download template",
+      "downloadHref": "https://github.com/themewagon/nova-astro",
+      "customizeLabel": "Request customization",
+      "customizeHref": "https://webscale.pl/?utm_source=nova-demo&utm_medium=banner&utm_campaign=t001-nova-custom"
+    },
+    "navigation": {
+      "menu": [
+        { "label": "About us", "href": "#zespol" },
+        { "label": "Services", "href": "#services" },
+        { "label": "Selected work", "href": "#realizacje" },
+        { "label": "Reviews", "href": "#opinie" }
+      ],
+      "cta": {
+        "label": "Start a project",
+        "hoverLabel": "Let's talk",
+        "href": "#contact"
+      },
+      "aria": {
+        "menuOpen": "Open navigation menu",
+        "menuClose": "Close menu",
+        "menuExpand": "Expand submenu",
+        "navMain": "Main navigation",
+        "drawer": "Navigation menu"
+      },
+      "languageLabel": "Choose language"
+    },
+    "sections": {
+      "nova-hero-wireframe": {
+        "eyebrow": "STRATEGY / DESIGN / TECHNOLOGY",
+        "heading": "New possibilities for",
+        "headingAccent": "ambitious brands",
+        "description": "We create modern websites that strengthen your image, attract clients and turn your business goals into real growth.",
+        "primaryCTA": { "label": "Start a project", "href": "#contact" },
+        "secondaryCTA": { "label": "Meet the team", "href": "#zespol" },
+        "trustedBy": "Trusted by",
+        "trustItems": ["MODO", "LUMI", "KOVO", "NOMA", "ASPEKT"],
+        "image": "/assets/images/t001-nova/t001-nova-hero.webp",
+        "imageAlt": "Strategist working at a laptop",
+        "stats": [
+          { "value": "2000+", "label": "Projects delivered" },
+          { "value": "10+", "label": "Years of experience" },
+          { "value": "800+", "label": "Product hours" },
+          { "value": "150M+", "label": "Client revenue generated" }
+        ]
+      },
+      "nova-projects": {
+        "title": "Turning ideas into real outcomes",
+        "description": "We combine strategic thinking, refined design and modern technology to create websites that look great and deliver measurable value.",
+        "linkLabel": "See selected work",
+        "linkHref": "#realizacje",
+        "items": [
+          { "category": "Websites", "title": "A premium brand with a new website", "image": "/assets/images/t001-nova/t001-nova-project-laptop.webp", "alt": "Laptop showing a website project" },
+          { "category": "Brand identity", "title": "A new identity for an ambitious brand", "image": "/assets/images/t001-nova/t001-nova-project-building.webp", "alt": "Modern building used as a project example" }
+        ]
+      },
+      "nova-services": {
+        "title": "Our services",
+        "description": "End-to-end support, from the first concept to launch and continued growth.",
+        "linkLabel": "Explore our services",
+        "linkHref": "#services",
+        "items": [
+          { "number": "01.", "icon": "palette", "title": "UX/UI design", "description": "Modern and functional design tailored to your brand. We create experiences that feel intuitive and support business goals." },
+          { "number": "02.", "icon": "browser", "title": "Websites", "description": "Fast, responsive and conversion-focused websites for modern businesses. Every screen has a clear purpose." },
+          { "number": "03.", "icon": "paint-brush", "title": "Brand identity", "description": "A consistent visual identity that helps your brand stand out and build trust through strategy, type and detail." },
+          { "number": "04.", "icon": "lifebuoy", "title": "Support and growth", "description": "Ongoing support after launch. We help keep your website current, reliable and ready for the next stage." }
+        ]
+      },
+      "nova-team": {
+        "title": "People who create value",
+        "description": "We are a team of specialists who combine a passion for technology with a sharp eye for good design. Every project is shaped around the brand, its goals and its audience.",
+        "image": "/assets/images/t001-nova/t001-nova-about-team.webp",
+        "imageAlt": "Nova team working on a project",
+        "checks": ["Strategic thinking", "Tailored approach", "Real support"],
+        "teamCount": "10+",
+        "teamLabel": "specialists on the team",
+        "teamAriaLabel": "Our team",
+        "teamAvatars": [
+          { "src": "/assets/images/t001-nova/t001-nova-avatar-01@220.webp", "alt": "Nova team member" },
+          { "src": "/assets/images/t001-nova/t001-nova-avatar-02@220.webp", "alt": "Nova team member" },
+          { "src": "/assets/images/t001-nova/t001-nova-avatar-03@220.webp", "alt": "Nova team member" }
+        ],
+        "buttonLabel": "Meet the team",
+        "buttonHref": "#zespol"
+      },
+      "faq3": {
+        "title": "Frequently asked questions",
+        "description": "The key information about our process, collaboration and outcomes before you start a project.",
+        "tagline": "FAQ",
+        "items": [
+          { "q": "How long does it take to prepare a new website?", "a": "A standard project usually takes 2 to 4 weeks. The timeline depends on the scope, number of pages and how quickly the materials are provided." },
+          { "q": "Can you help prepare the copy and images?", "a": "Yes. We can organise existing materials, prepare the content structure and recommend a direction for imagery and graphics that fits the brand." },
+          { "q": "Will the website work well on mobile?", "a": "Yes. We design for phones, tablets and desktops from the start. Every key view is checked across several screen sizes." },
+          { "q": "Can I edit the website after launch?", "a": "Yes. We structure the project so the most important content can be updated easily. We also provide a short handover guide after launch." }
+        ]
+      },
+      "testimonial-v2": {
+        "title": "Reviews that say more",
+        "description": "See how working with us translated into a stronger image and better results for our clients.",
+        "tagline": "Client reviews",
+        "avatarAltPrefix": "Photo of",
+        "items": [
+          { "quote": "The new website finally gave our communication a clear structure and started bringing better enquiries from the first week.", "author": "Anna Kowalska", "initials": "AK", "role": "Founder of a premium brand", "avatar": "https://i.pravatar.cc/150?u=anna-kowalska" },
+          { "quote": "The process was focused, efficient and very well guided. We received a website that genuinely fits our brand.", "author": "Michal Nowak", "initials": "MN", "role": "Operations director", "avatar": "https://i.pravatar.cc/150?u=michal-nowak" },
+          { "quote": "We can finally present our work in a way that reflects its quality. Clients noticed the difference straight away.", "author": "Karolina Wojcik", "initials": "KW", "role": "Studio owner", "avatar": "https://i.pravatar.cc/150?u=karolina-wojcik" }
+        ]
+      }
+    },
+    "footer": {
+      "eyebrow": "Your brand deserves more",
+      "heading": "Let's create together",
+      "description": "Tell us about your project and let's see how we can help your brand grow.",
+      "primaryLabel": "Get in touch",
+      "primaryHref": "#contact",
+      "secondaryLabel": "Explore services",
+      "secondaryHref": "#services",
+      "legalLinks": [
+        { "label": "Privacy policy", "href": "/polityka-prywatnosci/" },
+        { "label": "Cookies", "href": "/cookies/" }
+      ],
+      "footerLinks": [
+        { "label": "About us", "href": "#zespol" },
+        { "label": "Services", "href": "#services" },
+        { "label": "Selected work", "href": "#realizacje" },
+        { "label": "Reviews", "href": "#opinie" }
+      ],
+      "ariaLegal": "Legal documents",
+      "ariaNavigation": "Footer navigation",
+      "copyright": "All rights reserved.",
+      "attributionPrefix": "Design and development by ",
+      "attributionLinkLabel": "WebScale",
+      "attributionLinkHref": "https://webscale.pl"
+    }
+  }
+}

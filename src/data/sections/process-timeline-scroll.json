@@ -1,0 +1,64 @@
+{
+  "pl": {
+    "title": "Jak pracujemy?",
+    "description": "Poznaj nasz sprawdzony proces współpracy od pierwszego kontaktu po oddanie gotowego wnętrza.",
+    "stepLabel": "Krok",
+    "items": [
+      {
+        "title": "Konsultacja i analiza potrzeb",
+        "description": "Rozmawiamy o Twoich oczekiwaniach i budżecie, analizujemy projekt i ustalamy zakres prac oraz wstępne założenia."
+      },
+      {
+        "title": "Pomiary i wizja lokalna",
+        "description": "Spotykamy się na nieruchomości i przeprowadzamy szczegółową weryfikację techniczną ścian, wylewek i instalacji."
+      },
+      {
+        "title": "Precyzyjny kosztorys i harmonogram",
+        "description": "Przygotowujemy przejrzystą wycenę oraz realny harmonogram prac. Dokładnie wiesz, za co płacisz i kiedy zakończą się etapy."
+      },
+      {
+        "title": "Przejrzysta umowa i płatności etapami",
+        "description": "Podpisujemy czytelną umowę zabezpieczającą obie strony. Płacisz wyłącznie za faktycznie wykonane i odebrane prace."
+      },
+      {
+        "title": "Realizacja i tygodniowe raporty",
+        "description": "Koordynujemy zakupy, logistykę i podwykonawców. Co tydzień otrzymujesz raport zdjęciowy z podsumowaniem postępów."
+      },
+      {
+        "title": "Odbiór pod klucz i gwarancja",
+        "description": "Przeprowadzamy drobiazgowy odbiór jakościowy i oddajemy gotowe do zamieszkania wnętrze wraz z gwarancją na wykonane prace."
+      }
+    ]
+  },
+  "en": {
+    "title": "How we work?",
+    "description": "Get to know our proven cooperation process from the first contact to handing over the finished interior.",
+    "stepLabel": "Step",
+    "items": [
+      {
+        "title": "Consultation and needs analysis",
+        "description": "We talk about your expectations and budget, analyze the design and agree on the scope of works and initial assumptions."
+      },
+      {
+        "title": "Measurements and site visit",
+        "description": "We meet at the property and carry out a detailed technical verification of walls, screeds and installations."
+      },
+      {
+        "title": "Precise quote and schedule",
+        "description": "We prepare a transparent estimate and a realistic work schedule. You know exactly what you pay for and when stages end."
+      },
+      {
+        "title": "Clear contract and stage payments",
+        "description": "We sign a clear contract protecting both parties. You pay only for works actually completed and accepted."
+      },
+      {
+        "title": "Execution and weekly reports",
+        "description": "We coordinate purchases, logistics and subcontractors. Every week you receive a photo report with a progress summary."
+      },
+      {
+        "title": "Turnkey handover and guarantee",
+        "description": "We carry out a meticulous quality inspection and hand over the interior ready for occupancy with a guarantee on the works."
+      }
+    ]
+  }
+}

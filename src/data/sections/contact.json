@@ -1,0 +1,58 @@
+{
+  "title": "Skontaktuj się z nami",
+  "description": "Jesteśmy do Twojej dyspozycji. Wypełnij formularz, a odezwiemy się najszybciej jak to możliwe.",
+  "mapUrl": "https://www.google.com/maps?output=embed&q=Warszawa,+Polska",
+  "email": "kontakt@twojafirma.pl",
+  "address": "ul. Przykładowa 123, 00-001 Warszawa",
+  "social": {
+    "facebook": "#",
+    "instagram": "#",
+    "youtube": "#",
+    "twitter": "#",
+    "labels": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "youtube": "YouTube",
+      "twitter": "Twitter"
+    }
+  },
+  "formFields": [
+    { "name": "firstname", "label": "Imię", "type": "text", "required": true, "placeholder": "Jan", "autoComplete": "given-name" },
+    { "name": "lastname", "label": "Nazwisko", "type": "text", "required": true, "placeholder": "Kowalski", "autoComplete": "family-name" },
+    { "name": "email", "label": "E-mail", "type": "email", "required": true, "placeholder": "jan@example.com", "autoComplete": "email" },
+    { "name": "phone", "label": "Telefon", "type": "tel", "required": false, "placeholder": "+48 123 456 789", "autoComplete": "tel" },
+    { "name": "subject", "label": "Temat", "type": "select", "required": true, "options": [
+      { "value": "wycena", "label": "Wycena projektu" },
+      { "value": "wspolpraca", "label": "Współpraca" },
+      { "value": "pytanie", "label": "Pytanie ogólne" },
+      { "value": "inne", "label": "Inne" }
+    ]},
+    { "name": "message", "label": "Wiadomość", "type": "textarea", "required": true, "rows": 5, "placeholder": "Twoja wiadomość...", "autoComplete": "off" }
+  ],
+  "rows": {
+    "labels": {
+      "phone": "Telefon",
+      "email": "E-mail",
+      "address": "Adres",
+      "location": "Lokalizacja"
+    }
+  },
+  "socialLabel": "Obserwuj nas",
+  "joinTeam": {
+    "paragraphs": [
+      "Wierzymy, że razem osiągniemy zamierzony efekt. Dziękujemy za zaufanie, jakim nas Państwo obdarzyli.",
+      "Po wypełnieniu formularza otrzymają Państwo odpowiedź e-mail z dalszymi krokami współpracy."
+    ]
+  },
+  "map": {
+    "openLabel": "Otwórz w Google Maps",
+    "externalLabel": "Otwórz większą mapę w Google Maps",
+    "consentMessage": "Mapa zostanie załadowana po zgodzie na usługę zewnętrzną.",
+    "cookieSettingsLabel": "Ustawienia cookies"
+  },
+  "submitLabel": "Wyślij wiadomość",
+  "submittingLabel": "Wysyłanie...",
+  "resetLabel": "Wyślij kolejną",
+  "successMessage": "Dziękujemy za wiadomość! Odezwiemy się najszybciej jak to możliwe.",
+  "errorMessage": "Wystąpił błąd podczas wysyłania. Spróbuj ponownie później."
+}

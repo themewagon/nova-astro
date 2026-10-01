@@ -1,0 +1,44 @@
+{
+  "pl": {
+    "eyebrow": "Jak działamy",
+    "headingLines": ["Podejście, które przynosi", "mierzalne efekty"],
+    "steps": [
+      {
+        "num": "01",
+        "title": "Diagnoza i cele",
+        "description": "Analizujemy potrzeby i cel współpracy, aby trafnie dopasować rozwiązanie i metody pracy."
+      },
+      {
+        "num": "02",
+        "title": "Plan działania",
+        "description": "Przygotowujemy konkretny plan z priorytetami i jasnymi krokami wdrożenia zmian."
+      },
+      {
+        "num": "03",
+        "title": "Wdrożenie i trwałe efekty",
+        "description": "Realizujemy zmiany i wspieramy zespół, aż wypracowane efekty się utrwalą."
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "How we work",
+    "headingLines": ["An approach that brings", "measurable results"],
+    "steps": [
+      {
+        "num": "01",
+        "title": "Diagnosis and goals",
+        "description": "We analyze the needs and the goal of the cooperation to fit the right solution and working methods."
+      },
+      {
+        "num": "02",
+        "title": "Action plan",
+        "description": "We prepare a concrete plan with priorities and clear steps for implementing the changes."
+      },
+      {
+        "num": "03",
+        "title": "Delivery and lasting results",
+        "description": "We implement the changes and support the team until the achieved results become permanent."
+      }
+    ]
+  }
+}

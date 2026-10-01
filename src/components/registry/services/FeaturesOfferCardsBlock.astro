@@ -1,0 +1,204 @@
+---
+// Why: FeaturesOfferCardsBlock is a reusable visual treatment for offer cards
+// project (v1 "Offer Cards"): pricing cards with ghost number in Anton, red price, MOST
+// POPULAR badge in the middle offer and CTA as a button. Glow (ui-glow-sec + ui-glow-offers)
+// and font Anton are already in the core.css/fonts.css of the starter-kit, so the block looks
+// identical to the source.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import offerData from "@data/sections/features-offer.json";
+
+type FeatureItem = {
+  icon?: string;
+  title?: string;
+  description?: string;
+  price?: string;
+  priceNote?: string;
+  priceOptions?: string[];
+  priceNote2?: string;
+  cta?: string;
+  features?: string[];
+};
+
+interface Props {
+  sectionId?: string;
+  title?: string;
+  subtitle?: string;
+  items?: FeatureItem[];
+/** Label above the section title, editable through JSON. */
+  eyebrow?: string;
+  /** HoverText przycisku CTA, edytowalny z JSON. */
+  ctaHover?: string;
+/** Badge label displayed on the middle card. */
+  popularBadge?: string;
+  /** Etykieta zamiast ceny, gdy karta nie ma ceny. */
+  emptyPriceLabel?: string;
+/** Fallback CTA used when a card does not define item.cta. */
+  ctaFallback?: { label: string; href: string };
+  /** Section heading tag: 'h2' by default, 'h1' on subpages (SEO). */
+  headingTag?: string;
+}
+
+const {
+  sectionId = "oferta",
+  title = "",
+  subtitle = "",
+  items = [],
+  eyebrow = "",
+  ctaHover = "",
+  popularBadge = "",
+  emptyPriceLabel = "",
+  ctaFallback,
+  headingTag = "h2",
+} = Astro.props as Props;
+
+// Why: "props || json" lets page configuration override JSON content without
+// duplicating the default data in the component.
+const resolvedTitle = title || offerData.title || "";
+const resolvedSubtitle = subtitle || offerData.subtitle || "";
+const resolvedEyebrow = eyebrow || offerData.eyebrow || "";
+const resolvedCtaHover = ctaHover || offerData.ctaHover || "";
+const resolvedPopularBadge = popularBadge || offerData.popularBadge || "";
+const resolvedEmptyPrice = emptyPriceLabel || offerData.emptyPriceLabel || "";
+// Why: optional chaining instead of the default "= {}" in destructuring, because the default
+// empty object spoils type inference ({} absorbs the actual type).
+const resolvedCtaFallback = {
+  label: ctaFallback?.label || offerData.ctaFallback?.label || "",
+  href: ctaFallback?.href || offerData.ctaFallback?.href || "",
+};
+const list = items.length > 0 ? items : (offerData.items || []);
+
+// Why: the numbering of offers (01, 02, 03) creates an editorial order consistent with
+// ContactEditorialBlock, and the middle position receives a badge distinction.
+const numbered = list.map((item, index) => ({
+  ...item,
+  num: String(index + 1).padStart(2, "0"),
+  popular: index === 1,
+}));
+---
+
+<Section id={sectionId} tone="page" class="relative">
+  <Container>
+    <div class="relative">
+      <!-- Why: glow lights behind the headline and price cards (ui-glow-offers
+           from core.css). Blob anchored to section container - edges out
+           view, so the light looks like limitless background illumination. -->
+      <div class="ui-glow ui-glow-sec ui-glow-offers" aria-hidden="true"></div>
+
+      <!-- Section header centered: label + title + lead -->
+      <div class="relative mb-12 flex flex-col items-center text-center">
+        <span class="ui-type-accent-label mb-4">{resolvedEyebrow}</span>
+        <Heading tag={headingTag} variant="section-title" class="text-brand-dark">
+          {resolvedTitle}
+        </Heading>
+        <Text variant="lead" class="mt-4 max-w-2xl text-brand-dark/70">
+          {resolvedSubtitle}
+        </Text>
+      </div>
+
+      <!-- Why: grid 1 column on mobile, 2 on sm, 3 on lg; middle card
+           (popular) is slightly raised to emphasize emphasis. -->
+      <div class="relative grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        {numbered.map((item) => (
+          <article
+            class:list={[
+              "ui-card-interactive ui-glow-card group relative flex flex-col overflow-hidden rounded-2xl border bg-white p-7",
+              item.popular
+                ? "border-brand-primary/60 lg:-translate-y-3"
+                : "border-brand-dark/15",
+            ]}
+          >
+            <!-- Why: Anton's ghost number creates a sporty character of the card;
+                 on hover the number fades (opacity 30 -> 10) so that the content gains
+                 on readability and emphasize interaction. -->
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute -right-2 -top-7 font-[Anton] text-[7rem] leading-none text-neutral-900 opacity-30 transition-opacity duration-300 group-hover:opacity-10"
+            >
+              {item.num}
+            </span>
+
+            <!-- Why: badge only in the middle card (popular) - diagonal
+                 in the corner of the card. -->
+            {item.popular && (
+              <span class="absolute right-0 top-0 rounded-bl-lg bg-brand-primary px-3 py-1 font-bold text-[10px] uppercase italic tracking-[0.18em] text-white">
+                {resolvedPopularBadge}
+              </span>
+            )}
+
+            <div class="mb-6 flex size-12 items-center justify-center rounded-lg bg-brand-primary/10 text-brand-primary transition-all duration-300 group-hover:bg-brand-primary group-hover:text-white">
+              <Icon name={item.icon ?? "star"} class="text-2xl" />
+            </div>
+
+            <h3 class="text-lg font-bold uppercase leading-none tracking-[0.02em] text-brand-dark">{item.title}</h3>
+
+            <Text variant="body" class="mt-3 text-sm leading-relaxed text-brand-dark/70">
+              {item.description}
+            </Text>
+
+            <!-- Why: price as the highlight of the card - Anton in suit
+                 accent. Empty price only shows the CTA (emptyPrice) label. -->
+            <div class="mt-6 flex items-baseline gap-2">
+              {item.price ? (
+                <>
+                  <span class="font-[Anton] text-5xl leading-none text-brand-primary">{item.price}</span>
+                  <span class="text-sm font-bold uppercase tracking-[0.15em] text-brand-dark/60">
+                    {item.priceNote}
+                  </span>
+                </>
+              ) : (
+                <span class="text-sm font-bold uppercase tracking-[0.2em] text-brand-primary">
+                  {resolvedEmptyPrice}
+                </span>
+              )}
+            </div>
+
+            <!-- Why: price variants as a list with accent dots -
+                 clear distinction of payment options without heavy graphics. -->
+            {item.priceOptions && item.priceOptions.length > 0 && (
+              <ul class="mt-4 space-y-1.5">
+                {item.priceOptions.map((opt) => (
+                  <li class="flex items-center gap-2 text-sm text-brand-dark/70">
+                    <span aria-hidden="true" class="size-1 shrink-0 rounded-full bg-brand-primary/60"></span>
+                    {opt}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <!-- Why: additional note (e.g. condition of cooperation) as delicate
+                 colored bar under the price variants. -->
+            {item.priceNote2 && (
+              <p class="mt-4 rounded-lg border border-brand-primary/20 bg-brand-primary/5 px-3 py-2 text-sm font-semibold leading-snug text-brand-primary md:text-base">
+                {item.priceNote2}
+              </p>
+            )}
+
+            <!-- Why: list of features separated from price by a line (border-t);
+                 plain dots as a marker so as not to compete with the content. -->
+            <ul class="mt-6 space-y-2.5 border-t border-brand-dark/15 pt-5">
+              {(item.features ?? []).map((feature) => (
+                <li class="flex items-start gap-3 text-sm leading-snug text-brand-dark/70">
+                  <span aria-hidden="true" class="mt-[7px] size-1 shrink-0 rounded-full bg-brand-primary/60"></span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+
+            <!-- Why: CTA glued to the bottom of the card (mt-auto) so that all
+                 buttons were aligned regardless of content length. -->
+            <div class="mt-auto pt-7">
+              <Button href={resolvedCtaFallback.href} variant="primary" class="w-full" hoverText={resolvedCtaHover}>
+                {item.cta ?? resolvedCtaFallback.label}
+              </Button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </Container>
+</Section>

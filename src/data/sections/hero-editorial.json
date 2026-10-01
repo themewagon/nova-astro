@@ -1,0 +1,48 @@
+{
+  "pl": {
+    "eyebrow": "Studio kreatywne",
+    "heading": "Kreatywność i strategia",
+    "headingAccent": "w jednym miejscu.",
+    "description": "Projektujemy marki i strony internetowe, które łączą wyrazisty design z działającymi rozwiązaniami. Od pierwszego szkicu, przez wdrożenie, po stały rozwój.",
+    "primaryCTA": {
+      "label": "Umów rozmowę",
+      "href": "/kontakt/"
+    },
+    "trustBadges": [
+      { "icon": "star", "label": "Sprawdzone metody" },
+      { "icon": "shield-chevron", "label": "Gwarancja jakości" },
+      { "icon": "check-circle", "label": "Mierzalne efekty" }
+    ],
+    "marqueeItems": [
+      { "name": "Branding", "icon": "star" },
+      { "name": "Strategia", "icon": "gear" },
+      { "name": "Design", "icon": "pencil" },
+      { "name": "Digital", "icon": "waveform" },
+      { "name": "Wideo", "icon": "play" },
+      { "name": "Content", "icon": "chat" }
+    ]
+  },
+  "en": {
+    "eyebrow": "Creative studio",
+    "heading": "Creativity and strategy",
+    "headingAccent": "in one place.",
+    "description": "We design brands and websites that combine distinctive design with solutions that actually work. From the first sketch, through launch, to steady growth.",
+    "primaryCTA": {
+      "label": "Book a call",
+      "href": "/kontakt/"
+    },
+    "trustBadges": [
+      { "icon": "star", "label": "Proven methods" },
+      { "icon": "shield-chevron", "label": "Quality guarantee" },
+      { "icon": "check-circle", "label": "Measurable results" }
+    ],
+    "marqueeItems": [
+      { "name": "Branding", "icon": "star" },
+      { "name": "Strategy", "icon": "gear" },
+      { "name": "Design", "icon": "pencil" },
+      { "name": "Digital", "icon": "waveform" },
+      { "name": "Video", "icon": "play" },
+      { "name": "Content", "icon": "chat" }
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "logo": "QA Fixture",
+    "links": [
+      { "label": "Start", "href": "/qa/mobile-fixture/" },
+      { "label": "O nas", "href": "/qa/mobile-fixture/#about" },
+      { "label": "Usługi", "href": "/qa/mobile-fixture/#services" },
+      { "label": "Kontakt", "href": "/qa/mobile-fixture/#contact" }
+    ],
+    "cta": { "label": "Umów rozmowę", "href": "/qa/mobile-fixture/#contact" }
+  },
+  "hero": {
+    "tagline": "Najlepsze rozwiązania",
+    "title": "Profesjonalne usługi cyfrowe dla Twojej firmy, kompleksowa obsługa i wsparcie techniczne",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.",
+    "cta": {
+      "label": "Skontaktuj się z nami już dzisiaj i umów bezpłatną konsultację",
+      "href": "/qa/mobile-fixture/#contact"
+    }
+  },
+  "cards": [
+    {
+      "title": "Doradztwo techniczne w zakresie optymalizacji procesów biznesowych",
+      "description": "Oferujemy pełne wsparcie w zakresie doradztwa technicznego, analizy potrzeb, projektowania rozwiązań oraz wdrażania systemów. Specjalizujemy się w optymalizacji procesów biznesowych z wykorzystaniem nowoczesnych technologii.",
+      "email": "bardzodlugiadresemailowyniezawierajacyspacji@domena-rozszerzona-testowa.pl",
+      "phone": "+48 123 456 789",
+      "address": "ul. Przykładowa 12345678901234567890, 00-001 Warszawa"
+    },
+    {
+      "title": "Projektowanie i tworzenie stron internetowych oraz aplikacji webowych",
+      "description": "Tworzymy nowoczesne, szybkie i responsywne strony internetowe. Projektujemy interfejsy użytkownika z naciskiem na UX i konwersję. Używamy najnowszych technologii takich jak Astro, React i Tailwind CSS.",
+      "email": "kontakt@dlugadomenatestowa-ebiznes.pl",
+      "phone": "+48 987 654 32109876543210",
+      "address": "ul. Długa 12345678901234567890, 90-001 Łódź"
+    },
+    {
+      "title": "Audyt wydajności i optymalizacja szybkości ładowania stron",
+      "description": "Przeprowadzamy kompleksowy audyt wydajności stron internetowych. Identyfikujemy problemy z szybkością ładowania i Core Web Vitals. Optymalizujemy obrazy, CSS i JavaScript dla osiągnięcia 95+ punktów w Lighthouse.",
+      "email": "audytwydajnosciowy-test-optymalizacjastron@optymalizacja-test.pl",
+      "phone": "+48 111 222 333 444 555 666",
+      "address": "ul. Testowa 12345678901234567890, 30-001 Kraków"
+    },
+    {
+      "title": "Hosting, domeny i utrzymanie stron, kompletne wsparcie techniczne",
+      "description": "Zajmujemy się konfiguracją hostingu, domen i certyfikatów SSL. Oferujemy usługi utrzymania stron, aktualizacji i kopii zapasowych. Zapewniamy wsparcie techniczne i monitoring dostępności. Loremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididunt.",
+      "email": "adres-bez-spacji-i-bardzo-dlugi-ktory-sprawdza-lamanie-tekstu-w-karcie@przykladowa-domena-testowa.pl",
+      "phone": "+48 777 888 999000111222333444555",
+      "address": "ul. Prosta 12345678901234567890, 50-001 Wrocław"
+    }
+  ],
+  "marquee": {
+    "items": [
+      "Technologia", "Innowacja", "Automatyzacja", "Optymalizacja", "Digitalizacja",
+      "Transformacja", "Analityka", "Integracja", "Wirtualizacja", "Modernizacja"
+    ]
+  },
+  "form": {
+    "nameLabel": "Twoje imię i nazwisko",
+    "namePlaceholder": "Wpisz swoje imię i nazwisko",
+    "emailLabel": "Adres e-mail",
+    "emailPlaceholder": "wpisz@email.com",
+    "messageLabel": "Twoja wiadomość",
+    "messagePlaceholder": "Opisz czego dotyczy Twoja sprawa...",
+    "submitLabel": "Wyślij wiadomość i poczekaj na kontakt",
+    "successMessage": "Dziękujemy za wiadomość! Odpowiemy najszybciej jak to możliwe.",
+    "errorMessage": "Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później."
+  },
+  "footer": {
+    "about": "Profesjonalna firma świadcząca usługi cyfrowe od 2010 roku. Specjalizujemy się w tworzeniu stron internetowych, optymalizacji wydajności i doradztwie technicznym dla biznesu.",
+    "links": [
+      { "label": "Start", "href": "/qa/mobile-fixture/" },
+      { "label": "Polityka prywatności", "href": "/qa/mobile-fixture/polityka-prywatnosci/" },
+      { "label": "Regulamin", "href": "/qa/mobile-fixture/regulamin/" },
+      { "label": "Kontakt", "href": "/qa/mobile-fixture/#contact" }
+    ],
+    "copyright": "QA Fixture 2026. Wszelkie prawa zastrzeżone."
+  },
+  "anchorSection": {
+    "id": "contact",
+    "title": "Skontaktuj się z nami, odpowiemy na wszystkie pytania dotyczące naszej oferty",
+    "description": "Masz pytanie? Napisz do nas! Odpowiadamy w ciągu 24 godzin w dni robocze. Zapraszamy też do bezpośredniego kontaktu telefonicznego."
+  }
+}

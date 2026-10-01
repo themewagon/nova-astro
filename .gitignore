@@ -1,0 +1,55 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# Full Phosphor CSS is generated from the installed package before dev/build.
+src/styles/.generated/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+oauth-config.php
+
+# CMS - lokalny config wygenerowany (zawiera tylko local_backend, ale jest
+# pochodna cms:gen i nie ma sensu trzymac go w repo)
+
+# Client Assets
+src/assets/raw/
+!src/assets/raw/.gitkeep
+
+# macOS-specific files
+.DS_Store
+
+# jetbrains setting folder
+.idea/
+
+# impeccable live sessions (runtime data)
+.impeccable/live/sessions/
+
+# Lighthouse reports are generated evidence, not source files.
+audit-reports/lighthouse-*
+audit-reports/
+
+# Marketplace archives are generated locally and are not source files.
+release/
+
+# Internal WebScale workflow files are kept locally and are not part of the public theme.
+AGENTS.md
+TEMPLATE.md
+.docs/
+.impeccable/
+.vscode/
+archive/
+
+dev-server.log

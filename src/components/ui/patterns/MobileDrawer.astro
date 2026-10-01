@@ -1,0 +1,86 @@
+---
+import Button from '@components/ui/atoms/Button.astro';
+import Heading from '@components/ui/atoms/Heading.astro';
+import Icon from '@components/ui/atoms/Icon.astro';
+import Text from '@components/ui/atoms/Text.astro';
+import { formatInternalLink } from '@utils/url';
+
+interface DrawerLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  links?: DrawerLink[];
+  ctaLabel?: string;
+  ctaHref?: string;
+  closeLabel?: string;
+  mode?: 'inline' | 'overlay';
+  class?: string;
+}
+
+const {
+  id = 'mobile-drawer',
+  eyebrow,
+  title,
+  links = [],
+  ctaLabel,
+  ctaHref,
+  closeLabel = 'Zamknij menu',
+  mode = 'inline',
+  class: className,
+} = Astro.props;
+
+const isOverlay = mode === 'overlay';
+---
+
+<div
+  id={id}
+  class:list={[
+    'isolate',
+    isOverlay ? 'fixed inset-0 z-[13000] flex items-stretch justify-end bg-brand-dark/40 p-0' : 'relative w-full max-w-sm rounded-xl border border-brand-dark/10 bg-[var(--ui-bg-page)] p-5 shadow-lg',
+    className,
+  ]}
+  data-mobile-drawer
+  data-mobile-drawer-mode={mode}
+>
+  {isOverlay && <button type="button" class="absolute inset-0 cursor-default" data-mobile-drawer-close aria-label={closeLabel}></button>}
+  <aside
+    class:list={[
+      'relative flex min-h-full w-full flex-col gap-6 bg-[var(--ui-bg-page)] p-6 text-brand-dark shadow-xl sm:max-w-sm',
+      !isOverlay && 'min-h-0 rounded-xl p-0 shadow-none',
+    ]}
+    role="dialog"
+    aria-modal={isOverlay ? 'true' : undefined}
+    aria-label={title}
+  >
+    <div class="flex items-start justify-between gap-4 border-b border-brand-dark/10 pb-5">
+      <div class="space-y-1">
+        {eyebrow && <Text variant="accent-label">{eyebrow}</Text>}
+        <Heading tag="h2" variant="section-heading-lg">{title}</Heading>
+      </div>
+      <Button type="button" variant="ghost" size="icon" class="size-9 shrink-0" aria-label={closeLabel} data-mobile-drawer-close>
+        <Icon name="x" aria-hidden="true" />
+      </Button>
+    </div>
+    <nav aria-label={title} class="space-y-1">
+      {links.map((link) => (
+        <a href={formatInternalLink(link.href)} class="block rounded-md px-3 py-2.5 text-sm font-semibold text-brand-dark transition-colors hover:bg-brand-dark/[0.05] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand-primary/30">
+          {link.label}
+        </a>
+      ))}
+    </nav>
+    {ctaLabel && ctaHref && <Button href={ctaHref} variant="primary" full>{ctaLabel}</Button>}
+  </aside>
+</div>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-mobile-drawer-close]') : null;
+    const drawer = target?.closest('[data-mobile-drawer]');
+    drawer?.setAttribute('hidden', 'true');
+  });
+</script>

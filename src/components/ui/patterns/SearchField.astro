@@ -1,0 +1,44 @@
+---
+import Button from '@components/ui/atoms/Button.astro';
+import Icon from '@components/ui/atoms/Icon.astro';
+import Input from '@components/ui/atoms/Input.astro';
+import Text from '@components/ui/atoms/Text.astro';
+
+interface Props {
+  id?: string;
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  hint?: string;
+  actionLabel?: string;
+  actionHref?: string;
+  class?: string;
+}
+
+const {
+  id = 'search-field',
+  name,
+  label,
+  placeholder,
+  hint,
+  actionLabel,
+  actionHref,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['space-y-3', className]}>
+  {label && <Text variant="accent-label">{label}</Text>}
+  <div class="flex flex-col gap-3 sm:flex-row">
+    <div class="relative min-w-0 flex-1">
+      <Input id={id} name={name} type="search" placeholder={placeholder} class="pr-11" />
+      <Icon name="magnifying-glass" size="md" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-brand-dark/45" />
+    </div>
+    {actionLabel && (
+      <Button type="button" href={actionHref} variant="primary" size="md">
+        {actionLabel}
+      </Button>
+    )}
+  </div>
+  {hint && <Text variant="body" class="text-sm text-brand-dark/55">{hint}</Text>}
+</div>

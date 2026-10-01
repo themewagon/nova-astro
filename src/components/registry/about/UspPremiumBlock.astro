@@ -1,0 +1,140 @@
+---
+// Why: UspPremiumBlock is a copy of the USP section (stats + benefit cards
+// + CTA) with reusable premium presentation. Color tokens
+// (text-on-surface, bg-surface, etc.) were replaced with GLOBAL brand
+// tokens of starter-kit, and content entrance was taken over by the global animation mechanism at
+// PageBuilder level. Icons
+// Phosphor is rendered by the Icon atom. JSON content is generic (pl/en), without company
+// name, client stats and contacts.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import { formatInternalLink } from "@utils/url";
+import jsonData from "@data/sections/usp-premium.json";
+
+// Why: data receives content for ONE locale (pl or en), hence the type
+// is ["pl"] and not typeof jsonData (entire {pl, en} object). This makes the
+// "props.data || jsonData[locale]" pattern type-correct and compilable.
+type UspData = (typeof jsonData)["pl"];
+
+export interface Props {
+  /** Section anchor id (optional). */
+  id?: string;
+  /** Content language from JSON. PL is the default language, EN is the English equivalent. */
+  locale?: "pl" | "en";
+  /** Section content. Props override JSON (pattern "props || json"). */
+  data?: UspData;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+  /** Additional classes for the section (e.g. from PageBuilder). */
+  class?: string;
+}
+
+const {
+  id,
+  locale = "pl",
+  data: propsData,
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: "props || json" pattern (as in other registry blocks):
+// block works standalone with section data, and PageBuilder or CMS can
+// override content via props.data.
+const t = propsData || jsonData[locale] || jsonData.pl;
+
+const stats = t.stats ?? [];
+const benefits = t.benefits ?? [];
+---
+
+<Section id={id} tone="page" class:list={["relative", className]}>
+  <Container>
+    <!-- Why: 3-column stats bar, mobile-first (gap-4 -> md:gap-8).
+         Separator is a vertical gradient line only from the second element
+         (i > 0) and only from md breakpoint (hidden md:block). -->
+    {stats.length > 0 && (
+      <div class="mb-16 grid grid-cols-3 gap-4 md:mb-20 md:gap-8">
+        {stats.map((stat, i) => (
+          <div class="relative text-center">
+            {i > 0 && (
+              <div class="absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-transparent via-brand-dark/10 to-transparent md:block" />
+            )}
+            {/* Why: value in brand color (client text-brand-primary
+                is the same token in starter-kit), label in text-brand-dark/70
+                instead of client text-on-surface-variant/70. */}
+            <Heading tag="p" variant="section-heading-xl" class="text-brand-primary">
+              {stat.value}
+            </Heading>
+            <Text class="mt-1 text-xs font-medium uppercase tracking-wide text-brand-dark/70 md:mt-2 md:text-sm">
+              {stat.label}
+            </Text>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div class="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-16 xl:gap-20">
+      <div class="flex max-w-lg flex-col items-center text-center lg:items-start lg:text-left">
+        {t.eyebrow && (
+          <Text variant="accent-label" class="mb-4">{t.eyebrow}</Text>
+        )}
+        {t.heading && (
+          <Heading tag={headingTag} variant="section-heading-lg" class="text-balance">
+            {t.heading}
+          </Heading>
+        )}
+        {t.description && (
+          <Text variant="lead" class="mt-5 text-pretty">
+            {t.description}
+          </Text>
+        )}
+        {t.description2 && (
+          <Text variant="lead" class="mt-3 text-pretty">
+            {t.description2}
+          </Text>
+        )}
+            {/* Why: formatInternalLink ensures trailing slash in internal
+            links (SEO rule of starter-kit), as in other blocks. */}
+        {t.cta?.href && (
+          <div class="mt-8">
+            <Button href={formatInternalLink(t.cta.href)}>
+              {t.cta.label}
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <!-- Why: card with client shadow and hover (lift + subtle brand
+           border). bg-white instead of client bg-surface, overlay is
+           brand glow as in other starter-kit blocks (TrustBarBlock). -->
+      {benefits.length > 0 && (
+        <div class="flex-1">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {benefits.map((item) => (
+              <article class="ui-card-interactive group relative overflow-hidden rounded-2xl border border-brand-primary/10 bg-white p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)]">
+                <div class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  style="background: radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in oklab, var(--color-brand-primary) 8%, transparent) 0%, transparent 70%)" />
+                <div class="relative flex flex-col items-center text-center sm:items-start sm:text-left">
+                  {/* Why: client <i class="ph ph-X"> replaced with
+                      Icon atom from starter-kit (same Phosphor mechanism). */}
+                  <div class="mb-4 flex size-12 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary">
+                    <Icon name={item.icon} class="text-xl" />
+                  </div>
+                  <Heading tag="h3" variant="feature-title" class="mb-2 leading-snug tracking-tight text-brand-dark">
+                    {item.title}
+                  </Heading>
+                  <Text variant="feature-body-sm" class="text-brand-dark/70">
+                    {item.description}
+                  </Text>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </Container>
+</Section>

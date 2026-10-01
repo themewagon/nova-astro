@@ -1,0 +1,107 @@
+---
+import Text from '@components/ui/atoms/Text.astro';
+import FilterTabs from '@components/ui/patterns/FilterTabs.astro';
+import FormField from '@components/ui/patterns/FormField.astro';
+import FormStatus from '@components/ui/patterns/FormStatus.astro';
+import MobileDrawer from '@components/ui/patterns/MobileDrawer.astro';
+import SearchField from '@components/ui/patterns/SearchField.astro';
+import SelectDropdown from '@components/ui/patterns/SelectDropdown.astro';
+import ToastFeedback from '@components/ui/patterns/ToastFeedback.astro';
+import previewCopy from '@data/dev/component-library/ui-preview.json';
+
+interface Props {
+  previewId?: string;
+}
+
+const { previewId = 'search-field' } = Astro.props;
+---
+
+<div class="ui-bg-page flex min-h-[22rem] w-full items-center justify-center p-6 sm:p-10">
+  {previewId === 'search-field' && (
+    <SearchField
+      id="catalog-search"
+      class="w-full max-w-xl"
+      label={previewCopy.search.label}
+      placeholder={previewCopy.search.placeholder}
+      hint={previewCopy.search.hint}
+      actionLabel={previewCopy.search.buttonLabel}
+    />
+  )}
+
+  {previewId === 'select-dropdown' && (
+    <SelectDropdown
+      id="catalog-project-type"
+      class="w-full max-w-sm"
+      label={previewCopy.select.label}
+      selectedId="service"
+      options={[
+        { id: 'service', label: previewCopy.select.optionOne },
+        { id: 'landing', label: previewCopy.select.optionTwo },
+        { id: 'shop', label: previewCopy.select.optionThree },
+      ]}
+    />
+  )}
+
+  {previewId === 'filter-tabs' && (
+    <div class="w-full max-w-2xl space-y-4">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <Text variant="accent-label">{previewCopy.filters.label}</Text>
+        <Text variant="body" class="text-sm text-brand-dark/55">{previewCopy.filters.activeCount}</Text>
+      </div>
+      <FilterTabs
+        label={previewCopy.filters.label}
+        activeId="all"
+        items={[
+          { id: 'all', label: previewCopy.filters.all },
+          { id: 'websites', label: previewCopy.filters.websites },
+          { id: 'shops', label: previewCopy.filters.shops },
+        ]}
+      />
+    </div>
+  )}
+
+  {previewId === 'toast-feedback' && (
+    <ToastFeedback
+      class="max-w-md"
+      title={previewCopy.toast.title}
+      description={previewCopy.toast.description}
+      closeLabel={previewCopy.toast.closeLabel}
+    />
+  )}
+
+  {previewId === 'form-field-error' && (
+    <FormField
+      id="catalog-email"
+      class="w-full max-w-md"
+      type="email"
+      label={previewCopy.form.label}
+      value={previewCopy.form.value}
+      error={previewCopy.form.error}
+      hint={previewCopy.form.hint}
+    />
+  )}
+
+  {previewId === 'form-statuses' && (
+    <div class="grid w-full max-w-5xl gap-4 lg:grid-cols-3">
+      <FormStatus type="loading" title={previewCopy.formStatus.loadingTitle} description={previewCopy.formStatus.loadingDescription} />
+      <FormStatus type="success" title={previewCopy.formStatus.successTitle} description={previewCopy.formStatus.successDescription} />
+      <FormStatus type="error" title={previewCopy.formStatus.errorTitle} description={previewCopy.formStatus.errorDescription} />
+    </div>
+  )}
+
+  {previewId === 'mobile-drawer' && (
+    <MobileDrawer
+      eyebrow={previewCopy.drawer.eyebrow}
+      title={previewCopy.drawer.title}
+      closeLabel={previewCopy.drawer.closeLabel}
+      ctaLabel={previewCopy.drawer.cta}
+      ctaHref="/kontakt/"
+      links={[
+        { href: '/', label: previewCopy.drawer.home },
+        { href: '/uslugi/', label: previewCopy.drawer.services },
+        { href: '/realizacje/', label: previewCopy.drawer.projects },
+        { href: '/kontakt/', label: previewCopy.drawer.contact },
+      ]}
+    />
+  )}
+</div>

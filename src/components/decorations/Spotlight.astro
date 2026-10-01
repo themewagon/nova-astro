@@ -1,0 +1,44 @@
+---
+interface Props {
+  color?: string;
+  size?: string;
+  position?: 'top-left' | 'top-right' | 'center' | 'bottom-left' | 'bottom-right';
+  opacity?: string;
+  blur?: string;
+  class?: string;
+}
+
+const {
+  color = 'var(--color-brand-primary)',
+  size = '32rem',
+  position = 'center',
+  opacity = '0.18',
+  blur = '18px',
+  class: className,
+} = Astro.props;
+
+const positionStyles: Record<string, string> = {
+  'top-left': 'top-0 left-0 -translate-x-1/4 -translate-y-1/4',
+  'top-right': 'top-0 right-0 translate-x-1/4 -translate-y-1/4',
+  center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+  'bottom-left': 'bottom-0 left-0 -translate-x-1/4 translate-y-1/4',
+  'bottom-right': 'bottom-0 right-0 translate-x-1/4 translate-y-1/4',
+};
+---
+
+<div
+  class:list={[
+    'pointer-events-none absolute select-none rounded-full',
+    positionStyles[position],
+    className,
+  ]}
+  style={{
+    width: size,
+    height: size,
+    opacity,
+    filter: `blur(${blur})`,
+    background: `radial-gradient(circle at center, ${color} 0%, transparent 68%)`,
+  }}
+  aria-hidden="true"
+  data-decoration="spotlight"
+></div>

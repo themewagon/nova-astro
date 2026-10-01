@@ -1,0 +1,59 @@
+{
+  "eyebrow": "Współpraca",
+  "title": "Wybierz zakres współpracy",
+  "subtitle": "Trzy poziomy zaangażowania: od szybkiego startu po pełną opiekę. Dopasuj ofertę do swoich celów i budżetu.",
+  "ctaHover": "Wybieram tę ofertę",
+  "popularBadge": "Najpopularniejszy",
+  "emptyPriceLabel": "Zapisz się",
+  "ctaFallback": { "label": "Wybieram", "href": "/#kontakt" },
+  "items": [
+    {
+      "icon": "star",
+      "title": "Podstawowy",
+      "description": "Lekki start dla małych projektów: kluczowe działania i jasna komunikacja, bez zbędnych kosztów.",
+      "price": "299 zł",
+      "priceNote": "/ miesiąc",
+      "priceOptions": ["299 zł / miesiąc", "Bez umowy na czas określony"],
+      "priceNote2": "Dobry wybór, aby przetestować współpracę",
+      "cta": "WYBIERZ",
+      "features": [
+        "Konsultacja wstępna",
+        "Dedykowany opiekun projektu",
+        "Raport miesięczny",
+        "Wsparcie e-mailowe"
+      ]
+    },
+    {
+      "icon": "shield",
+      "title": "Rozszerzony",
+      "description": "Zrównoważony zakres dla rosnących firm: więcej działań, krótszy czas reakcji i stałe doradztwo.",
+      "price": "499 zł",
+      "priceNote": "/ miesiąc",
+      "priceOptions": ["499 zł / miesiąc", "Umowa 3-miesięczna", "Priorytetowe wsparcie"],
+      "priceNote2": "Najczęściej wybierany wariant współpracy",
+      "cta": "WYBIERZ",
+      "features": [
+        "Wszystko z wariantu Podstawowy",
+        "Dodatkowe działania wizerunkowe",
+        "Wsparcie telefoniczne",
+        "Kwartalne podsumowanie wyników"
+      ]
+    },
+    {
+      "icon": "gear",
+      "title": "Premium",
+      "description": "Pełna opieka i maksymalna elastyczność: wszystko pod kontrolą, z dedykowanym zespołem i stałą dostępnością.",
+      "price": "799 zł",
+      "priceNote": "/ miesiąc",
+      "priceOptions": ["799 zł / miesiąc", "Umowa 6-miesięczna", "Dedykowany zespół", "Wsparcie 24/7"],
+      "priceNote2": "Dla firm, które oczekują pełnego zaangażowania",
+      "cta": "WYBIERZ",
+      "features": [
+        "Wszystko z wariantu Rozszerzony",
+        "Strategia pod klucz",
+        "Stały kontakt z zespołem",
+        "Priorytet 24/7"
+      ]
+    }
+  ]
+}

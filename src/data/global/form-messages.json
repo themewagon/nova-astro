@@ -1,0 +1,27 @@
+{
+  "submitLabel": "Send",
+  "submittingLabel": "Sending...",
+  "loadingTitle": "Sending message",
+  "loadingMessage": "Please wait a moment. The form is being submitted.",
+  "successTitle": "Message sent",
+  "errorTitle": "Failed to send message",
+  "resetLabel": "Send another",
+  "retryLabel": "Try again",
+  "successMessage": "Thank you for your message! We will get back to you as soon as possible.",
+  "errorMessage": "An error occurred while sending the message. Please try again later.",
+  "invalidResponse": "Server returned an invalid response.",
+  "networkError": "A network error occurred. Check your connection and try again.",
+  "resetHover": "Start again",
+  "submitHover": "Send now",
+  "privacyNote": "By clicking {label}, you accept the privacy policy.",
+  "privacyLinkLabel": "privacy policy",
+  "privacyHref": "/privacy-policy/",
+  "heading": "Send a message",
+  "rodoConsent": "I consent to data processing to respond to my inquiry",
+  "defaultFields": [
+    { "name": "name", "label": "Full name", "type": "text", "required": true, "placeholder": "John Doe", "autoComplete": "name" },
+    { "name": "phone", "label": "Phone", "type": "tel", "required": false, "placeholder": "+48 600 000 000", "autoComplete": "tel" },
+    { "name": "email", "label": "Email", "type": "email", "required": true, "placeholder": "john@example.com", "autoComplete": "email" },
+    { "name": "message", "label": "Message", "type": "textarea", "required": true, "placeholder": "Describe your inquiry...", "rows": 5 }
+  ]
+}

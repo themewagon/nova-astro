@@ -1,0 +1,34 @@
+---
+import { getNovaCopy, type NovaLocale } from "@utils/nova-i18n";
+
+interface Props {
+  locale?: NovaLocale;
+}
+
+const { locale = "pl" } = Astro.props as Props;
+const copy = getNovaCopy(locale).demoBanner;
+---
+
+<div data-nova-demo-banner class="sticky top-0 z-[1100] flex min-h-11 items-center bg-brand-dark text-brand-light">
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-2 text-xs sm:px-6 lg:px-8">
+    <p class="hidden min-w-0 truncate text-brand-light/75 sm:block">{copy.label}</p>
+    <div class="ml-auto flex shrink-0 items-center gap-3 sm:gap-5">
+      <a
+        href={copy.downloadHref}
+        target="_blank"
+        rel="noreferrer"
+        data-analytics-event="template_github_click"
+        data-analytics-location="nova_demo_banner"
+        class="text-brand-light/80 transition-colors hover:text-brand-accent"
+      >{copy.downloadLabel}</a>
+      <a
+        href={copy.customizeHref}
+        target="_blank"
+        rel="noreferrer"
+        data-analytics-event="template_customization_click"
+        data-analytics-location="nova_demo_banner"
+        class="rounded-md bg-brand-accent px-3 py-1.5 font-semibold text-brand-dark transition-colors hover:bg-brand-light"
+      >{copy.customizeLabel}</a>
+    </div>
+  </div>
+</div>

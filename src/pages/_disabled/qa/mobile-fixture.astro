@@ -1,0 +1,245 @@
+---
+import Text from "@components/ui/atoms/Text.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import "@styles/global.css";
+import fixtureData from "@data/qa/mobile-fixture.json";
+
+const data = fixtureData as {
+  nav: { logo: string; links: { label: string; href: string }[]; cta: { label: string; href: string } };
+  hero: { tagline: string; title: string; description: string; cta: { label: string; href: string } };
+  cards: { title: string; description: string; email: string; phone: string; address: string }[];
+  marquee: { items: string[] };
+  form: { nameLabel: string; namePlaceholder: string; emailLabel: string; emailPlaceholder: string; messageLabel: string; messagePlaceholder: string; submitLabel: string; successMessage: string; errorMessage: string };
+  footer: { about: string; links: { label: string; href: string }[]; copyright: string };
+  anchorSection: { id: string; title: string; description: string };
+};
+---
+
+<!DOCTYPE html>
+<html lang="pl" data-theme="default">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Mobile Fixture — Starter Kit</title>
+  <meta name="description" content="Strona testowa do weryfikacji mobile QA, kart, overflow, navbaru i accessibility." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body class="min-h-screen flex flex-col ui-bg-page font-sans text-brand-dark antialiased selection:bg-brand-primary/10 selection:text-brand-primary">
+  <!-- Navbar -->
+  <header data-site-header class="fixed top-0 left-0 z-[1000] w-full transition-all duration-300 py-4 lg:py-6 nav-transparent" style="background:var(--color-ui-bg-page, #fff)">
+    <div class="ui-container flex items-center justify-between">
+      <a href={data.nav.links[0].href} class="font-black tracking-tight text-xl lg:text-2xl text-brand-dark no-underline" data-navbar-close>
+        <span class="text-brand-primary">QA</span> Fixture
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-6" aria-label="Nawigacja glowna">
+        {data.nav.links.map((link) => (
+          <a href={link.href} class="text-sm font-semibold text-brand-dark/80 hover:text-brand-primary transition-colors">
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href={data.nav.cta.href} class="hidden lg:inline-flex ui-button ui-button-primary h-10 px-4 text-sm font-bold rounded-md items-center whitespace-nowrap">
+          {data.nav.cta.label}
+        </a>
+
+        <button type="button" data-navbar-toggle class="ui-nav-menu-toggle lg:hidden" aria-controls="site-nav-drawer" aria-expanded="false" aria-label="Menu nawigacji">
+          <span class="ui-nav-menu-toggle__bar" aria-hidden="true"></span>
+          <span class="ui-nav-menu-toggle__bar" aria-hidden="true"></span>
+          <span class="ui-nav-menu-toggle__bar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="site-nav-drawer" class="ui-nav-drawer-root" role="presentation">
+    <div class="ui-nav-drawer-backdrop" data-navbar-close aria-hidden="true"></div>
+    <aside class="ui-nav-drawer--sheet" role="dialog" aria-modal="true" aria-label="Menu nawigacji">
+      <div class="ui-nav-drawer__deck" aria-hidden="true">
+        <div class="ui-nav-drawer__layer ui-nav-drawer__layer--1"></div>
+        <div class="ui-nav-drawer__layer ui-nav-drawer__layer--2"></div>
+        <div class="ui-nav-drawer__layer ui-nav-drawer__layer--3"></div>
+      </div>
+      <div class="ui-nav-drawer__content">
+        <div class="ui-nav-drawer__top">
+          <button type="button" data-navbar-close class="ui-nav-drawer__close" aria-label="Zamknij menu">
+            <span class="ui-nav-drawer__close-bar" aria-hidden="true"></span>
+            <span class="ui-nav-drawer__close-bar" aria-hidden="true"></span>
+            <span class="ui-nav-drawer__close-bar" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="ui-nav-drawer__scroller">
+          <nav class="ui-nav-drawer__nav" aria-label="Nawigacja glowna">
+            {data.nav.links.map((link, i) => (
+              <div class="ui-nav-drawer__item" style={`--stagger: ${i}`}>
+                <a href={link.href} class="ui-nav-drawer__link" data-navbar-close>
+                  {link.label}
+                </a>
+              </div>
+            ))}
+            <div class="ui-nav-drawer__item" style={`--stagger: ${data.nav.links.length}`}>
+              <a href={data.nav.cta.href} class="ui-nav-drawer__cta" data-navbar-close>
+                {data.nav.cta.label}
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Hero -->
+  <section class="ui-section ui-bg-base pt-28 lg:pt-36">
+    <div class="ui-container">
+      <div class="max-w-4xl mx-auto text-center">
+        <Text variant="accent-label" class="mb-4">{data.hero.tagline}</Text>
+        <Heading variant="hero" class="font-heading font-bold mb-6">{data.hero.title}</Heading>
+        <Text variant="lead" class="max-w-2xl mx-auto mb-8">{data.hero.description}</Text>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href={data.hero.cta.href} class="ui-button ui-button-primary h-11 sm:h-12 px-5 sm:px-8 text-sm sm:text-lg font-bold rounded-md inline-flex items-center whitespace-nowrap">
+            {data.hero.cta.label}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Grid -->
+  <section class="ui-section ui-bg-page" id="services">
+    <div class="ui-container">
+      <Heading variant="section-heading-xl" class="font-heading font-bold text-center mb-12">
+        Nasze uslugi — sprawdz co mozemy Ci zaoferowac
+      </Heading>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {data.cards.map((card) => (
+          <article class="flex flex-col rounded-xl border border-brand-dark/10 shadow-sm overflow-hidden ui-bg-page py-6 gap-6 min-w-0 break-words">
+            <div class="flex flex-col gap-2 px-6">
+              <Heading variant="feature-title" class="font-heading font-bold text-lg">{card.title}</Heading>
+              <Text variant="body" class="leading-relaxed">{card.description}</Text>
+            </div>
+            <div class="px-6 space-y-2 text-sm">
+              <p class="break-all"><span class="font-semibold">Email:</span> {card.email}</p>
+              <p class="break-all"><span class="font-semibold">Tel:</span> {card.phone}</p>
+              <p class="break-all"><span class="font-semibold">Adres:</span> {card.address}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <section class="ui-section ui-bg-base overflow-hidden py-8">
+    <div class="marquee-wrapper" style="overflow:hidden;mask-image:linear-gradient(to right,transparent 0,#000 5%,#000 95%,transparent 100%);-webkit-mask-image:linear-gradient(to right,transparent 0,#000 5%,#000 95%,transparent 100%)">
+      <div class="marquee-track flex gap-8" style="animation:marquee 30s linear infinite;width:max-content">
+        {data.marquee.items.map((item) => (
+          <Text tag="span" variant="accent-label" class="text-lg font-bold whitespace-nowrap">{item}</Text>
+        ))}
+        {data.marquee.items.map((item) => (
+          <Text tag="span" variant="accent-label" class="text-lg font-bold whitespace-nowrap">{item}</Text>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Anchor Section -->
+  <section class="ui-section ui-bg-page" id={data.anchorSection.id}>
+    <div class="ui-container">
+      <div class="max-w-2xl mx-auto text-center mb-10">
+        <Heading variant="section-heading-lg" class="font-heading font-bold mb-4">{data.anchorSection.title}</Heading>
+        <Text variant="lead">{data.anchorSection.description}</Text>
+      </div>
+
+      <div class="max-w-xl mx-auto">
+        <form class="flex flex-col gap-6" onsubmit="return false;" data-test-form>
+          <div class="flex flex-col gap-2">
+            <label for="fixture-name" class="text-sm font-semibold text-brand-dark/80">{data.form.nameLabel}</label>
+            <input id="fixture-name" type="text" placeholder={data.form.namePlaceholder} class="h-11 px-4 rounded-lg border border-brand-dark/20 ui-bg-page text-brand-dark text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary" required />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="fixture-email" class="text-sm font-semibold text-brand-dark/80">{data.form.emailLabel}</label>
+            <input id="fixture-email" type="email" placeholder={data.form.emailPlaceholder} class="h-11 px-4 rounded-lg border border-brand-dark/20 ui-bg-page text-brand-dark text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary" required />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="fixture-message" class="text-sm font-semibold text-brand-dark/80">{data.form.messageLabel}</label>
+            <textarea id="fixture-message" rows={4} placeholder={data.form.messagePlaceholder} class="px-4 py-3 rounded-lg border border-brand-dark/20 ui-bg-page text-brand-dark text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary resize-vertical" required></textarea>
+          </div>
+          <button type="submit" class="ui-button ui-button-primary h-11 sm:h-12 px-5 sm:px-8 text-sm sm:text-base font-bold rounded-md w-full">
+            {data.form.submitLabel}
+          </button>
+          <Text variant="disclaimer" class="text-center text-brand-dark/50" aria-live="polite">
+            {data.form.successMessage}
+          </Text>
+          <Text variant="disclaimer" class="text-center text-red-500 hidden" aria-live="assertive">
+            {data.form.errorMessage}
+          </Text>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Image test -->
+  <section class="ui-section ui-bg-base">
+    <div class="ui-container">
+      <div class="max-w-lg mx-auto text-center">
+        <Heading variant="section-heading-lg" class="font-heading font-bold mb-6">Obraz z atrybutami</Heading>
+        <div class="rounded-xl overflow-hidden">
+          <img
+            src="/og-image.webp"
+            alt="Przykladowy obraz testowy do weryfikacji atrybutow accessibility"
+            width="1200"
+            height="630"
+            loading="lazy"
+            decoding="async"
+            class="w-full h-auto"
+            style="aspect-ratio:1200/630"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="ui-bg-surface border-t border-brand-dark/5 mt-auto">
+    <div class="ui-container">
+      <div class="flex flex-col md:flex-row justify-between gap-6 py-10">
+        <div class="max-w-sm">
+          <p class="text-sm text-brand-dark/60 leading-relaxed">{data.footer.about}</p>
+        </div>
+        <nav class="flex flex-wrap gap-4" aria-label="Linki w stopce">
+          {data.footer.links.map((link) => (
+            <a href={link.href} class="text-sm text-brand-dark/70 transition-colors hover:text-brand-primary">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+      <div class="border-t border-brand-dark/5 py-4 text-center">
+        <p class="text-xs text-brand-dark/50">{data.footer.copyright}</p>
+      </div>
+    </div>
+  </footer>
+
+  <script is:inline src="/js/navbar.js"></script>
+  <script is:inline>
+    (function() {
+      var style = document.createElement('style');
+      style.textContent = '@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}';
+      document.head.appendChild(style);
+    })();
+  </script>
+  <script is:inline>
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var tracks = document.querySelectorAll('.marquee-track');
+        tracks.forEach(function(t) { t.style.animation = 'none'; });
+      }
+    })();
+  </script>
+</body>
+</html>

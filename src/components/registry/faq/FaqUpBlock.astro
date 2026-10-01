@@ -1,0 +1,277 @@
+---
+// Dlaczego: FaqUPBlock to reimplementacja sekcji FAQ z landing page'a
+// recruitment of the Pomeranian University in Slupsk (design
+// z referencyjnego układu, zachowano
+// structure: accordion with items with cut corners (clip-path, color
+// brand-primary after opening), the help icon in the octagon and the +/− toggle.
+// Kliencka sygnatura (neon lime, navy, cyan) jest zmapowana na tokeny
+// brand starter-kit, dot pattern in background removed (DESIGN_RULES: zero
+// dots), and the CTA under the list is the Button atom with text swap (hoverText).
+// The content is PL/EN neutral.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import jsonData from "@data/sections/faq-up.json";
+
+type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+type LocaleData = (typeof jsonData)["pl"] & {
+  items: FaqItem[];
+  ctaLabel: string;
+  ctaHoverLabel: string;
+  ctaHref: string;
+};
+
+export interface Props {
+  /** Full section details; when missing, the block reads the fallback from the JSON.*/
+  data?: LocaleData;
+  /** JSON content language: "pl" (default) or "en".*/
+  locale?: "pl" | "en";
+  /** Section anchor id (default "faq").*/
+  id?: string;
+  /** Header tag: 'h2' by default.*/
+  headingTag?: "h1" | "h2";
+  /** Additional classes per section (e.g. with PageBuilder).*/
+  class?: string;
+}
+
+const { data, locale = "pl", id = "faq", headingTag = "h2", class: className = "" } =
+  Astro.props as Props;
+
+// Dlaczego: wzorzec "props.data || jsonData[locale]" (jak w HeroCountdownBlock),
+// so that the block works independently from the section data, and PageBuilder or CMS can
+// overwrite content. Fallback to pl protects against bad places.
+const t = (data ?? jsonData[locale] ?? jsonData.pl) as LocaleData;
+const items = t.items ?? [];
+---
+
+<Section tone="base" class:list={["up-faq-section relative overflow-hidden", className]} id={id}>
+  <Container class="up-faq-container relative z-10 max-w-[58rem]">
+    <Text tag="p" class="up-eyebrow up-eyebrow--center">{t.eyebrow}</Text>
+    <Heading
+      tag={headingTag}
+      class="up-faq-title mx-auto mt-3 max-w-2xl text-center text-[clamp(1.5rem,4vw,2rem)] font-extrabold uppercase"
+    >
+      {t.heading}
+    </Heading>
+
+    {/* Why: first item open by default (is-open + aria-expanded),
+        exactly as in the original (index.html line 359).*/}
+    <dl class="up-faq-list mt-10 grid gap-3">
+      {items.map((item, i) => (
+        <div class:list={["up-faq-item", i === 0 && "is-open"]} role="group">
+          <dt>
+            <button
+              type="button"
+              class="up-faq-question"
+              aria-expanded={i === 0}
+              aria-controls={`up-faq-answer-${i}`}
+              data-faq-question
+            >
+              <span class="up-faq-qicon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 17v.01M12 13a3 3 0 0 0 1-5.83 2.5 2.5 0 0 0-3.9 2.02" />
+                </svg>
+              </span>
+              <span class="up-faq-question__text">{item.question}</span>
+              <span class="up-faq-toggle" aria-hidden="true"></span>
+            </button>
+          </dt>
+          <dd class="up-faq-answer" id={`up-faq-answer-${i}`}>
+            <Text tag="p" set:html={item.answer} />
+          </dd>
+        </div>
+      ))}
+    </dl>
+
+    <div class="up-faq__cta mt-8 flex justify-center">
+      <Button href={t.ctaHref} variant="outline" size="lg" hoverText={t.ctaHoverLabel}>
+        {t.ctaLabel}
+      </Button>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  /* Why: UP signature as own block classes (pattern
+     AboutExpertBlock), ale z kolorami na tokenach brand starter-kita.
+     Dot pattern from the original removed (DESIGN_RULES: zero dots).*/
+
+  .up-faq-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .up-eyebrow {
+    margin: 0;
+    color: var(--color-brand-dark);
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .up-eyebrow--center {
+    text-align: center;
+  }
+
+  .up-faq-title {
+    color: var(--color-brand-dark);
+  }
+
+  .up-faq-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---- Item accordion (.faq-item pattern from the original) ----*/
+  .up-faq-item {
+    --faq-cut: 0.85rem;
+    position: relative;
+    background: var(--color-surface-container-low);
+    clip-path: polygon(var(--faq-cut) 0, calc(100% - var(--faq-cut)) 0, 100% var(--faq-cut), 100% calc(100% - var(--faq-cut)), calc(100% - var(--faq-cut)) 100%, var(--faq-cut) 100%, 0 calc(100% - var(--faq-cut)), 0 var(--faq-cut));
+    transition: background 0.3s ease;
+  }
+
+  .up-faq-item::after {
+    /* Why: white inset (1.5px) creates a frame inside the truncated item.*/
+    position: absolute;
+    inset: 1.5px;
+    z-index: 0;
+    background: var(--color-surface);
+    clip-path: polygon(calc(var(--faq-cut) + 1.5px) 1.5px, calc(100% - var(--faq-cut) - 1.5px) 1.5px, calc(100% - 1.5px) calc(var(--faq-cut) + 1.5px), calc(100% - 1.5px) calc(100% - var(--faq-cut) - 1.5px), calc(100% - var(--faq-cut) - 1.5px) calc(100% - 1.5px), calc(var(--faq-cut) + 1.5px) calc(100% - 1.5px), 1.5px calc(100% - var(--faq-cut) - 1.5px), 1.5px calc(var(--faq-cut) + 1.5px));
+    content: "";
+  }
+
+  .up-faq-item.is-open {
+    background: var(--color-brand-primary);
+  }
+
+  .up-faq-item dt {
+    margin: 0;
+  }
+
+  .up-faq-question {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.95rem 1.5rem;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--color-brand-dark);
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .up-faq-qicon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    aspect-ratio: 1;
+    background: var(--color-brand-primary);
+    clip-path: polygon(18% 0, 82% 0, 100% 18%, 100% 82%, 82% 100%, 18% 100%, 0 82%, 0 18%);
+    color: var(--color-on-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .up-faq-question:hover .up-faq-qicon {
+    background: var(--color-brand-dark);
+    color: var(--color-on-primary);
+  }
+
+  .up-faq-question__text {
+    flex: 1;
+  }
+
+  .up-faq-toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.75rem;
+    aspect-ratio: 1;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-brand-dark);
+  }
+
+  .up-faq-toggle::before {
+    content: "+";
+  }
+
+  .up-faq-item.is-open .up-faq-toggle::before {
+    content: "\2212";
+  }
+
+  .up-faq-answer {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    padding: 0 1.5rem 0 4.75rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--color-on-surface-variant);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-0.5rem);
+    transition:
+      max-height 0.55s cubic-bezier(0.33, 1, 0.68, 1),
+      opacity 0.55s cubic-bezier(0.33, 1, 0.68, 1),
+      transform 0.55s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .up-faq-answer p {
+    margin: 0;
+  }
+
+  .up-faq-answer strong {
+    color: var(--color-brand-dark);
+  }
+
+  .up-faq-item.is-open .up-faq-answer {
+    max-height: 50rem;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 0 1.5rem 1.25rem 4.75rem;
+  }
+</style>
+
+<script>
+  // Why: accordion from the original (client main.js): toggle .is-open
+  // on the clicked item + closing the remaining ones, aria-expanded consistent
+  // with condition. Smoothness is ensured by the max-height/opacity transition in CSS.
+  const questions = document.querySelectorAll<HTMLButtonElement>("[data-faq-question]");
+
+  questions.forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = button.closest<HTMLElement>(".up-faq-item");
+      if (!item) return;
+
+      const isOpen = item.classList.contains("is-open");
+
+      questions.forEach((other) => {
+        const otherItem = other.closest<HTMLElement>(".up-faq-item");
+        otherItem?.classList.remove("is-open");
+        other.setAttribute("aria-expanded", "false");
+      });
+
+      if (!isOpen) {
+        item.classList.add("is-open");
+        button.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+</script>

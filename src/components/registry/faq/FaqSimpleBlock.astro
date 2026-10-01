@@ -1,0 +1,73 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import faqData from "@data/sections/faq.json";
+
+// Dlaczego: FaqSimpleBlock to alternatywny wariant FAQ bez kategorii.
+// Simpler than FaqListBlock, ideal for pages with few questions.
+// It doesn't group questions, it just displays them as a flat list with accordion.
+interface FaqItem {
+	q: string;
+	a: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+	items?: FaqItem[];
+	/** Section header tag: 'h2' by default, 'h1' when the block is the first section of a page without hero (SEO).*/
+	headingTag?: string;
+}
+
+const { 
+	class: className = "", 
+	title = faqData.title, 
+	description = faqData.description,
+	tagline = faqData.tagline,
+	headingTag = "h2",
+	items
+} = Astro.props;
+
+// Why: fallback to faqData.items when the customer does not provide their own questions.
+// Enables you to preview a component with demo data.
+const list = items && items.length > 0 ? items : faqData.items;
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container">
+		<SectionHeader 
+			title={title}
+			description={description}
+			tagline={tagline}
+			titleTag={headingTag}
+			align="center"
+		/>
+
+		<!-- Why: each question is a separate input object, and the answer remains part of the accordion.-->
+		<div class="w-full max-w-2xl mx-auto mt-12 space-y-2" data-accordion>
+			{list.map((item) => (
+				<details class="group ui-bg-surface ui-radius-lg border border-brand-dark/5 overflow-hidden min-w-0">
+					<summary class="flex min-w-0 items-center justify-between w-full p-4 text-left cursor-pointer list-none select-none">
+						<Heading level={4} class="pr-8 !text-[16px] leading-snug !font-sans !font-semibold text-brand-dark/80">
+							{item.q}
+						</Heading>
+						<div class="transition-transform duration-300 group-open:-rotate-45 text-brand-primary">
+							<svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+							</svg>
+						</div>
+					</summary>
+					<div class="px-4 pb-4">
+						<Text variant="feature-body-sm" class="ui-text-on-light-subtle">
+							{item.a}
+						</Text>
+					</div>
+				</details>
+			))}
+		</div>
+	</div>
+</Section>

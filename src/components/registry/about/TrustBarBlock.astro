@@ -1,0 +1,169 @@
+---
+// Why: TrustBarBlock builds trust on the page: counters (years of experience,
+// completed projects) + partner logos. Pattern ported 1:1 from the
+// reference project. No "lang" prop, because starter-kit has no i18n; everything
+// is passed via JSON (dataKey "trust-bar").
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Text from "@components/ui/atoms/Text.astro";
+
+type TrustItem = { value: string; label: string };
+type TrustPartner = { src: string; alt: string };
+
+interface Props {
+  eyebrow?: string;
+  items?: TrustItem[];
+  partners?: TrustPartner[];
+}
+
+const { eyebrow = "", items = [], partners = [] } = Astro.props as Props;
+---
+
+<Section tone="page" class="relative overflow-hidden">
+  <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 80% 50% at 50% 50%, color-mix(in oklab, var(--color-brand-primary) 6%, transparent) 0%, transparent 60%)"></div>
+  <Container>
+    <div class="trust-band">
+      {items.map((item) => (
+        <div class="trust-item">
+          <div class="trust-item__value">{item.value}</div>
+          <Text variant="body" class="trust-item__label">{item.label}</Text>
+        </div>
+      ))}
+    </div>
+
+    {partners && partners.length > 0 && (
+      <div class="mt-14 pt-12" style="border-top:1px solid var(--color-outline-variant)">
+        <Text variant="accent-label" class="mb-10 text-center" style="color:var(--color-on-surface)">{eyebrow}</Text>
+        <div class="trust-logos">
+          {partners.map((partner) => (
+            <div class="trust-logo" title={partner.alt}>
+              <img
+                src={partner.src}
+                alt={partner.alt}
+                class="trust-logo__img"
+                loading="lazy"
+                width="160"
+                height="64"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </Container>
+</Section>
+
+<style>
+  .trust-band {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    border-radius: var(--rounded-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-outline-variant);
+    background: var(--color-surface);
+  }
+
+  .trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: clamp(1.5rem, 4vw, 2.25rem) 1rem;
+    text-align: center;
+    background: var(--color-surface);
+    border-left: 1px solid var(--color-outline-variant);
+    border-top: 1px solid var(--color-outline-variant);
+  }
+
+  /* First row without top border to avoid double line above tile */
+  .trust-item:nth-child(1) {
+    border-top: none;
+  }
+
+  @media (min-width: 768px) {
+    .trust-band {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .trust-item {
+      border-top: none;
+    }
+
+    /* First column without left border (flush left) */
+    .trust-item:nth-child(1) {
+      border-left: none;
+    }
+
+    /* Last column (3) without right border so the band frame stays clean */
+    .trust-item:nth-child(3) {
+      border-right: none;
+    }
+  }
+
+  .trust-item__value {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-on-surface);
+  }
+
+  .trust-item__label {
+    color: var(--color-on-surface-variant);
+    max-width: 22ch;
+  }
+
+  /* Membership logos: uniform, monochrome white silhouettes */
+  .trust-logos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    max-width: 66.666%;
+    margin: 0 auto;
+  }
+
+  .trust-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--color-outline-variant);
+    /* Light "scrim" under logos: some are opaque
+       tiles (e.g. ORA), so we show them in true colors. */
+    background: var(--color-surface-bright);
+    transition:
+      border-color 0.3s ease,
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s ease;
+  }
+
+  .trust-logo:hover {
+    border-color: var(--color-brand-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--ui-elevation-strong);
+  }
+
+  .trust-logo__img {
+    height: 2.25rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    /* Uniform white silhouettes on dark background; therefore brightness(0) invert(1):
+       colored logo becomes a white silhouette consistent with the rest of the section. */
+    filter: brightness(0) invert(1);
+    opacity: 0.72;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    .trust-logo__img {
+      height: 2.75rem;
+    }
+  }
+
+  .trust-logo:hover .trust-logo__img {
+    opacity: 1;
+  }
+</style>

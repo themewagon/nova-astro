@@ -1,0 +1,66 @@
+---
+// Why: FeatureGridBlock is a reusable "feature grid" section
+// project (FeatureGridBlock).The client reveal and raw <i> were replaced with the Icon atom
+// of the starter kit, and the client data (lean industry) was replaced with general PL/EN
+// content to make the block suitable for the library.
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import jsonData from "@data/sections/feature-grid.json";
+
+export interface FeatureGridItem {
+	/** Nazwa ikony Phosphor bez prefiksu, np. "gear" → ph ph-gear. */
+	icon: string;
+	title: string;
+	description: string;
+}
+
+interface Props {
+/** The contents of the section; override the default JSON. */
+	data?: typeof jsonData;
+/** Content language with JSON. EN is the default language, EN is the equivalent of English. */
+	locale?: "pl" | "en";
+	/** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+	headingTag?: string;
+}
+
+const { data, locale = "pl", headingTag = "h2" } = Astro.props;
+
+// Why: "props || json" pattern (as in AboutLawBlock) to make the block work alone with the
+// section data, and PageBuilder or CMS may have overwritten the content.
+const t = (data ?? jsonData[locale] ?? jsonData.pl) as typeof jsonData["pl"];
+const items = t.items ?? [];
+---
+
+<!--
+  FeatureGridBlock: a network of service cards / features; each card, icon, title, description (ui-bg-surface + ui-elevation-soft). No reveal: animations adds a page.
+-->
+<Section tone="page">
+	<div class="ui-container">
+		<SectionHeader
+			title={t.heading}
+			description={t.intro}
+			titleTag={headingTag}
+			align="center"
+		/>
+		<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+			{
+				items.map((item) => (
+					<article class="flex flex-col gap-4 p-6 ui-radius-lg ui-bg-surface ui-elevation-soft">
+						{/* Why: atom Icon instead of client <i class:list> - consistent
+						    Phosphor icon rendering throughout the library. */}
+						<Icon name={item.icon} class="text-3xl text-brand-primary" />
+						<Heading tag="h3" variant="feature-title" class="ui-text-on-light">
+							{item.title}
+						</Heading>
+						<Text variant="feature-body-sm" class="ui-text-on-light-subtle">
+							{item.description}
+						</Text>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</Section>

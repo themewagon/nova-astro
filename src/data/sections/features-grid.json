@@ -1,0 +1,74 @@
+{
+  "pl": {
+    "title": "Dlaczego my?",
+    "description": "Sprawdź, co zyskujesz, wybierając współpracę z nami. Sześć konkretnych korzyści, które wyróżniają nas na tle innych.",
+    "items": [
+      {
+        "icon": "scroll",
+        "title": "Przejrzyste umowy",
+        "description": "Wszystkie warunki jasne od pierwszego dnia. Zero ukrytych kosztów i niejasnych zapisów."
+      },
+      {
+        "icon": "image",
+        "title": "Raporty z postępu",
+        "description": "Regularne zdjęcia i aktualizacje, żebyś zawsze wiedział, na jakim etapie jest projekt."
+      },
+      {
+        "icon": "calculator",
+        "title": "Płatności etapami",
+        "description": "Płacisz za faktycznie wykonane prace, a nie z góry za całość inwestycji."
+      },
+      {
+        "icon": "clock",
+        "title": "Termin w umowie",
+        "description": "Realny termin zapisany czarno na białym. Szanujemy Twój czas."
+      },
+      {
+        "icon": "users",
+        "title": "Stały opiekun projektu",
+        "description": "Jedna osoba prowadzi projekt od początku do końca. Zawsze wiesz, z kim rozmawiasz."
+      },
+      {
+        "icon": "briefcase",
+        "title": "Finansowanie",
+        "description": "Pomagamy rozłożyć inwestycję na dogodne raty, dopasowane do Twoich możliwości."
+      }
+    ]
+  },
+  "en": {
+    "title": "Why choose us?",
+    "description": "See what you gain by working with us. Six concrete benefits that set us apart from the rest.",
+    "items": [
+      {
+        "icon": "scroll",
+        "title": "Transparent contracts",
+        "description": "All terms clear from day one. No hidden costs or vague clauses."
+      },
+      {
+        "icon": "image",
+        "title": "Progress reports",
+        "description": "Regular photos and updates, so you always know where the project stands."
+      },
+      {
+        "icon": "calculator",
+        "title": "Stage payments",
+        "description": "You pay for work actually completed, not upfront for the whole project."
+      },
+      {
+        "icon": "clock",
+        "title": "Deadline in contract",
+        "description": "A realistic deadline written into the contract. Your time matters."
+      },
+      {
+        "icon": "users",
+        "title": "Dedicated project supervisor",
+        "description": "One person manages the project from start to finish. You always know who to talk to."
+      },
+      {
+        "icon": "briefcase",
+        "title": "Financing",
+        "description": "We help spread the investment into convenient installments that fit your budget."
+      }
+    ]
+  }
+}

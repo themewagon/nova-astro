@@ -1,0 +1,47 @@
+---
+interface Props {
+  variant?: 'wave' | 'angle' | 'curve' | 'tilt';
+  color?: string;
+  flip?: boolean;
+  class?: string;
+}
+
+const {
+  variant = 'wave',
+  color,
+  flip = false,
+  class: className,
+} = Astro.props;
+
+const fillColor = color || 'var(--ui-bg-page, #ffffff)';
+const flipTransform = flip ? 'scaleY(-1)' : '';
+---
+
+<div
+  class:list={['pointer-events-none relative z-0 w-full select-none leading-[0]', className]}
+  aria-hidden="true"
+>
+  {variant === 'wave' && (
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: flipTransform, width: '100%', height: '120px' }}>
+      <path d="M0,40 C320,120 720,0 1440,60 L1440,0 L0,0 Z" fill={fillColor} />
+    </svg>
+  )}
+
+  {variant === 'angle' && (
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: flipTransform, width: '100%', height: '120px' }}>
+      <path d="M0,120 L1440,0 L1440,0 L0,0 Z" fill={fillColor} />
+    </svg>
+  )}
+
+  {variant === 'curve' && (
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: flipTransform, width: '100%', height: '120px' }}>
+      <path d="M0,0 C360,120 1080,120 1440,0 L1440,0 L0,0 Z" fill={fillColor} />
+    </svg>
+  )}
+
+  {variant === 'tilt' && (
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style={{ transform: flipTransform, width: '100%', height: '80px' }}>
+      <path d="M0,80 L1440,20 L1440,0 L0,0 Z" fill={fillColor} />
+    </svg>
+  )}
+</div>

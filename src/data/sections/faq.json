@@ -1,0 +1,51 @@
+{
+  "title": "Najczęściej zadawane pytania",
+  "description": "Najczęstsze pytania i odpowiedzi.",
+  "tagline": "FAQ",
+  "items": [
+    { "q": "Jaki jest czas realizacji?", "a": "Standardowy czas realizacji to 2-4 tygodnie, w zależności od zakresu projektu." },
+    { "q": "Czy wycena jest płatna?", "a": "Nie, wycena jest całkowicie bezpłatna i bez zobowiązań." },
+    { "q": "Jakie technologie stosujecie?", "a": "Specjalizujemy się w Astro, React, Tailwind CSS i nowoczesnym JavaScript." },
+    { "q": "Czy oferujecie wsparcie po wdrożeniu?", "a": "Tak, oferujemy wsparcie techniczne i aktualizacje w ramach umowy." },
+    { "q": "Czy pracujecie zdalnie?", "a": "Tak, większość projektu realizujemy zdalnie, ale spotkania online są zawsze możliwe." }
+  ],
+  "categories": [
+    {
+      "title": "Pytania ogólne",
+      "items": [
+        { "q": "Jak działa szyfrowanie end-to-end?", "a": "Szyfrowanie end-to-end gwarantuje, że tylko nadawca i odbiorca mają dostęp do treści wiadomości." },
+        { "q": "Czy mogę uzyskać dostęp do zaszyfrowanych danych, jeśli zapomnię klucza?", "a": "Nie, zapomnienie lub utrata klucza szyfrującego oznacza, że do zaszyfrowanych danych nie można uzyskać dostępu." }
+      ],
+      "moreLink": ""
+    },
+    {
+      "title": "Licencja i prywatność",
+      "items": [
+        { "q": "Czy moje dane osobowe są udostępniane firmom trzecim?", "a": "Nie, ściśle przestrzegamy podejścia zorientowanego na prywatność. Twoje dane osobowe nigdy nie są udostępniane ani sprzedawane." },
+        { "q": "Czy mogę korzystać z platformy na wielu urządzeniach?", "a": "Tak, możesz bezproblemowo korzystać z naszej platformy na wielu urządzeniach." }
+      ],
+      "moreLink": ""
+    },
+    {
+      "title": "Użytkowanie i przechowywanie",
+      "items": [
+        { "q": "Czy mogę korzystać z platformy na różnych urządzeniach?", "a": "Tak, Twoje zaszyfrowane dane synchronizują się na wszystkich urządzeniach w czasie rzeczywistym." },
+        { "q": "Czy są jakieś ograniczenia dotyczące przechowywania?", "a": "Oferujemy plany w różnych progach: wyższe progi odblokowują więcej miejsca." },
+        { "q": "Czy mogę wyeksportować swoje dane?", "a": "Możesz eksportować wiadomości, pliki i dokumenty do kopii zapasowej lub migracji." }
+      ]
+    },
+    {
+      "title": "Wsparcie i regulaminy",
+      "items": [
+        { "q": "Czy moje dane są udostępniane firmom trzecim?", "a": "Nigdy, przestrzegamy ścisłych protokołów prywatności. Twoje dane pozostają Twoje." },
+        { "q": "Jak mogę skontaktować się ze wsparciem?", "a": "Napisz do nas na support@example.com lub skorzystaj z czatu w aplikacji." }
+      ]
+    }
+  ],
+  "cta": {
+    "title": "Masz pytania?",
+    "description": "Wszystko, co musisz wiedzieć o naszej platformie. Jesteśmy tutaj, aby pomóc Ci z każdym pytaniem.",
+    "buttonLabel": "Kontakt ze wsparciem",
+    "buttonHref": "/kontakt/"
+  }
+}

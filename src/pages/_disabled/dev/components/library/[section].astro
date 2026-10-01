@@ -1,0 +1,27 @@
+---
+import ComponentGallery from '@components/dev/component-library/ComponentGallery.astro';
+import { getDeveloperCatalogGroups, getDeveloperCatalogMetadata } from '@components/dev/component-library/component-catalog-metadata';
+
+// Dlaczego: kategorie w bibliotece = grupy z MAPY KATEGORII (SECTION_GROUPS).
+// The path /dev/components/library/<groupId>/ shows all variants
+// w danej grupie, a nie pojedynczy wpis rejestru.
+export function getStaticPaths() {
+  const catalog = getDeveloperCatalogMetadata();
+  const groups = getDeveloperCatalogGroups()
+    .filter((group) => catalog.some((item) => item.groupId === group.id))
+    .map((group) => group.id);
+
+  return groups.map((groupId) => ({
+    params: { section: groupId },
+    props: { catalog, activeSectionId: groupId },
+  }));
+}
+
+if (!import.meta.env.DEV) {
+  return new Response(null, { status: 404 });
+}
+
+const { catalog, activeSectionId } = Astro.props;
+---
+
+<ComponentGallery catalog={catalog} activeSectionId={activeSectionId} />

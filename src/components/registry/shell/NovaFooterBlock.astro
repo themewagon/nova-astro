@@ -1,0 +1,49 @@
+---
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { getNovaCopy, getNovaNavigationPath, type NovaLocale } from "@utils/nova-i18n";
+
+interface Props {
+  locale?: NovaLocale;
+}
+
+const { locale = "pl" } = Astro.props as Props;
+const id = locale === "pl" ? "kontakt" : "contact";
+const copy = getNovaCopy(locale).footer;
+const footerLinks = copy.footerLinks.map((link) => ({ ...link, href: getNovaNavigationPath(link.href, locale) }));
+const legalLinks = copy.legalLinks.map((link) => ({ ...link, href: getNovaNavigationPath(link.href, locale) }));
+
+---
+
+<footer id={id} style="background-image: url('/assets/images/t001-nova/t001-nova-cta-mountains@1920.webp')" class="relative overflow-hidden rounded-t-[var(--rounded-lg)] bg-brand-dark bg-cover bg-center bg-no-repeat text-brand-light">
+  <div class="absolute inset-0 bg-brand-dark/60" aria-hidden="true"></div>
+  <div class="ui-container relative z-10 mx-auto grid w-[min(100%-2rem,80rem)] gap-10 py-16 pb-8 sm:py-20">
+    <div class="mx-auto max-w-5xl text-center">
+      <p class="mb-4 flex items-center justify-center gap-4 text-xs font-bold uppercase tracking-[0.14em] text-brand-accent">
+        <span class="h-px w-10 bg-brand-accent/70" aria-hidden="true"></span>
+        <span>{copy.eyebrow}</span>
+        <span class="h-px w-10 bg-brand-accent/70" aria-hidden="true"></span>
+      </p>
+      <h2 class="m-0 max-w-none text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.95] tracking-[-0.06em] text-brand-light lg:whitespace-nowrap">{copy.heading}</h2>
+      <p class="mx-auto mt-6 max-w-xl text-[clamp(1rem,1.5vw,1.2rem)] leading-[1.55] text-brand-light/80">{copy.description}</p>
+      <div class="mx-auto mt-10 flex w-full max-w-xs flex-col justify-center gap-3 sm:mt-12 sm:max-w-none sm:flex-row">
+        <Button href={getNovaNavigationPath(copy.primaryHref, locale)} variant="accent" class="min-h-11 w-full sm:w-auto">{copy.primaryLabel}</Button>
+        <Button href={getNovaNavigationPath(copy.secondaryHref, locale)} variant="outline" class="min-h-11 w-full !border-brand-light/65 !bg-brand-dark/35 !text-brand-light sm:w-auto">{copy.secondaryLabel}</Button>
+      </div>
+    </div>
+    <div class="flex flex-col items-center gap-8 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+      <nav aria-label={copy.ariaLegal} class="flex w-full flex-wrap justify-center gap-x-6 gap-y-3 sm:w-auto sm:justify-start">
+        {legalLinks.map((link) => <a href={link.href} class="inline-flex min-h-11 items-center text-sm text-brand-light/80 transition-colors hover:text-brand-accent sm:min-h-0">{link.label}</a>)}
+      </nav>
+      <nav aria-label={copy.ariaNavigation} class="grid w-full grid-cols-2 gap-x-6 gap-y-3 sm:flex sm:w-auto sm:flex-wrap sm:justify-start lg:justify-end">
+        {footerLinks.map((link) => <a href={link.href} class="inline-flex min-h-11 items-center text-sm text-brand-light transition-colors hover:text-brand-accent sm:min-h-0">{link.label}</a>)}
+      </nav>
+    </div>
+    <div class="flex flex-col items-center gap-4 border-t border-brand-light/25 pt-8 text-center text-brand-light/75 sm:flex-row sm:items-center sm:justify-between sm:text-left">
+      <Text tag="span" variant="feature-body-sm">
+        {copy.copyright} &bull; Distributed by <a target="_blank" href="https://themewagon.com" rel="noreferrer" class="text-brand-light transition-colors hover:text-brand-accent">ThemeWagon</a>
+      </Text>
+      <Text tag="span" variant="feature-body-sm" class="sm:text-right">{copy.attributionPrefix}<a href={copy.attributionLinkHref} target="_blank" rel="noreferrer" class="text-brand-light transition-colors hover:text-brand-accent">{copy.attributionLinkLabel}</a></Text>
+    </div>
+  </div>
+</footer>

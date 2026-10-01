@@ -1,0 +1,54 @@
+{
+  "pl": {
+    "eyebrow": "Najczęstsze pytania",
+    "heading": "Jak wygląda współpraca?",
+    "items": [
+      {
+        "question": "Jak szybko otrzymam odpowiedź?",
+        "answer": "Odpowiadamy na zgłoszenia w ciągu jednego dnia roboczego. Jeśli temat wymaga głębszej analizy, od razu podajemy termin, w którym wrócimy z pełną informacją."
+      },
+      {
+        "question": "Czy pierwsza konsultacja jest płatna?",
+        "answer": "Nie. Pierwsza konsultacja służy poznaniu Twoich potrzeb i ocenie, czy możemy pomóc. Dopiero po niej proponujemy konkretny zakres i wycenę."
+      },
+      {
+        "question": "Jak długo trwa współpraca?",
+        "answer": "To zależy od celu. Część projektów to kilka tygodni, inne rozciągają się na miesiące. Na starcie zawsze ustalamy harmonogram i kamienie milowe."
+      },
+      {
+        "question": "Czy pracujecie zdalnie?",
+        "answer": "Tak. Większość prac wykonujemy zdalnie, a spotkania stacjonarne organizujemy wtedy, gdy projekt tego wymaga."
+      },
+      {
+        "question": "Co otrzymam po zakończeniu projektu?",
+        "answer": "Komplet dokumentacji, przekazanie wiedzy zespołowi i jasny plan utrzymania efektów. Po zakończeniu pozostajemy do dyspozycji na pytania."
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "Frequently asked questions",
+    "heading": "How does cooperation work?",
+    "items": [
+      {
+        "question": "How quickly will I get a reply?",
+        "answer": "We respond to inquiries within one business day. If the topic requires deeper analysis, we immediately provide a date by which you will receive a full answer."
+      },
+      {
+        "question": "Is the first consultation paid?",
+        "answer": "No. The first consultation is about understanding your needs and assessing whether we can help. Only after that do we propose a concrete scope and pricing."
+      },
+      {
+        "question": "How long does the cooperation take?",
+        "answer": "It depends on the goal. Some projects take a few weeks, others span months. At the start we always agree on a timeline and milestones."
+      },
+      {
+        "question": "Do you work remotely?",
+        "answer": "Yes. Most of the work is done remotely, and on-site meetings are organized when the project requires them."
+      },
+      {
+        "question": "What do I receive after the project ends?",
+        "answer": "Complete documentation, knowledge transfer to your team and a clear plan for maintaining the results. After the project ends we remain available for questions."
+      }
+    ]
+  }
+}

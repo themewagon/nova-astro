@@ -1,0 +1,56 @@
+{
+  "pl": {
+    "eyebrow": "Z czym mierzą się firmy",
+    "heading": "Zanim do nas zadzwonią, mają te problemy",
+    "description": "Każda organizacja jest inna, ale wzorce się powtarzają. Oto sytuacje, w których firmy najczęściej szukają pomocy.",
+    "items": [
+      {
+        "num": "01",
+        "title": "Brak danych i wskaźników",
+        "description": "Decyzje podejmowane na wyczucie, trudno określić, co działa, a co wymaga naprawy. Brak pomiarów uniemożliwia obiektywną ocenę procesów."
+      },
+      {
+        "num": "02",
+        "title": "Niska terminowość",
+        "description": "Realizacje opóźniają się, a klienci tracą cierpliwość. Czas i pieniądze uciekają w przestojach oraz przeplanowaniach."
+      },
+      {
+        "num": "03",
+        "title": "Rosnące reklamacje",
+        "description": "Standardy nie są utrzymywane, a koszty poprawek i zwrotów idą w górę. Każda zmiana na stanowisku obniża jakość."
+      },
+      {
+        "num": "04",
+        "title": "Zmiany nie utrzymują się",
+        "description": "Projekt się kończy, a po miesiącu wraca stary sposób pracy. Brak systemu, odpowiedzialności i monitoringu podważa efekty."
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "What companies struggle with",
+    "heading": "Before they call us, they have these problems",
+    "description": "Every organization is different, but patterns repeat. Here are the situations in which companies most often look for help.",
+    "items": [
+      {
+        "num": "01",
+        "title": "No data or KPIs",
+        "description": "Decisions are made by gut feeling and it is hard to tell what works and what needs fixing. Without measurements, processes cannot be evaluated objectively."
+      },
+      {
+        "num": "02",
+        "title": "Poor on-time delivery",
+        "description": "Projects slip, customers lose patience. Time and money leak through downtime and rescheduling."
+      },
+      {
+        "num": "03",
+        "title": "Rising complaints",
+        "description": "Standards are not maintained and the cost of rework and returns keeps growing. Every change on the shop floor lowers quality."
+      },
+      {
+        "num": "04",
+        "title": "Changes do not stick",
+        "description": "The project ends and after a month the old way of working returns. Missing system, ownership and monitoring undermine the results."
+      }
+    ]
+  }
+}

@@ -1,0 +1,119 @@
+/* Shared reveal contract for the whole page. JavaScript only toggles visibility. */
+
+@layer components {
+  :root {
+    --motion-duration: 1000ms;
+    --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-stagger: 120ms;
+    --motion-blur: 3px;
+    --motion-distance: 0.6rem;
+  }
+
+  /* The ready flag is added before paint. Without it, content stays visible if JavaScript fails. */
+  html[data-motion-ready] [data-motion="fade"],
+  html[data-motion-ready] [data-motion="viewport"],
+  html[data-motion-ready] [data-motion-sequence="fade"] > *,
+  html[data-motion-ready] [data-motion-sequence="viewport"] > *,
+  html[data-motion-ready] [data-motion-auto-target] {
+    opacity: 0;
+    filter: blur(var(--motion-blur));
+    translate: 0 var(--motion-distance);
+    transition:
+      opacity var(--motion-duration) var(--motion-ease) var(--motion-delay, 0ms),
+      filter var(--motion-duration) var(--motion-ease) var(--motion-delay, 0ms),
+      translate var(--motion-duration) var(--motion-ease) var(--motion-delay, 0ms),
+      transform 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      box-shadow 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      border-color 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      background-color 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      color 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms !important;
+  }
+
+  html[data-motion-ready] [data-motion="fade"][data-motion-visible],
+  html[data-motion-ready] [data-motion="viewport"][data-motion-visible],
+  html[data-motion-ready] [data-motion-sequence="fade"] > *[data-motion-visible],
+  html[data-motion-ready] [data-motion-sequence="viewport"] > *[data-motion-visible],
+  html[data-motion-ready] [data-motion-auto-target][data-motion-visible] {
+    opacity: 1;
+    filter: blur(0);
+    translate: 0 0;
+  }
+
+  html[data-motion-ready] [data-motion-sequence="fade"] > *,
+  html[data-motion-ready] [data-motion-sequence="viewport"] > * {
+    --motion-delay: calc(var(--motion-order, 0) * var(--motion-stagger));
+  }
+
+  html[data-motion-ready] [data-motion-auto-target] {
+    --motion-delay: calc(var(--motion-auto-order, 0) * var(--motion-stagger));
+  }
+
+  /* Soft sections use the same engine with a shorter, quieter reveal. */
+  html[data-motion-ready] [data-motion-profile="soft"] > * {
+    --motion-duration: 950ms;
+    --motion-stagger: 120ms;
+    --motion-blur: 2px;
+    --motion-distance: 0.4rem;
+  }
+
+  /* Large media surfaces fade without blur to avoid unnecessary GPU work. */
+  html[data-motion-ready] [data-motion-media] {
+    filter: none;
+  }
+
+  html[data-motion-ready] [data-motion-skip] {
+    opacity: 1;
+    filter: none;
+    translate: none;
+    transition: none;
+  }
+
+  /* Interactive cards keep the reveal transition and restore their hover contract after entering. */
+  html[data-motion-ready] .ui-card-interactive[data-motion-visible] {
+    opacity: 1;
+    filter: blur(0);
+    translate: 0 0;
+    transition:
+      opacity var(--motion-duration) var(--motion-ease) var(--motion-delay, 0ms),
+      filter var(--motion-duration) var(--motion-ease) var(--motion-delay, 0ms),
+      translate var(--motion-duration) var(--motion-ease) var(--motion-delay, 0ms),
+      transform 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      box-shadow 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      border-color 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      background-color 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms,
+      color 250ms cubic-bezier(0.33, 1, 0.68, 1) 0ms;
+  }
+
+  html[data-motion-disabled] *,
+  html[data-motion-disabled] *::before,
+  html[data-motion-disabled] *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+
+    [data-motion="fade"],
+    [data-motion="viewport"],
+    [data-motion-sequence="fade"] > *,
+    [data-motion-sequence="viewport"] > *,
+    [data-motion-auto-target] {
+      opacity: 1 !important;
+      filter: none !important;
+      translate: none !important;
+      transition: none !important;
+    }
+
+    .ui-card-interactive[data-motion-visible] {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+}

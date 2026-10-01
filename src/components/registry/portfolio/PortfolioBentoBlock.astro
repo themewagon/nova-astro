@@ -1,0 +1,78 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import portfolioData from "@data/sections/portfolio.json";
+
+interface PortfolioItem {
+	title: string;
+	category: string;
+	img: string;
+	span?: string;
+	height?: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+	items?: PortfolioItem[];
+	/** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+	headingTag?: string;
+}
+
+const { 
+	class: className = "", 
+	title = "", 
+	description = "",
+	tagline = "",
+	headingTag = "h2",
+	items
+} = Astro.props;
+
+const list = items && items.length > 0 ? items : portfolioData.items;
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container" data-lightbox-group>
+		<SectionHeader 
+			title={title || portfolioData.title || portfolioData.variants.bento.title}
+			description={description || portfolioData.description || portfolioData.variants.bento.description}
+			tagline={tagline || portfolioData.tagline || portfolioData.variants.bento.tagline}
+			titleTag={headingTag}
+			align="left"
+		/>
+
+		<!-- Why: bento grid gives a modern look, various card sizes
+they attract the eye and break the monotonicity.No explicit data-motion
+= global auto-reveal from motion.js: header (tagline/h2/description)
+and the cards enter one by one on the scroll. -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-12 auto-rows-[300px]">
+			{list.map((item) => (
+				<div class={`relative group ui-radius-xl overflow-hidden ui-elevation-soft cursor-zoom-in ${item.span || ''}`} data-lightbox data-href={item.img} data-title={item.title}>
+					<SmartImage 
+						src={item.img} 
+						alt={item.title} 
+						class="ui-media-zoom"
+					/>
+					
+					{/* Gradient Overlay */}
+					<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-50 group-hover:opacity-70 transition-opacity duration-300"></div>
+					
+					{/* Content */}
+					<div class="absolute inset-x-0 bottom-0 p-6 md:p-8 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+						<Text variant="feature-body-sm" tag="span" class="ui-label-on-dark">
+							{item.category}
+						</Text>
+						<Heading level={3} variant="feature-title" class="text-white">
+							{item.title}
+						</Heading>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</Section>

@@ -1,0 +1,76 @@
+---
+// Why: AudienceSplitBlock is a faithful copy of the "FOR WHOM" section from the
+// reference project (split 2 columns: text on left, list of 4 target groups
+// on right with h-px separators between groups). Client color tokens
+// were replaced with global brand tokens of starter-kit, and content entrance was taken over by
+// global motion. Client groups
+// were replaced with generic categories in JSON to make the block library-ready.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import jsonData from "@data/sections/audience-split.json";
+
+interface Props {
+  /** Full section data; when missing, block reads fallback from JSON. */
+  data?: typeof jsonData;
+  /** Content language from JSON: "pl" (default) or "en". */
+  locale?: "pl" | "en";
+  /** Section anchor id (defaults to "dla-kogo"). */
+  id?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when block is first section without hero (SEO). */
+  headingTag?: string;
+  /** Additional classes for the section (e.g. from PageBuilder). */
+  class?: string;
+}
+
+const {
+  data,
+  locale = "pl",
+  id = "dla-kogo",
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: "props.data || jsonData[locale]" pattern (as in AboutLawBlock),
+// so the block works standalone with section data, and PageBuilder or CMS can
+// override content. When data comes from outside, we select its language
+// variant (pl/en) as JSON does.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+const groups = t.groups ?? [];
+---
+
+<Section id={id} tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    {/* Why: 2-column grid in ratio 1fr (text) to 1.2fr (group list),
+        exactly as in original. On mobile columns stack
+        (mobile-first), and content is centered. */}
+    <div class="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-14">
+      {/* Why: left column is text only: label, heading and lead.
+          Label color comes from text-brand-primary token, so it reacts
+          to active theme of starter-kit. */}
+      <div class="text-center lg:text-left">
+        <Text variant="accent-label" tag="p" class="!font-extrabold !tracking-[0.24em] !text-brand-primary">{t.eyebrow}</Text>
+        <Heading tag={headingTag} variant="section-heading-lg" class="mt-5 !font-extrabold">{t.heading}</Heading>
+        <Text variant="lead" class="mt-5 !font-semibold leading-[1.6] sm:leading-8">{t.description}</Text>
+      </div>
+
+      {/* Why: right column is list of groups (title + description) separated
+          by h-px separators. On mobile separator shrinks to max-w-[200px]
+          and groups are centered, on desktop separator is full width
+          and text is left-aligned (exactly as in client).
+          Separator does not appear after last group. */}
+      <div class="flex flex-col items-center gap-5 text-center lg:items-start lg:pl-8 lg:text-left xl:pl-12">
+        {groups.map((group, index) => [
+          <div>
+            <Heading tag="h3" class="!text-lg !font-extrabold">{group.title}</Heading>
+            <Text variant="feature-body-sm" class="mt-1 !font-semibold leading-6 text-brand-dark/70">{group.description}</Text>
+          </div>,
+          index < groups.length - 1 ? (
+            <div class="h-px w-full max-w-[200px] bg-brand-dark/10 lg:max-w-none"></div>
+          ) : null,
+        ])}
+      </div>
+    </div>
+  </Container>
+</Section>

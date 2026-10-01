@@ -1,0 +1,51 @@
+{
+  "search": {
+    "label": "Szukaj w katalogu",
+    "placeholder": "Wpisz nazwę komponentu",
+    "hint": "Możesz wpisać nazwę, kategorię albo wariant.",
+    "buttonLabel": "Szukaj"
+  },
+  "select": {
+    "label": "Typ projektu",
+    "selected": "Strona usługowa",
+    "optionOne": "Strona usługowa",
+    "optionTwo": "Landing page",
+    "optionThree": "Sklep internetowy"
+  },
+  "filters": {
+    "label": "Filtruj realizacje",
+    "all": "Wszystkie",
+    "websites": "Strony WWW",
+    "shops": "Sklepy",
+    "activeCount": "12 realizacji"
+  },
+  "toast": {
+    "title": "Zapisano zmiany",
+    "description": "Konfiguracja komponentu jest gotowa do użycia.",
+    "closeLabel": "Zamknij komunikat"
+  },
+  "form": {
+    "label": "Adres e-mail",
+    "value": "kontakt@",
+    "error": "Wpisz poprawny adres e-mail.",
+    "hint": "Użyj adresu, na który możemy odpowiedzieć."
+  },
+  "formStatus": {
+    "loadingTitle": "Wysyłanie wiadomości",
+    "loadingDescription": "Proszę chwilę poczekać. Formularz jest właśnie przekazywany.",
+    "successTitle": "Wiadomość wysłana",
+    "successDescription": "Dziękujemy za wiadomość. Odezwiemy się tak szybko, jak to możliwe.",
+    "errorTitle": "Nie udało się wysłać wiadomości",
+    "errorDescription": "Sprawdź połączenie i spróbuj ponownie. Wpisane dane pozostają na miejscu."
+  },
+  "drawer": {
+    "eyebrow": "Menu",
+    "title": "Poznaj ofertę",
+    "home": "Strona główna",
+    "services": "Usługi",
+    "projects": "Realizacje",
+    "contact": "Kontakt",
+    "cta": "Porozmawiajmy",
+    "closeLabel": "Zamknij menu"
+  }
+}

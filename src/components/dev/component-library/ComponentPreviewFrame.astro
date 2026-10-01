@@ -1,0 +1,106 @@
+---
+import Layout from '@layouts/Layout.astro';
+import type { DeveloperCatalogVariant } from './component-catalog';
+
+interface Props {
+  selected: DeveloperCatalogVariant;
+  thumbnail?: boolean;
+}
+
+const { selected, thumbnail = false } = Astro.props;
+const PreviewComponent = selected.component;
+const isThumbnail = thumbnail;
+const selectedVariantLabel = selected.variantLabel || selected.variantId;
+const frameBodyClass = [
+  'component-frame',
+  `component-frame-${selected.sectionId}`,
+  ...(isThumbnail ? ['component-frame-thumbnail'] : []),
+].join(' ');
+---
+
+<Layout
+  title={`${selected.sectionLabel} / ${selectedVariantLabel}`}
+  noIndex={true}
+  theme="default"
+  bodyClass={frameBodyClass}
+  showShell={false}
+  clientRuntime={!isThumbnail}
+  enableLenis={false}
+>
+  <div class="component-frame__canvas">
+    <PreviewComponent {...selected.props} theme="light" />
+  </div>
+</Layout>
+
+<script is:inline>
+  if (window.top === window.self) {
+    document.body.classList.add('component-frame-standalone');
+  }
+</script>
+
+<style is:global>
+  html,
+  body,
+  body.component-frame,
+  body.component-frame .component-frame__canvas {
+    min-height: 100%;
+  }
+
+  body.component-frame {
+    min-width: 0;
+    overflow-x: hidden;
+    background: var(--ui-bg-page);
+  }
+
+  html:has(body.component-frame-thumbnail:not(.component-frame-standalone)),
+  html:has(body.component-frame-thumbnail:not(.component-frame-standalone)) body,
+  body.component-frame-thumbnail:not(.component-frame-standalone) {
+    overflow: hidden !important;
+  }
+
+  body.component-frame-thumbnail:not(.component-frame-standalone) main {
+    padding-top: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html:has(body.component-frame-thumbnail:not(.component-frame-standalone)),
+  body.component-frame-thumbnail:not(.component-frame-standalone),
+  body.component-frame-thumbnail:not(.component-frame-standalone) * {
+    scrollbar-width: none;
+  }
+
+  html:has(body.component-frame-thumbnail:not(.component-frame-standalone))::-webkit-scrollbar,
+  body.component-frame-thumbnail:not(.component-frame-standalone)::-webkit-scrollbar,
+  body.component-frame-thumbnail:not(.component-frame-standalone) *::-webkit-scrollbar {
+    display: none;
+  }
+
+  html:has(body.component-frame-thumbnail.component-frame-standalone),
+  body.component-frame-thumbnail.component-frame-standalone {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body.component-frame-thumbnail.component-frame-standalone main {
+    padding-top: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Why: hero in production reserves space for the global header,
+     which isolated preview does not render.*/
+  body.component-frame-hero .component-frame__canvas {
+    --site-header-height: 0px;
+  }
+
+  body.component-frame #floating-bar,
+  body.component-frame #cookie-consent,
+  body.component-frame #cookie-settings-launcher,
+  body.component-frame #vt-bar,
+  body.component-frame #fst,
+  body.component-frame #site-nav-drawer,
+  body.component-frame astro-dev-toolbar,
+  body.component-frame #dev-toolbar-root {
+    display: none !important;
+  }
+
+</style>

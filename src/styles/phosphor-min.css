@@ -1,0 +1,83 @@
+/* Phosphor Icons - minimalny zestaw (tylko ikony uzywane w starter-kicie).
+ * Pelny pakiet @phosphor-icons/web ciagnal 500KB CSS + 4 formaty fontu (~4MB).
+ * Tu: woff2 (144KB) + 35 ikon uzywanych w komponentach i danych. Reszta ikon
+ * dostepna przez dopisanie .ph.ph-NAZWA:before { content: "\xxxx"; } (kody z
+ * node_modules/@phosphor-icons/web/src/regular/selection.json).
+ * UWAGA: font i kody pochodza z PAKIETU projektu (nie kopiowac kodow miedzy
+ * projektami - wersje pakietu maja rozne kodepointy).
+ * Po zmianie komponentow: npm run build i porownaj 'IKONY W DIST' z lista
+ * ponizej (grep po dist/*.html), dopisz brakujace.
+ */
+@font-face {
+  font-family: 'Phosphor';
+  src: url('/fonts/phosphor.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+.ph {
+  font-family: 'Phosphor', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  display: inline-block;
+}
+
+.ph.ph-arrow-left:before { content: "\e058"; }
+.ph.ph-arrow-right:before { content: "\e06c"; }
+.ph.ph-arrow-up:before { content: "\e08e"; }
+.ph.ph-arrow-up-right:before { content: "\e092"; }
+.ph.ph-barbell:before { content: "\e0b6"; }
+.ph.ph-briefcase:before { content: "\e0ee"; }
+.ph.ph-buildings:before { content: "\e102"; }
+.ph.ph-medal:before { content: "\e320"; }
+.ph.ph-caret-down:before { content: "\e136"; }
+.ph.ph-caret-right:before { content: "\e13a"; }
+.ph.ph-calculator:before { content: "\ee538"; }
+.ph.ph-chat:before { content: "\e15c"; }
+.ph.ph-chat-circle:before { content: "\ee168"; }
+.ph.ph-chart-bar:before { content: "\e150"; }
+.ph.ph-check-circle:before { content: "\e184"; }
+.ph.ph-clock:before { content: "\e19a"; }
+.ph.ph-cookie:before { content: "\e6ca"; }
+.ph.ph-copy:before { content: "\e1ca"; }
+.ph.ph-envelope:before { content: "\e214"; }
+.ph.ph-envelope-simple:before { content: "\e218"; }
+.ph.ph-facebook-logo:before { content: "\e226"; }
+.ph.ph-gear:before { content: "\e270"; }
+.ph.ph-gavel:before { content: "\ea32"; }
+.ph.ph-hand:before { content: "\e298"; }
+.ph.ph-handshake:before { content: "\e582"; }
+.ph.ph-hammer:before { content: "\e80e"; }
+.ph.ph-house:before { content: "\e2c2"; }
+.ph.ph-image:before { content: "\e2ca"; }
+.ph.ph-instagram-logo:before { content: "\e2d0"; }
+.ph.ph-magnifying-glass:before { content: "\e30c"; }
+.ph.ph-map-pin:before { content: "\e316"; }
+.ph.ph-microphone:before { content: "\e326"; }
+.ph.ph-sliders:before { content: "\e432"; }
+.ph.ph-speaker-high:before { content: "\e44a"; }
+.ph.ph-users-three:before { content: "\e68e"; }
+.ph.ph-wifi-high:before { content: "\e4ea"; }
+.ph.ph-waveform:before { content: "\e802"; }
+.ph.ph-paint-roller:before { content: "\e6f4"; }
+.ph.ph-path:before { content: "\e39c"; }
+.ph.ph-pencil:before { content: "\ee3ae"; }
+.ph.ph-phone:before { content: "\e3b8"; }
+.ph.ph-play:before { content: "\e3d0"; }
+.ph.ph-screwdriver:before { content: "\e86e"; }
+.ph.ph-scales:before { content: "\e750"; }
+.ph.ph-scroll:before { content: "\eb7a"; }
+.ph.ph-shapes:before { content: "\ec5e"; }
+.ph.ph-shield:before { content: "\e40a"; }
+.ph.ph-shield-chevron:before { content: "\e40e"; }
+.ph.ph-star:before { content: "\e46a"; }
+.ph.ph-timer:before { content: "\e492"; }
+.ph.ph-truck:before { content: "\e4b4"; }
+.ph.ph-twitter-logo:before { content: "\e4ba"; }
+.ph.ph-users:before { content: "\e4d6"; }
+.ph.ph-whatsapp-logo:before { content: "\e5d0"; }
+.ph.ph-wrench:before { content: "\e5d4"; }
+.ph.ph-x:before { content: "\e4f6"; }
+.ph.ph-youtube-logo:before { content: "\e4fc"; }

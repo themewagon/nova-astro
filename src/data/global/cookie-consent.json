@@ -1,0 +1,8 @@
+{
+  "title": "We use cookies",
+  "description": "This site uses cookies to improve browsing experience and analyze traffic. By using the site, you agree to our <a href=\"/cookies/\" class=\"font-semibold text-brand-primary underline decoration-brand-primary/30 underline-offset-4 hover:decoration-brand-primary transition-all\">cookie policy</a>.",
+  "acceptLabel": "Accept",
+  "essentialLabel": "Essential",
+  "hover": "Got it!",
+  "essentialHover": "Only these"
+}

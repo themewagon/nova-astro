@@ -1,0 +1,91 @@
+---
+import Icon from '@components/ui/atoms/Icon.astro';
+import Label from '@components/ui/atoms/Label.astro';
+import Text from '@components/ui/atoms/Text.astro';
+
+interface SelectOption {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  id?: string;
+  name?: string;
+  label?: string;
+  hint?: string;
+  options?: SelectOption[];
+  selectedId?: string;
+  class?: string;
+}
+
+const {
+  id = 'select-dropdown',
+  name,
+  label,
+  hint,
+  options = [],
+  selectedId = options[0]?.id,
+  class: className,
+} = Astro.props;
+
+const selectedOption = options.find((option) => option.id === selectedId) ?? options[0];
+---
+
+<div class:list={['space-y-2', className]} data-select-dropdown>
+  {label && <Label for={`${id}-trigger`}>{label}</Label>}
+  <input type="hidden" name={name} value={selectedOption?.id ?? ''} data-select-value-input />
+  <details class="group relative">
+    <summary
+      id={`${id}-trigger`}
+      class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-md border border-brand-dark/15 bg-[var(--ui-bg-page)] px-4 text-sm font-semibold text-brand-dark shadow-sm outline-none transition-colors hover:border-brand-primary focus-visible:ring-3 focus-visible:ring-brand-primary/30"
+      data-select-trigger
+    >
+      <span data-select-value>{selectedOption?.label ?? ''}</span>
+      <Icon name="caret-down" class="shrink-0 text-brand-dark/50 transition-transform group-open:rotate-180" />
+    </summary>
+    <div class="absolute inset-x-0 top-full z-10 mt-2 space-y-1 rounded-md border border-brand-dark/10 bg-[var(--ui-bg-page)] p-1.5 shadow-lg" role="listbox" aria-label={label}>
+      {options.map((option) => (
+        <button
+          type="button"
+          class="flex min-h-10 w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm text-brand-dark transition-colors hover:bg-brand-dark/[0.05] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand-primary/30"
+          data-select-option={option.id}
+          data-select-label={option.label}
+          aria-selected={option.id === selectedOption?.id}
+          role="option"
+        >
+          <span>{option.label}</span>
+          <Icon name="check" class:list={['text-brand-primary', option.id !== selectedOption?.id && 'invisible']} aria-hidden="true" />
+        </button>
+      ))}
+    </div>
+  </details>
+  {hint && <Text variant="body" class="text-sm text-brand-dark/55">{hint}</Text>}
+</div>
+
+<script>
+  const initializeSelectDropdowns = () => {
+    document.querySelectorAll<HTMLElement>('[data-select-dropdown]').forEach((root) => {
+      if (root.dataset.selectReady === 'true') return;
+      root.dataset.selectReady = 'true';
+
+      const details = root.querySelector('details');
+      const value = root.querySelector<HTMLElement>('[data-select-value]');
+      const valueInput = root.querySelector<HTMLInputElement>('[data-select-value-input]');
+
+      root.querySelectorAll<HTMLButtonElement>('[data-select-option]').forEach((option) => {
+        option.addEventListener('click', () => {
+          value && (value.textContent = option.dataset.selectLabel ?? option.textContent ?? '');
+          valueInput && (valueInput.value = option.dataset.selectOption ?? '');
+          root.querySelectorAll('[data-select-option]').forEach((item) => {
+            item.setAttribute('aria-selected', String(item === option));
+            item.querySelector('.ph-check')?.classList.toggle('invisible', item !== option);
+          });
+          details?.removeAttribute('open');
+        });
+      });
+    });
+  };
+
+  document.addEventListener('astro:page-load', initializeSelectDropdowns);
+  initializeSelectDropdowns();
+</script>

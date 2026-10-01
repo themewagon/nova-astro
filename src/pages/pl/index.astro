@@ -1,0 +1,21 @@
+---
+import Layout from '@layouts/Layout.astro';
+import PageBuilder from '@components/PageBuilder.astro';
+import pageConfig from '@data/pages/index.json';
+import { getNovaCopy, type NovaLocale } from '@utils/nova-i18n';
+
+const locale: NovaLocale = 'pl';
+const localized = getNovaCopy(locale);
+---
+
+<Layout
+  title={localized.page.title}
+  description={localized.page.description}
+  lang={locale}
+  locale={locale}
+  navbarVariant="floating"
+  footerVariant="nova"
+  fullBleedTop={true}
+>
+  <PageBuilder heading={localized.page.heading} sections={pageConfig.sections} locale={locale} />
+</Layout>

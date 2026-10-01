@@ -1,0 +1,94 @@
+{
+  "pl": {
+    "title": "Nasze usługi",
+    "description": "Kompleksowa pomoc w realizacji projektów budowlanych, remontowych i aranżacyjnych. Od pomysłu, przez projekt, po gotowe wnętrze.",
+    "items": [
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "house",
+        "title": "Remonty i wykończenia",
+        "description": "Kompleksowe remonty mieszkań i domów, od prac rozbiórkowych po wykończenie pod klucz, z zachowaniem terminu i budżetu.",
+        "href": "/kontakt/",
+        "linkLabel": "Skontaktuj się"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "wrench",
+        "title": "Naprawy i konserwacja",
+        "description": "Szybka reakcja na awarie, drobne naprawy oraz regularna konserwacja instalacji i wyposażenia, żeby uniknąć kosztownych usterek.",
+        "href": "/kontakt/",
+        "linkLabel": "Skontaktuj się"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "shapes",
+        "title": "Projektowanie i aranżacja",
+        "description": "Pomagamy zaplanować układ pomieszczeń, dobrać materiały i kolory, a także stworzyć funkcjonalną i estetyczną przestrzeń.",
+        "href": "/kontakt/",
+        "linkLabel": "Skontaktuj się"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "hammer",
+        "title": "Odbiory i przeglądy",
+        "description": "Profesjonalne przeglądy techniczne nieruchomości przed zakupem, najmem lub rozpoczęciem prac, z jasnym raportem usterek.",
+        "href": "/kontakt/",
+        "linkLabel": "Skontaktuj się"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "users",
+        "title": "Doradztwo i koordynacja",
+        "description": "Wsparcie w wyborze wykonawców, nadzór nad przebiegiem prac i kontakt z fachowcami w jednym miejscu, bez stresu i chaosu.",
+        "href": "/kontakt/",
+        "linkLabel": "Skontaktuj się"
+      }
+    ]
+  },
+  "en": {
+    "title": "Our services",
+    "description": "Full support for construction, renovation and interior design projects. From an idea, through design, to a finished interior.",
+    "items": [
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "house",
+        "title": "Renovation & Finishing",
+        "description": "Complete renovations of apartments and houses, from demolition work to turnkey finishing, on time and within budget.",
+        "href": "/kontakt/",
+        "linkLabel": "Get in touch"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "wrench",
+        "title": "Repairs & Maintenance",
+        "description": "Fast response to failures, minor repairs and regular maintenance of installations and equipment to avoid costly breakdowns.",
+        "href": "/kontakt/",
+        "linkLabel": "Get in touch"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "shapes",
+        "title": "Design & Layout",
+        "description": "We help plan room layouts, choose materials and colors, and create a functional, stylish space.",
+        "href": "/kontakt/",
+        "linkLabel": "Get in touch"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "hammer",
+        "title": "Inspections & Reviews",
+        "description": "Professional technical inspections of properties before purchase, rent or construction work, with a clear defect report.",
+        "href": "/kontakt/",
+        "linkLabel": "Get in touch"
+      },
+      {
+        "image": "/assets/placeholders/image-landscape.svg",
+        "icon": "users",
+        "title": "Consulting & Coordination",
+        "description": "Help choosing contractors, supervision of the works and contact with specialists in one place, without stress and chaos.",
+        "href": "/kontakt/",
+        "linkLabel": "Get in touch"
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+---
+/**
+ * FeatureItem — Atom
+ * Feature row with miniature icon box + description text.
+ * Used in CtaFeaturesBlock (split layout) and similar sections.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div class:list={["flex items-center gap-2 text-muted-foreground", className]}>
+  <div class="p-2 text-foreground rounded-lg bg-background outline outline-border shrink-0">
+    <slot name="icon" />
+  </div>
+  <p class="text-sm"><slot /></p>
+</div>

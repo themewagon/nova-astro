@@ -1,0 +1,51 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { getCurrentTemplate } from "@/config/template-layouts";
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import notFound from "@data/pages/404.json";
+
+const currentTemplate = getCurrentTemplate();
+const noIndex = true;
+---
+
+<!-- Dlaczego: 404 korzysta z globalnego shellu Layoutu (floating navbar
+     jak na homepage: transparentny overlay -> fixed po scrollu). -->
+<Layout
+  title="404 - Nie znaleziono strony"
+  noIndex={noIndex}
+  theme={currentTemplate === "default" ? undefined : currentTemplate}
+  navbarVariant="floating"
+  footerVariant="nova"
+  fullBleedTop
+>
+  <Section tone="page" class="relative overflow-hidden flex items-center justify-center min-h-[calc(100vh-8rem)] py-20 md:py-28">
+            <Container class="text-center relative z-10">
+                <div class="mb-12 relative inline-block">
+                    <span class="text-[6rem] md:text-[9rem] font-black leading-none text-brand-dark/40 select-none tracking-tighter">
+                        404
+                    </span>
+                </div>
+
+                <Heading tag="h1" variant="section-title" class="mb-4">
+                    {notFound.heading}
+                </Heading>
+
+                <Text variant="lead" class="mb-10 max-w-md mx-auto">
+                    {notFound.body}
+                </Text>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <Button href={notFound.cta1.href} variant="primary" class="w-full sm:w-auto" hoverText={notFound.cta1.hover || "Wracamy!"}>
+                        {notFound.cta1.label}
+                    </Button>
+                    <Button href={notFound.cta2.href} variant="outline" class="w-full sm:w-auto" hoverText={notFound.cta2.hover || "Napisz do nas"}>
+                        {notFound.cta2.label}
+                    </Button>
+                </div>
+            </Container>
+        </Section>
+</Layout>

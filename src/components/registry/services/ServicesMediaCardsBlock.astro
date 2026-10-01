@@ -1,0 +1,192 @@
+---
+// Why: ServicesMediaCardsBlock is a faithful copy of the "SOLUTIONS" section from the
+// reference project (centered header + grid of 6 service cards with an image alternating
+// at the top or bottom of the card).The client color tokens were changed to global brand
+// starter kit tokens, and the content input was taken over by the global motion system.Client
+// content replaced with generic PL/EN data in JSON.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import { formatInternalLink } from "@utils/url";
+import jsonData from "@data/sections/services-media-cards.json";
+
+interface Props {
+/** Full section data. The block reads the JSON fallback when omitted. */
+  data?: typeof jsonData;
+/** Content language from JSON: "pl" (default) or "en". */
+  locale?: "pl" | "en";
+/** Section anchor id (default: "solutions"). */
+  id?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+/** Additional section classes, for example from PageBuilder. */
+  class?: string;
+}
+
+const {
+  data,
+  locale = "pl",
+  id = "rozwiazania",
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: the "props.data || jsonData[locale]" pattern (as in AboutLawBlock), so that the block
+// works independently with section data, and PageBuilder or CMS can overwrite the
+// content.When the date comes from outside, we select the language variant (pl/en), just like
+// JSON does.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+const rawItems = t.items ?? [];
+
+// Why: formatInternalLink takes care of trailing slash and path cleanliness./#contact anchors
+// are left untouched (hero-law.json pattern).
+const items = rawItems.map((item) => ({
+  ...item,
+  ctaHref: formatInternalLink(item.ctaHref),
+}));
+---
+
+<Section id={id} tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    {/* Why: header centered as in the original, with a visible line
+decorative.In the case of the client, the dash was hidden from the animation,
+so after removing reveal we unhide it to keep it visible. */}
+    <div class="mx-auto max-w-4xl text-center">
+      <Text variant="accent-label" tag="p" class="!font-extrabold !tracking-[0.26em] !text-brand-primary">{t.eyebrow}</Text>
+      <Heading tag={headingTag} variant="section-heading-lg" class="mt-5 !font-extrabold">{t.heading}</Heading>
+      <Text variant="lead" class="mx-auto mt-4 max-w-2xl !font-semibold">{t.description}</Text>
+      <div class="mx-auto mt-6 h-0.5 w-14 bg-brand-primary"></div>
+    </div>
+
+    {/* Why: grid of 3 columns on desktop, 2 on sm, 1 on mobile (mobile-first).
+auto-rows-1fr from the original replaced h-full on tabs, which gives
+equal height of rows without the risk of layout cracks. */}
+    <div class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+      {items.map((item) => (
+        <article
+          class:list={[
+            "group flex h-full flex-col rounded-xl border border-brand-dark/10 shadow-soft lc-card-hover hover:border-brand-primary/30",
+            // Why: Originally, the cards with the image at the bottom were delicate
+            // background primary-container (tinted), other creamy. After conversion
+            // na tokeny: tinted to bg-brand-primary/10, kremowe to bg-white.
+            item.imageOnTop ? "bg-white" : "bg-brand-primary/10",
+          ]}
+        >
+          {/* Why: image on top only for every second tab (image OnTop).Wrapper with grayscale and hover:grayscale-0 exactly as in the original. */}
+          {item.imageOnTop && (
+            <div class="mx-3 mt-3 overflow-hidden rounded-xl border border-brand-dark/10 grayscale transition duration-500 group-hover:grayscale-0 lc-card-img">
+              <img
+                src={item.image.src}
+                alt={item.image.alt}
+                class="aspect-[5/3] w-full object-cover"
+                loading="lazy"
+                decoding="async"
+                width="640"
+                height="384"
+              />
+            </div>
+          )}
+
+          <div class="mx-3 mb-3 mt-3 rounded-lg border border-brand-dark/10 bg-white px-4 py-3.5 lc-card-body">
+            <Heading tag="h3" class="text-sm leading-snug !font-extrabold text-brand-dark">{item.title}</Heading>
+            <div class="my-2.5 h-px bg-brand-dark/10"></div>
+            <Text variant="body" class="text-sm !font-semibold text-brand-dark/70">{item.description}</Text>
+            <a href={item.ctaHref} class="lc-arrow-link">
+              {item.ctaLabel}
+              <span class="lc-arrow-link-icon" aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          {/* Why: image at the bottom of the card (after the content), with space only
+mb-3, exactly as in the original DOM structure. */}
+          {!item.imageOnTop && (
+            <div class="mx-3 mb-3 overflow-hidden rounded-xl border border-brand-dark/10 grayscale transition duration-500 group-hover:grayscale-0 lc-card-img">
+              <img
+                src={item.image.src}
+                alt={item.image.alt}
+                class="aspect-[5/3] w-full object-cover"
+                loading="lazy"
+                decoding="async"
+                width="640"
+                height="384"
+              />
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </Container>
+</Section>
+
+<style>
+  /* Why: lc-* styles are kept local to this block, with colors
+on brand tokens (var(--color-brand-primary)) so that they respond to active ones
+theme starter kit.Preserved times and transition curves 1:1 from the original. */
+  .lc-arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--color-brand-primary);
+    transition: gap 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lc-arrow-link:hover {
+    gap: 0.75rem;
+  }
+  .lc-arrow-link .lc-arrow-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1;
+    position: relative;
+    top: -2px;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lc-arrow-link:hover .lc-arrow-link-icon {
+    transform: translateX(6px);
+  }
+
+  /* Why: the tab body fills the space and pushes the CTA link to the bottom
+(margin-top: auto) so that the links in the row are aligned. */
+  .lc-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .lc-card-body .lc-arrow-link {
+    margin-top: auto;
+  }
+
+  /* Why: hover the card raises it and scales the image inside.Client shadow
+(rgba(7,22,50,.2)) stays because it's a pure shadow color, not a token. */
+  .lc-card-hover {
+    transition: border-color 0.3s ease, box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lc-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -16px rgba(7, 22, 50, 0.2);
+  }
+  .lc-card-img img {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lc-card-hover:hover .lc-card-img img {
+    transform: scale(1.04);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lc-card-hover,
+    .lc-arrow-link,
+    .lc-arrow-link .lc-arrow-link-icon {
+      transition: none;
+    }
+    .lc-card-hover:hover,
+    .lc-arrow-link:hover,
+    .lc-arrow-link:hover .lc-arrow-link-icon {
+      transform: none;
+    }
+  }
+</style>

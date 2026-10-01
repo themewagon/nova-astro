@@ -1,0 +1,15 @@
+---
+import ComponentGallery from '@components/dev/component-library/ComponentGallery.astro';
+import { getDeveloperCatalogMetadata } from '@components/dev/component-library/component-catalog-metadata';
+
+if (!import.meta.env.DEV) {
+  return new Response(null, { status: 404 });
+}
+
+const catalog = getDeveloperCatalogMetadata();
+// Why: the library home page shows the "All" category by default,
+// so that the search searches the entire catalog, not just the first section.
+const selectedSectionId = 'all';
+---
+
+{selectedSectionId && <ComponentGallery catalog={catalog} activeSectionId={selectedSectionId} />}

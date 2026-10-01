@@ -1,0 +1,153 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import portfolioData from "@data/sections/portfolio.json";
+
+interface PortfolioItem {
+	title: string;
+	category: string;
+	img: string;
+	span?: string;
+	height?: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+  categories?: string[];
+  items?: PortfolioItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+  }
+
+const { 
+	class: className = "", 
+	title = "", 
+	description = "",
+	tagline = "",
+	headingTag = "h2",
+	categories = ["Wszystkie", "Mieszkalne", "Komercyjne", "Wnętrza", "Zieleń"],
+	items
+} = Astro.props;
+
+const list = items && items.length > 0 ? items : portfolioData.items;
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container" data-portfolio-categorized data-lightbox-group>
+		<SectionHeader 
+title={title || portfolioData.title || portfolioData.variants.categorized.title}
+description={description || portfolioData.description || portfolioData.variants.categorized.description}
+tagline={tagline || portfolioData.tagline || portfolioData.variants.categorized.tagline}
+titleTag={headingTag}
+align="center"
+/>
+
+		{/* Why: filtering by category makes browsing easier for clients with multiple projects, buttons provide clear feedback */}
+		{/* Filter Tabs */}
+		<div class="flex flex-wrap justify-center gap-2 mb-12">
+			{categories.map((cat, index) => (
+				<button 
+					type="button"
+					data-filter={cat}
+					class={`portfolio-filter-btn px-6 py-2.5 rounded-full border text-sm font-medium transition-all duration-300 ${
+						index === 0 
+							? 'bg-brand-primary text-white border-brand-primary shadow-md' 
+							: 'ui-bg-surface border-brand-dark/10 ui-text-on-light hover:border-brand-primary/50'
+					}`}
+				>
+					{cat}
+				</button>
+			))}
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{list.map((item) => (
+				<div class="group cursor-pointer portfolio-item" data-category={item.category}>
+					<div class="relative w-full aspect-[4/3] ui-radius-xl overflow-hidden ui-elevation-soft mb-4 cursor-zoom-in" data-lightbox data-href={item.img} data-title={item.title}>
+						<SmartImage 
+							src={item.img} 
+							alt={item.title} 
+							class="ui-media-zoom"
+						/>
+						<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+					</div>
+					
+					<div class="px-2">
+						<Text variant="feature-body-sm" class="text-brand-primary font-medium uppercase tracking-wider mb-1">
+							{item.category}
+						</Text>
+						<Heading level={3} variant="feature-title" class="ui-text-on-light group-hover:text-brand-primary transition-colors">
+							{item.title}
+						</Heading>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</Section>
+
+<script>
+	const activeBtnClasses = ['bg-brand-primary', 'text-white', 'border-brand-primary', 'shadow-md'];
+	const inactiveBtnClasses = ['ui-bg-surface', 'border-brand-dark/10', 'ui-text-on-light', 'hover:border-brand-primary/50'];
+
+	function setFilterButtonActive(active: HTMLButtonElement, all: readonly HTMLButtonElement[]) {
+		for (const b of all) {
+			b.classList.remove(...activeBtnClasses);
+			b.classList.add(...inactiveBtnClasses);
+		}
+		active.classList.remove(...inactiveBtnClasses);
+		active.classList.add(...activeBtnClasses);
+	}
+
+	function applyCategoryFilter(root: HTMLElement, category: string | null) {
+		const items = root.querySelectorAll<HTMLElement>('.portfolio-item');
+		for (const item of items) {
+			const itemCat = item.getAttribute('data-category');
+			const match = category === 'All' || !category || itemCat === category;
+			item.toggleAttribute('hidden', !match);
+		}
+	}
+
+	let portfolioFilterAbort: AbortController | null = null;
+
+	function onPortfolioFilterDocumentClick(e: MouseEvent) {
+		const target = e.target;
+		if (!(target instanceof Element)) return;
+		if (!target) return;
+
+		const btn = target.closest<HTMLButtonElement>('.portfolio-filter-btn');
+		if (!btn) return;
+
+		const root = btn.closest<HTMLElement>('[data-portfolio-categorized]');
+		if (!root) return;
+
+		const filterBtns = [...root.querySelectorAll<HTMLButtonElement>('.portfolio-filter-btn')];
+		if (!filterBtns.length) return;
+
+		const category = btn.getAttribute('data-filter');
+		setFilterButtonActive(btn, filterBtns);
+		applyCategoryFilter(root, category);
+	}
+
+	function setupPortfolioFilters() {
+		portfolioFilterAbort?.abort();
+		portfolioFilterAbort = new AbortController();
+		document.addEventListener('click', onPortfolioFilterDocumentClick, {
+			signal: portfolioFilterAbort.signal,
+			capture: true,
+		});
+	}
+
+	document.addEventListener('astro:page-load', setupPortfolioFilters);
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', setupPortfolioFilters);
+	} else {
+		setupPortfolioFilters();
+	}
+</script>

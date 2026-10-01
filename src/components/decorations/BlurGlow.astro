@@ -1,0 +1,43 @@
+---
+interface Props {
+  color?: string;
+  size?: string;
+  placement?: 'behind-center' | 'behind-left' | 'behind-right' | 'behind-top' | 'behind-bottom';
+  opacity?: string;
+  blur?: string;
+  class?: string;
+}
+
+const {
+  color = 'var(--color-brand-primary)',
+  size = '24rem',
+  placement = 'behind-center',
+  opacity = '0.3',
+  blur = '80px',
+  class: className,
+} = Astro.props;
+
+const placementStyles: Record<string, string> = {
+  'behind-center': 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+  'behind-left': 'top-1/2 left-0 -translate-x-1/3 -translate-y-1/2',
+  'behind-right': 'top-1/2 right-0 translate-x-1/3 -translate-y-1/2',
+  'behind-top': 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/3',
+  'behind-bottom': 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3',
+};
+---
+
+<div
+  class:list={[
+    'pointer-events-none absolute select-none',
+    placementStyles[placement] || placementStyles['behind-center'],
+    className,
+  ]}
+  style={{
+    width: size,
+    height: size,
+    opacity: opacity,
+    background: `radial-gradient(ellipse at center, ${color} 0%, transparent 65%)`,
+    filter: `blur(${blur})`,
+  }}
+  aria-hidden="true"
+/>

@@ -1,0 +1,62 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import data from "@data/sections/testimonial-v2.json";
+import { ACTIVE_TEMPLATE } from "@config/template";
+
+interface Item { quote: string; author: string; initials: string; role: string; avatar?: string }
+export interface Props { sectionId?: string; title?: string; description?: string; tagline?: string; avatarAltPrefix?: string; items?: Item[]; class?: string }
+
+const { sectionId = "testimonial-v2", title, description, tagline, avatarAltPrefix, items, class: className = "" } = Astro.props as Props;
+const fallback = ACTIVE_TEMPLATE === "nova" ? undefined : data;
+const list = items && items.length > 0 ? items : fallback?.items ?? [];
+const resolvedAvatarAltPrefix = avatarAltPrefix ?? fallback?.avatarAltPrefix ?? "";
+const resolvedTitle = title || fallback?.title || "";
+const resolvedDescription = description || fallback?.description || "";
+const columns = [list, [...list.slice(2), ...list.slice(0, 2)], [...list.slice(1), ...list.slice(0, 1)]];
+---
+
+<Section id={sectionId === "testimonial-v2" ? "opinie" : sectionId} tone="page" class:list={["overflow-hidden", className]}>
+  <div class="ui-container">
+    <div data-motion-sequence="viewport" data-motion-profile="soft">
+      <SectionHeader title={resolvedTitle} description={resolvedDescription} titleTag="h2" align="center" class="mx-auto max-w-3xl" />
+      <div class="relative mx-auto mt-12 flex max-h-[720px] max-w-6xl justify-center gap-4 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] md:gap-6">
+      {columns.map((column, columnIndex) => (
+        <div class:list={["w-full max-w-sm", columnIndex > 0 ? "hidden md:block" : ""]}>
+          <div class:list={["testimonial-v2-track flex flex-col", columnIndex === 0 ? "testimonial-v2-scroll" : columnIndex === 1 ? "testimonial-v2-scroll-slow" : "testimonial-v2-scroll-fast"]}>
+            {[0, 1, 2].map((copyIndex) => (
+              <div class="flex flex-col gap-5 pb-5" aria-hidden={copyIndex > 0 ? "true" : undefined}>
+                {column.map((item) => (
+                  <article class="ui-bg-surface ui-radius-lg shrink-0 border border-brand-dark/10 p-6 shadow-sm md:p-8">
+                    <p class="text-brand-dark/75 leading-relaxed">{item.quote}</p>
+                    <footer class="mt-6 flex items-center gap-3">
+                      <span class="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-primary/15 text-xs font-semibold text-brand-primary">
+                        {item.initials}
+                        {item.avatar && <img src={item.avatar} alt={`${resolvedAvatarAltPrefix} ${item.author}`} width="40" height="40" class="absolute inset-0 size-full rounded-full object-cover" loading="eager" onerror="this.remove()" />}
+                      </span>
+                      <div>
+                        <cite class="block not-italic font-semibold text-brand-dark">{item.author}</cite>
+                        <span class="text-sm text-brand-dark/55">{item.role}</span>
+                      </div>
+                    </footer>
+                  </article>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  @keyframes testimonial-v2-up { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -33.333333%, 0); } }
+  .testimonial-v2-scroll, .testimonial-v2-scroll-slow, .testimonial-v2-scroll-fast { backface-visibility: hidden; will-change: transform; }
+  .testimonial-v2-scroll { animation: testimonial-v2-up 14s linear infinite; }
+  .testimonial-v2-scroll-slow { animation: testimonial-v2-up 18s linear infinite; }
+  .testimonial-v2-scroll-fast { animation: testimonial-v2-up 12s linear infinite; }
+  .testimonial-v2-scroll:hover, .testimonial-v2-scroll-slow:hover, .testimonial-v2-scroll-fast:hover { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .testimonial-v2-scroll, .testimonial-v2-scroll-slow, .testimonial-v2-scroll-fast { animation: none; } }
+</style>

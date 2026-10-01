@@ -1,0 +1,64 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+
+interface FaqItem {
+	q: string;
+	a: string;
+}
+
+interface Props {
+	class?: string;
+	title?: string;
+	description?: string;
+	tagline?: string;
+	items?: FaqItem[];
+}
+
+const { 
+	class: className = "", 
+	title = "FAQ", 
+	description = "Najczęściej zadawane pytania.",
+	tagline = "FAQ",
+	items
+} = Astro.props;
+
+const list = items && items.length > 0 ? items : [
+	{ q: "Czy wycena jest płatna?", a: "Nie, wycena jest całkowicie bezpłatna i bez zobowiązań." },
+	{ q: "Jak długo trwa budowa domu szkieletowego?", a: "Czas realizacji zależy od metrażu i zakresu, zwykle 3-6 miesięcy." },
+	{ q: "Jakiego drewna używacie?", a: "Pracujemy z certyfikowanym drewnem konstrukcyjnym C24, KVH i BSH." },
+	{ q: "Czy udzielacie gwarancji?", a: "Tak, każdą usługę obejmujemy pisemną gwarancją." }
+];
+---
+
+<Section class:list={["ui-bg-page", className]}>
+	<div class="ui-container">
+		<SectionHeader 
+			title={title}
+			description={description}
+			tagline={tagline}
+			align="center"
+		/>
+
+		<div class="max-w-2xl mx-auto mt-12">
+			<dl class="flex flex-col gap-10">
+				{list.map((item) => (
+					<div class="flex flex-col gap-2">
+						<dt>
+							<Heading level={3} variant="feature-title" class="ui-text-on-light">
+								{item.q}
+							</Heading>
+						</dt>
+						<dd>
+							<Text variant="feature-body-sm" class="ui-text-on-light-subtle">
+								{item.a}
+							</Text>
+						</dd>
+					</div>
+				))}
+			</dl>
+		</div>
+	</div>
+</Section>

@@ -1,0 +1,33 @@
+---
+import NavStyles from "./shared/NavStyles.astro";
+import Centered from "./layouts/Centered.astro";
+import Floating from "./layouts/Floating.astro";
+import Local from "./layouts/Local.astro";
+import Plain from "./layouts/Plain.astro";
+import type { NavTheme } from "./shared/nav-theme-classes";
+import type { NovaLocale } from "@utils/nova-i18n";
+
+export type NavbarLayout = "centered" | "floating" | "local" | "plain";
+
+interface Props {
+	layout?: NavbarLayout;
+	theme?: NavTheme;
+	locale?: NovaLocale;
+}
+
+const { layout = "centered", theme = "transparent", locale = "pl" } = Astro.props;
+
+const layouts = {
+	centered: Centered,
+	floating: Floating,
+	local: Local,
+	plain: Plain,
+} as const;
+
+const Selected = layouts[layout] ?? Centered;
+---
+
+<NavStyles />
+<Selected theme={theme} locale={locale} />
+
+<!-- Navbar JS w Layout.astro -->

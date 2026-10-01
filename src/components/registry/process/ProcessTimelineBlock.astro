@@ -1,0 +1,86 @@
+---
+// Why: ProcessStepsBlock pattern port with brands-jodlowski (timeline with scroll-controlled
+// progress bar). We use starter-kit atoms (Section, Container, SectionHeader, Heading, Text,
+// Icon), thanks to which the block keeps a coherent system design without its own, separate CSS.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+
+interface TimelineItem {
+  icon?: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  class?: string;
+  title?: string;
+  description?: string;
+  items?: TimelineItem[];
+  /* * Section header tag: 'h2' by default, 'h1' when the block is the first section of the page without hero (SEO). */
+  headingTag?: string;
+}
+
+const {
+class: className = "",
+title = "Jak pracujemy?",
+description = "Poznaj nasz sprawdzony proces współpracy od pierwszego kontaktu po oddanie gotowego rozwiązania.",
+items = [],
+headingTag = "h2",
+} = Astro.props;
+
+// Why: Section content can come with a `ph-` prefix (as in JSON), and Icon.astro expects a name
+// without a prefix. Normalization also protects against an empty string and leaves a sensible
+// fallback "chat".
+const normalizeIconName = (icon?: string) =>
+  typeof icon === "string" && icon.trim().length > 0 ? icon.trim().replace(/^ph-/, "") : "chat";
+---
+
+<Section class:list={[className]} tone="base">
+  <Container>
+    <SectionHeader title={title} description={description} titleTag={headingTag} align="center" />
+
+    <div id="process-timeline" class="relative mx-auto mt-16 max-w-4xl">
+      <div class="absolute left-6 top-3 h-[calc(100%-1.5rem)] w-0.5 bg-brand-primary/10 rounded-full lg:left-1/2 lg:-translate-x-1/2" aria-hidden="true"></div>
+
+      <ol class="space-y-8 lg:space-y-20" id="timeline-steps">
+        {items.map((item, index) => {
+          const isEven = index % 2 === 0;
+          const stepNum = (index + 1).toString().padStart(2, "0");
+          return (
+            <li
+              class="timeline-step relative flex gap-5 lg:items-start"
+              class:list={[isEven ? "lg:flex-row" : "lg:flex-row-reverse"]}
+            >
+              <div class="flex shrink-0 items-start justify-center relative z-10 lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+                <div class="timeline-dot relative flex size-11 items-center justify-center rounded-full border-2 border-brand-primary/20 bg-brand-light text-brand-primary">
+                  <Icon name={normalizeIconName(item.icon)} class="text-xl" />
+                </div>
+              </div>
+
+              <div
+                class="timeline-content flex-1 pt-0.5 lg:pt-1"
+                class:list={[isEven ? "lg:pr-14 lg:text-right" : "lg:pl-14 lg:text-left"]}
+              >
+                <div class="mb-1 lg:mb-2">
+                  <span class="text-xs font-semibold uppercase tracking-widest text-brand-primary/60">Krok {stepNum}</span>
+                </div>
+                <Heading level={3} variant="feature-title" class="text-brand-dark mb-2">
+                  {item.title}
+                </Heading>
+                <Text variant="body" class="text-brand-dark/65">
+                  {item.description}
+                </Text>
+              </div>
+
+              <div class="hidden lg:block flex-1" aria-hidden="true"></div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  </Container>
+</Section>

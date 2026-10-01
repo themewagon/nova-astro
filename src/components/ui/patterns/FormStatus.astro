@@ -1,0 +1,34 @@
+---
+import Heading from '@components/ui/atoms/Heading.astro';
+import Icon from '@components/ui/atoms/Icon.astro';
+import Text from '@components/ui/atoms/Text.astro';
+
+interface Props {
+  type: 'loading' | 'success' | 'error';
+  title: string;
+  description?: string;
+  class?: string;
+}
+
+const { type, title, description, class: className } = Astro.props;
+
+const tone = {
+  loading: { icon: 'circle-notch', iconClass: 'bg-[var(--color-info-container)] text-[var(--color-info)]', borderClass: 'border-[var(--color-info)]/25' },
+  success: { icon: 'check-circle', iconClass: 'bg-[var(--color-success-container)] text-[var(--color-success)]', borderClass: 'border-[var(--color-success)]/30' },
+  error: { icon: 'warning-circle', iconClass: 'bg-[var(--color-error-container)] text-[var(--color-error)]', borderClass: 'border-[var(--color-error)]/30' },
+}[type];
+---
+
+<div
+  class:list={['ui-form-status flex w-full items-center gap-3 rounded-lg border bg-brand-light/50 px-3 py-3 shadow-sm', tone.borderClass, className]}
+  role={type === 'error' ? 'alert' : 'status'}
+  aria-live={type === 'error' ? 'assertive' : 'polite'}
+>
+  <span class:list={['flex size-8 shrink-0 items-center justify-center rounded-lg', tone.iconClass]} aria-hidden="true">
+    <Icon name={tone.icon} size="1rem" class:list={{ 'animate-spin': type === 'loading' }} />
+  </span>
+  <div class="min-w-0 space-y-1">
+    <Heading tag="h3" variant="feature-title" class="text-sm leading-tight">{title}</Heading>
+    {description && <Text variant="body" data-form-feedback-description class="text-xs leading-relaxed text-brand-dark/60">{description}</Text>}
+  </div>
+</div>

@@ -1,0 +1,65 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+	/** Card color variant and border */
+	variant?: 'default' | 'surface' | 'ghost' | 'outline';
+	/** Inner card padding */
+	padding?: 'none' | 'sm' | 'md' | 'lg';
+	/** Corner radius */
+	radius?: 'none' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+	/** Shadow effect (elevation) */
+	elevation?: 'none' | 'soft' | 'strong';
+}
+
+const {
+	variant = 'default',
+	padding = 'md',
+	radius = '3xl',
+	elevation = 'none',
+	class: className,
+	...props
+} = Astro.props;
+
+const variantStyles = {
+	default: "bg-brand-surface border border-brand-border",
+	surface: "ui-bg-surface border border-brand-border/50",
+	ghost: "bg-transparent border border-transparent hover:bg-brand-surface transition-colors",
+	outline: "bg-transparent border border-brand-border",
+};
+
+const paddingStyles = {
+	none: "p-0",
+	sm: "p-4 sm:p-5",
+	md: "p-6 md:p-8",
+	lg: "p-8 md:p-12",
+};
+
+const radiusStyles = {
+	none: "rounded-none",
+	md: "rounded-md",
+	lg: "rounded-lg",
+	xl: "rounded-xl",
+	"2xl": "rounded-2xl",
+	"3xl": "rounded-3xl",
+};
+
+const elevationStyles = {
+	none: "shadow-none",
+	soft: "ui-elevation-soft",
+	strong: "ui-elevation-strong",
+};
+
+const classes = [
+	"overflow-hidden",
+	variantStyles[variant],
+	paddingStyles[padding],
+	radiusStyles[radius],
+	elevationStyles[elevation],
+	className
+];
+---
+
+<div class:list={classes} {...props}>
+	<slot />
+</div>

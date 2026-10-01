@@ -1,0 +1,27 @@
+---
+interface Props {
+	type?: 'image' | 'video' | 'abstract';
+	class?: string;
+	aspect?: string;
+}
+
+const { type = 'image', class: className = '', aspect = 'aspect-square' } = Astro.props;
+
+---
+
+<div class:list={[
+	"relative flex items-center justify-center overflow-hidden border border-brand-dark/10 bg-brand-dark/[0.03]",
+	aspect,
+	className
+]}>
+	<div class="flex flex-col items-center gap-2 text-brand-dark/35">
+		<div class="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-dark/10 bg-white/50">
+			{type === 'image' && <i class="ph ph-image text-brand-dark/20 text-xl"></i>}
+			{type === 'video' && <i class="ph ph-play text-brand-dark/20 text-xl pl-1"></i>}
+			{type === 'abstract' && <i class="ph ph-shapes text-brand-dark/20 text-xl"></i>}
+		</div>
+		<span class="text-[10px] font-medium uppercase tracking-[0.14em] text-brand-dark/30">
+			Mockup {type}
+		</span>
+	</div>
+</div>

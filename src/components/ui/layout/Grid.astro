@@ -1,0 +1,38 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type ColsValue = number | Record<string, number>;
+
+interface Props {
+  /** Liczba kolumn lub obiekt breakpoint:columns np. { default:1, md:3 } */
+  cols?: ColsValue;
+  /** Gap: "sm" | "md" | "lg" | "xl" lub dowolny string */
+  gap?: string;
+  class?: string;
+  role?: HTMLAttributes<'div'>['role'];
+}
+
+const { cols = { default: 1, md: 3 }, gap = "md", class: className, role } = Astro.props;
+
+const gapMap: Record<string, string> = {
+  sm: "gap-3",
+  md: "gap-6",
+  lg: "gap-8",
+  xl: "gap-12",
+};
+const gapClass = gapMap[gap] || gap;
+
+function colsToClasses(c: ColsValue): string {
+  if (typeof c === "number") return `grid-cols-${c}`;
+  return Object.entries(c)
+    .map(([bp, n]) => {
+      if (bp === "default") return `grid-cols-${n}`;
+      return `${bp}:grid-cols-${n}`;
+    })
+    .join(" ");
+}
+---
+
+<div class:list={["grid", colsToClasses(cols), gapClass, className]} {...(role ? { role } : {})}>
+  <slot />
+</div>

@@ -1,0 +1,10 @@
+{
+  "title": "Zacznijmy tworzyć razem",
+  "description": "Porozmawiajmy o Twoim projekcie i sprawdźmy, jak możemy pomóc w rozwoju Twojej marki.",
+  "primaryLabel": "Skontaktuj się",
+  "primaryHref": "/kontakt/",
+  "secondaryLabel": "Poznaj ofertę",
+  "secondaryHref": "/uslugi/",
+  "image": "/assets/images/t001-nova/t001-nova-cta-mountains.webp",
+  "imageAlt": "Górski krajobraz jako tło sekcji kontaktowej"
+}

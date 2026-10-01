@@ -1,0 +1,90 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Grid from "@components/ui/layout/Grid.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import ServiceCard from "@components/ui/molecules/ServiceCard.astro";
+import data from "@data/sections/services-grid.json";
+
+// Why: a block of services in an asymmetric grid (3 + 2 cards), transferred from the
+// reference project. Content lives in JSON (src/data/sections/services-grid.json) in
+// pl/en versions, and PageBuilder/CMS props overwrite JSON (SSOT, configurable block pattern).
+// Default texts in the block do NOT exist so as not to duplicate JSON content in the
+// component.
+type ServiceItem = {
+  image: string;
+  icon: string;
+  title: string;
+  description: string;
+  href?: string;
+  linkLabel?: string;
+};
+
+export interface Props {
+  /** Id sekcji (kotwica nawigacji), np. "uslugi". */
+  sectionId?: string;
+/** Content language from JSON: "pl" or "en". The fallback is "pl". */
+  lang?: "pl" | "en";
+  title?: string;
+  description?: string;
+  items?: ServiceItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+/** Additional section classes, for example from PageBuilder. */
+  class?: string;
+}
+
+const {
+sectionId = "uslugi",
+lang = "pl",
+title,
+description,
+items,
+headingTag = "h2",
+class: className = "",
+} = Astro.props as Props;
+
+// Why: t is the content of the chosen language; en is a fallback when lang does not exist in
+// JSON (the configurable block model).
+const t = data[lang] ?? data.pl;
+
+const resolvedTitle = title || t.title;
+const resolvedDescription = description || t.description;
+const resolvedItems = items ?? t.items ?? [];
+---
+
+<!-- Why: Section adds data-motion-section, so tabs benefit from
+     global auto reveal. tone="page" gives a light gray background for the tokenized section
+     ui-bg-page. -->
+<Section id={sectionId} tone="page" class:list={[className]}>
+  <Container>
+    <SectionHeader
+title={resolvedTitle}
+description={resolvedDescription}
+titleTag={headingTag}
+align="center"
+/>
+
+    <!-- Why: the first row is 3 cards (items 0-2), mobile-first
+         (grid-cols-1), on lg three columns. -->
+    <div class="services-grid">
+      <Grid cols={{ default: 1, lg: 3 }} gap="lg">
+        {resolvedItems.slice(0, 3).map((item) => (
+          <ServiceCard item={item} />
+        ))}
+      </Grid>
+    </div>
+
+    <!-- Why: the second row (items 3-4) is 2 tabs narrowed to 66% of the width
+         container on the desktop (max-w-[66%]), which gives grid asymmetry. -->
+    <div class="mx-auto mt-8 max-w-full lg:max-w-[66%]">
+      <div class="services-grid">
+        <Grid cols={{ default: 1, lg: 2 }} gap="lg">
+          {resolvedItems.slice(3, 5).map((item) => (
+            <ServiceCard item={item} />
+          ))}
+        </Grid>
+      </div>
+    </div>
+  </Container>
+</Section>

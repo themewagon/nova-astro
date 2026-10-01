@@ -1,0 +1,34 @@
+{
+  "pl": {
+    "heading": "Zaufali nam",
+    "description": "Firmy i marki, które nam zaufały przy realizacji swoich projektów",
+    "items": [
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 1" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 2" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 3" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 4" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 5" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 6" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 7" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 8" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 9" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Firma 10" }
+    ]
+  },
+  "en": {
+    "heading": "Trusted by",
+    "description": "Companies and brands that trusted us with their projects",
+    "items": [
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 1" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 2" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 3" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 4" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 5" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 6" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 7" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 8" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 9" },
+      { "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Company 10" }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "name": "Partner 1", "icon": "star", "initials": "P1" },
+    { "name": "Partner 2", "icon": "heart", "initials": "P2" },
+    { "name": "Partner 3", "icon": "shield-check", "initials": "P3" },
+    { "name": "Partner 4", "icon": "lightbulb", "initials": "P4" },
+    { "name": "Partner 5", "icon": "medal", "initials": "P5" },
+    { "name": "Partner 6", "icon": "gear", "initials": "P6" }
+  ]
+}

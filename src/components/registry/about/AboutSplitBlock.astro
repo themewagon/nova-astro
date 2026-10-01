@@ -1,0 +1,234 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import SmartImage from "@components/ui/atoms/SmartImage.astro";
+import data from "@data/sections/about-split.json";
+
+// Why: texts and media are passed via props (SSOT - Single Source of Truth) with
+// fallback to JSON (src/data/sections/about-split.json). JSON holds en/pl
+// content, and PL is the default language for this "About us" block copy. Props from CMS
+// override JSON. Image shape (imageShape) determines the gallery layout.
+export interface Props {
+  /** Id sekcji do kotwicy i page configu. */
+  sectionId?: string;
+  /** Content language from JSON. */
+  lang?: "pl" | "en";
+  title?: string;
+  /** Opis jako string z akapitami rozdzielonymi \n\n. */
+  description?: string;
+  quote?: string;
+  signature?: string;
+  role?: string;
+  /** Main section image (used in rounded/split/arch/collage variants). */
+  image?: string;
+  /** Image array for the mosaic variant (4 frames). */
+  images?: string[];
+  /** Image presentation shape. */
+  imageShape?: "rounded" | "mosaic" | "split" | "arch" | "collage";
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section on the page without a hero (SEO). */
+  headingTag?: string;
+  /** Additional classes for the section (e.g. from PageBuilder). */
+  class?: string;
+}
+
+const {
+  sectionId = "about-split",
+  lang = "pl",
+  title,
+  description,
+  quote,
+  signature,
+  role,
+  image,
+  images,
+  imageShape = "rounded",
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+const t = data[lang] ?? data.pl;
+
+// Why: props take precedence over JSON, so each field has an explicit
+// fallback. Media live outside the en/pl structure in JSON (no need to duplicate
+// paths per language), so the main image and frame list are resolved
+// separately.
+const resolvedTitle = title || t.title;
+const resolvedDescription = description || t.description;
+const resolvedQuote = quote || t.quote;
+const resolvedSignature = signature || t.signature;
+const resolvedRole = role || t.role;
+const resolvedImage = image || data.image;
+const resolvedImages = images && images.length ? images : (data.images ?? []);
+
+// Why: mosaic splits the screen into 4 squares, so the frame list is cyclically
+// expanded to 4 positions. When the list is empty, modulo by length 0 would produce NaN
+// (division by zero), so fallback to landscape placeholder prevents a crash.
+const MOSAIC_PLACEHOLDER = "/assets/placeholders/image-landscape.svg";
+const mosaicSources = [0, 1, 2, 3].map(
+  (i) => (resolvedImages.length ? resolvedImages[i % resolvedImages.length] : MOSAIC_PLACEHOLDER)
+);
+---
+
+<Section id={sectionId} tone="page" class:list={[className]}>
+  <Container>
+    <!-- Why: 50/50 split on desktop, stacked on mobile. Left side
+         holds text (justify-center), right side shows image in selected shape. -->
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-24">
+      <div class="flex flex-col justify-center">
+        <Heading tag={headingTag} variant="section-heading-lg" class="text-brand-dark mb-8">
+          {resolvedTitle}
+        </Heading>
+
+        <!-- Why: we split the JSON description by \n\n into paragraphs and render
+             each as a separate Text to keep readable spacing. -->
+        {resolvedDescription.split("\n\n").map((paragraph) => (
+          <Text variant="lead" class="text-brand-dark/80 mb-6">
+            {paragraph}
+          </Text>
+        ))}
+
+        <!-- Why: quote block with signature closes the text column, and border-t
+             separates it from paragraphs. Quote is optional, role too. -->
+        <div class="border-t border-brand-dark/10 pt-8">
+          <div class="space-y-3">
+            {resolvedQuote && (
+              <p class="font-heading text-base italic leading-relaxed whitespace-pre-line text-brand-dark/55 md:text-lg">
+                &bdquo;{resolvedQuote}&rdquo;
+              </p>
+            )}
+
+            <h3 class="about-signature" aria-label={`Podpis: ${resolvedSignature}`}>{resolvedSignature}</h3>
+
+            {resolvedRole && (
+              <div>
+                <Text tag="p" variant="feature-body-sm" class="mt-1 uppercase tracking-[0.2em] text-brand-dark/65">
+                  {resolvedRole}
+                </Text>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <!-- Why: right column renders image in one of 5 shapes.
+           Rounded is the default single frame, mosaic is a 2x2 grid with offset
+           for even tiles, split shows two vertical frames with offset, arch is
+           an arch at the top, collage adds a smaller detail frame at the bottom corner. -->
+      <div class="relative flex flex-col justify-center">
+        {resolvedImage ? (
+          imageShape === "mosaic" ? (
+            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+              {[
+                "object-[0%_0%]",
+                "object-[100%_0%]",
+                "object-[0%_100%]",
+                "object-[100%_100%]",
+              ].map((pos, i) => (
+                <div
+                  class:list={[
+                    "aspect-square overflow-hidden rounded-xl sm:rounded-2xl shadow-sm",
+                    i % 2 === 1 && "md:translate-y-8",
+                  ]}
+                >
+                  <SmartImage
+                    src={mosaicSources[i]}
+                    alt="Realizacja wnętrza"
+                    class={`block w-full h-full object-cover ${pos}`}
+                    width={400}
+                    height={400}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : imageShape === "split" ? (
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-1/2 aspect-[4/5] overflow-hidden rounded-2xl shadow-sm">
+                <SmartImage
+                  src={resolvedImage}
+                  alt="Realizacja wnętrza"
+                  class="block w-full h-full object-cover object-left"
+                  width={400}
+                  height={500}
+                />
+              </div>
+              <div class="w-1/2 aspect-[4/5] overflow-hidden rounded-2xl shadow-sm md:translate-y-12">
+                <SmartImage
+                  src={resolvedImage}
+                  alt="Realizacja wnętrza"
+                  class="block w-full h-full object-cover object-right"
+                  width={400}
+                  height={500}
+                />
+              </div>
+            </div>
+          ) : imageShape === "arch" ? (
+            <div class="overflow-hidden rounded-t-[45%] rounded-b-2xl h-full min-h-[360px]">
+              <SmartImage
+                src={resolvedImage}
+                alt="Realizacja wnętrza"
+                class="block w-full h-full object-cover object-center"
+                width={800}
+                height={600}
+              />
+            </div>
+          ) : imageShape === "collage" ? (
+            <div class="relative">
+              <div class="overflow-hidden rounded-2xl h-full min-h-[360px]">
+                <SmartImage
+                  src={resolvedImage}
+                  alt="Realizacja wnętrza"
+                  class="block w-full h-full object-cover object-center"
+                  width={800}
+                  height={600}
+                />
+              </div>
+              <div class="absolute -bottom-6 -right-3 w-2/5 aspect-square overflow-hidden rounded-2xl border-4 border-brand-light shadow-xl">
+                <SmartImage
+                  src={resolvedImage}
+                  alt="Realizacja wnętrza (detale)"
+                  class="block w-full h-full object-cover object-center scale-125"
+                  width={300}
+                  height={300}
+                />
+              </div>
+            </div>
+          ) : (
+            <div class="overflow-hidden rounded-2xl h-full">
+              <SmartImage
+                src={resolvedImage}
+                alt="Realizacja wnętrza"
+                class="block w-full h-full object-cover object-center"
+                width={800}
+                height={600}
+              />
+            </div>
+          )
+        ) : (
+          <div class="flex h-full min-h-[300px] items-center justify-center rounded-2xl bg-brand-dark/5">
+            <Text variant="body" class="text-brand-dark/30">{data.imageFallback}</Text>
+          </div>
+        )}
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<!-- Why: signature is a decorative styled element, so it keeps its own
+     <style> block. Original font (Alex Brush, cursive) does not exist in
+     starter-kit, so we use the global font-heading design token
+     to keep the signature consistent with template typography. -->
+<style is:inline>
+  .about-signature {
+    display: block;
+    width: fit-content;
+    color: var(--color-brand-primary);
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 1;
+    opacity: 0.82;
+  }
+</style>

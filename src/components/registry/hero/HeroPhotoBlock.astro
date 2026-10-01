@@ -1,0 +1,209 @@
+---
+// Why: HeroPhotoBlock is a visual copy of the full-screen hero from the project
+// reference layout (cover photo + gradient + trust logo marquee).
+// Client color tokens have been converted to GLOBAL brand starter-kit tokens,
+// logotype file names to the general "company-N.png". The content input took over
+// globalny system motion, a Section daje data-motion-section.
+import Section from "@components/ui/layout/Section.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { formatInternalLink } from "@utils/url";
+import jsonData from "@data/sections/hero-photo.json";
+
+export interface Props {
+  /** Section data from JSON. Props overwrite the default data (pattern "props || json").*/
+  data?: typeof jsonData;
+  /** Content language with JSON. PL is the default language, EN is the English equivalent.*/
+  locale?: "pl" | "en";
+  /** Section anchor id (default "hero").*/
+  sectionId?: string;
+  /** Additional classes per section (e.g. with PageBuilder).*/
+  class?: string;
+}
+
+const {
+  data: overrideData,
+  locale = "pl",
+  sectionId = "hero",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: "props || json" pattern makes the block work
+// alone with the section data, and PageBuilder or CMS may have overwritten the content.
+const data = overrideData ?? jsonData;
+const t = data[locale] ?? data.pl;
+const brands = data.brands ?? [];
+---
+
+<Section
+  id={sectionId}
+  tone="page"
+  class:list={[
+    // Why: !pt-0 !pb-0 deletes the vertical padding of the section, because the background image
+    // it should be full screen (client override maintained 1:1).
+    "relative flex min-h-screen max-h-[1080px] flex-col overflow-hidden !pt-0 !pb-0",
+    className,
+  ]}
+>
+  <!-- Background: darkened photo + gradient on brand-dark token.
+       Dlaczego: gradient z color-mix na var(--color-brand-dark) daje czytelny
+       ciemny overlay po lewej, dokladnie jak u klienta, ale reaguje na theme.-->
+  <div class="absolute inset-0 z-0">
+    <img
+      src={data.background.src}
+      alt={data.background.alt}
+      width="1600"
+      height="900"
+      class="h-full w-full object-cover brightness-[0.5] saturate-[1.05]"
+      style="object-position: 80% center;"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div
+      class="absolute inset-0"
+      style="background: linear-gradient(100deg, color-mix(in oklab, var(--color-brand-dark) 88%, transparent) 0%, color-mix(in oklab, var(--color-brand-dark) 52%, transparent) 35%, transparent 62%);"
+    ></div>
+  </div>
+
+  <!-- Hero content: centered on mobile, left on desktop (lg:).-->
+  <div
+    class="relative z-10 mx-auto flex w-[calc(100%-2rem)] max-w-[1280px] flex-1 items-center pb-12 pt-32 lg:pb-14 lg:pt-36"
+    style="max-height:1080px"
+  >
+    <div class="w-full">
+      <div class="mx-auto max-w-[700px] text-center lg:mx-0 lg:text-left">
+        <Text
+          variant="accent-label"
+          tag="p"
+          class="mb-6 block !text-[0.75rem] !font-extrabold !tracking-[0.26em] !text-white/70"
+        >
+          {t.eyebrow}
+        </Text>
+
+        <Heading
+          level={1}
+          tag="h1"
+          class="text-balance !font-extrabold !text-white leading-[1.08] text-[clamp(1.75rem,5vw,3.2rem)]"
+        >
+          {t.heading}{" "}
+          <!-- Why: akcent jako osobne pole headingAccent, dzieki czemu CMS
+               can edit both parts of the header independently.-->
+          <span class="underline decoration-brand-accent decoration-[5px] underline-offset-[10px]">
+            {t.headingAccent}
+          </span>
+        </Heading>
+
+        <!-- Why: the lead colored with color-mix on brand-light so that it stands out
+             od ciemnego tla niezaleznie od palety theme.-->
+        <Text
+          variant="lead"
+          tag="p"
+          class="mt-6 !font-semibold leading-[1.7]"
+          style="color:color-mix(in oklab, var(--color-brand-light) 85%, transparent)"
+        >
+          {t.lead}
+        </Text>
+
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+          <!-- Dlaczego: primary CTA przez atom Button w wariancie accent
+               (bg brand-accent, hover: dark fill ::after + white text,
+               patrz components.css). Button sam formatuje link przez
+               formatInternalLink, dodatkowe formatowanie jest bezpieczne
+               (idempotentne). -->
+          <Button
+            href={formatInternalLink(t.ctaPrimary.href)}
+            variant="accent"
+            class="!rounded-sm !px-7 !text-[0.95rem] !font-extrabold !shadow-strong !min-h-[54px]"
+          >
+            {t.ctaPrimary.label}
+          </Button>
+          <Button
+            href={formatInternalLink(t.ctaSecondary.href)}
+            variant="outline"
+            class="!rounded-sm !border-white/40 !px-7 !text-[0.95rem] !font-extrabold !text-white !bg-transparent transition-colors hover:!bg-white hover:!text-brand-dark hover:!border-white !min-h-[54px]"
+          >
+            {t.ctaSecondary.label}
+          </Button>
+        </div>
+
+        <!-- Why: footnote as an array of parts, so that the "|" separator could have been
+             styled separately and the CMS didn't have to store HTML.-->
+        <div class="mt-6 border-t border-white/10 pt-4 text-center text-sm font-semibold tracking-wide text-white/50 lg:text-left">
+          {t.footnote.map((part, index) => (
+            <>
+              {index > 0 && <span class="mx-3 text-white/20">|</span>}
+              {part}
+            </>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marquee logos: full width, under content (mt-auto).
+       Why: the list is repeated 3x and the animation moves the bar by 33.333%,
+       that is, exactly the length of one set, making the loop
+       smooth and no jump visible (see @keyframes lc-marquee in <style>).-->
+  <div class="relative z-10 mt-auto w-full px-4 pb-4 pt-10 lg:pb-6 lg:pt-14">
+    <Text
+      tag="p"
+      class="mb-8 text-center !text-xs !font-extrabold !tracking-[0.22em]"
+      style="color:rgba(255,255,255,0.6)"
+    >
+      {t.trustCount}
+    </Text>
+    <div class="lc-marquee-mask overflow-hidden">
+      <div class="lc-marquee-track flex w-max items-center gap-12">
+        {[0, 1, 2].map(() =>
+          brands.map((brand) => (
+            <img
+              src={brand.src}
+              alt={brand.alt}
+              width="180"
+              height="48"
+              class="h-7 w-auto object-contain opacity-70"
+              loading="lazy"
+              decoding="async"
+            />
+          ))
+        )}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style is:global>
+  /* Dlaczego is:global: .btn-slide trafia na <a> renderowane przez atom
+     Button (a separate component), and Astro's scoped styles would not include it in the attribute
+     data-astro-cid, wiec selektor by nie zadzialal.*/
+
+  /* Dlaczego: kliencka animacja marquee przeniesiona z inline style do klasy.
+     translateX(-33.333%) is exactly the length of one three logos.*/
+  @keyframes lc-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-33.333%);
+    }
+  }
+
+  /* Why: the mask smoothes the marquee edges (fade on the sides),
+     kliencki inline style przeniesiony do klasy bloku. */
+  .lc-marquee-mask {
+    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+
+  .lc-marquee-track {
+    animation: lc-marquee 35s linear infinite;
+  }
+
+  /* Why: The client was pausing the hover animation (class lc-marquee-pause
+      sterowana skryptem), tutaj to samo czystym CSS. */
+  .lc-marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+</style>

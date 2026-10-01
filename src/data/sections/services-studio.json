@@ -1,0 +1,10 @@
+{
+  "heading": "Usługi",
+  "items": [
+    { "icon": "microphone", "title": "Doradztwo", "desc": "Konsultacje i analiza potrzeb na starcie projektu, aby wybrać najlepszą ścieżkę działania." },
+    { "icon": "sliders", "title": "Projektowanie", "desc": "Tworzenie koncepcji i rozwiązań szytych na miarę, zgodnie z celami i budżetem klienta." },
+    { "icon": "wifi-high", "title": "Wdrożenie", "desc": "Sprawna realizacja i integracja, z minimalnym zakłóceniem codziennej pracy zespołu." },
+    { "icon": "speaker-high", "title": "Wsparcie", "desc": "Stała opieka po wdrożeniu, szybka reakcja na zgłoszenia i monitoring działania." },
+    { "icon": "waveform", "title": "Szkolenia", "desc": "Praktyczne szkolenia dla zespołu, aby w pełni wykorzystać możliwości nowych rozwiązań." }
+  ]
+}

@@ -1,0 +1,207 @@
+---
+// Why: TimelineAlternateBlock is a faithful copy of the "WHAT COMES WITH COMPANIES" section
+// (timeline of problems) from a reference project (index.astro, lines 267-323):
+// centered header + alternating timeline with 4 elements (01-04), a vertical background line
+// and a fill line animated with scrolling. It differs from ProcessTimelineScrollBlock
+// in its alternating layout: text once on the left, once on the
+// right, plus duplicate content for mobile (text under the dot in the same grid column).
+// Client color tokens replaced with GLOBAL brand starter kit tokens and client data replaced
+// with generic PL/EN issues in JSON. Functional line animation remained a local component
+// exception.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import jsonData from "@data/sections/timeline-alternate.json";
+
+interface TimelineItem {
+  num: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  /* * Full section details; when missing, the block reads the fallback from the JSON. */
+  data?: typeof jsonData;
+  /* * JSON content language: "pl" (default) or "en". */
+  locale?: "pl" | "en";
+  /** Id kotwicy sekcji. */
+  id?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+  /* * Additional classes per section (e.g. with PageBuilder). */
+  class?: string;
+  /* * Content overrides (props take precedence over JSON). */
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  items?: TimelineItem[];
+}
+
+const {
+  data,
+  locale = "pl",
+  id,
+  headingTag = "h2",
+  class: className = "",
+  eyebrow,
+  heading,
+  description,
+  items,
+} = Astro.props as Props;
+
+// Why: the "props.data || jsonData[locale]" pattern (as in CardsFilterableBlock), so that the
+// block works independently with section data, and PageBuilder or CMS can overwrite the
+// content with props. When the date comes from outside, we select the language variant
+// (pl/en), just like JSON does.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+
+const resolvedEyebrow = eyebrow || t.eyebrow || "";
+const resolvedHeading = heading || t.heading || "";
+const resolvedDescription = description || t.description || "";
+const resolvedItems = items ?? t.items ?? [];
+
+// Why: number from JSON (e.g. "01"), and if missing, fallback to index+1 padded to two digits
+// so that the numbering never disappears.
+const numberedItems = resolvedItems.map((item, index) => ({
+  ...item,
+  num: item.num || (index + 1).toString().padStart(2, "0"),
+}));
+---
+
+<Section id={id} tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    <div class="mx-auto max-w-4xl text-center">
+      <Text variant="accent-label" class="!font-extrabold !tracking-[0.24em] !text-brand-primary" tag="p">{resolvedEyebrow}</Text>
+      <Heading tag={headingTag} variant="section-heading-lg" class="mt-5 !font-extrabold">{resolvedHeading}</Heading>
+      <Text variant="lead" class="mx-auto mt-5 max-w-2xl !font-semibold !leading-8">{resolvedDescription}</Text>
+    </div>
+
+    <div class="relative mx-auto mt-14 max-w-5xl" data-timeline-root>
+      <!-- Why: a background line (silent, 10% brand-dark) and a fill line above it
+           (full brand-accent) controlled by JS scrolling below. On mobile
+           the line is at the left edge, centered on sm. date-timeline-line
+           it's a contract with JS. -->
+      <div class="absolute left-[14px] top-3 h-[calc(100%-2rem)] w-px bg-brand-dark/10 sm:left-1/2 sm:-translate-x-1/2" aria-hidden="true">
+        <div class="timeline-line-fill absolute left-0 top-0 h-0 w-full bg-brand-accent transition-all duration-1000" data-timeline-line></div>
+      </div>
+
+      <div class="flex flex-col gap-16 sm:gap-24">
+        {numberedItems.map((item, index) => {
+          // Why: alternating by index (odd 01, 03 = text
+          // left; even 02, 04 = text on the right), exactly as in the client's case.
+          const isLeft = index % 2 === 0;
+          return (
+            <div
+              class="timeline-item relative grid grid-cols-[auto_1fr] gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-start sm:gap-0"
+              data-timeline-item
+              data-timeline-index={index}
+            >
+              {isLeft ? (
+                <>
+                  {/* Why: text on desktop on the left (hidden sm:block),
+                       and on mobile the variant below in the same column as the dot. */}
+                  <div class="hidden sm:block sm:pr-10 sm:text-right lg:pr-14">
+                    <Heading level={3} class="!text-lg !font-extrabold">{item.title}</Heading>
+                    <Text variant="feature-body-sm" class="mt-2 !font-semibold !leading-7">{item.description}</Text>
+                  </div>
+                  <div class="timeline-dot relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-brand-accent bg-white text-[10px] font-extrabold text-brand-accent transition-all duration-500 sm:mx-auto sm:h-11 sm:w-11 sm:text-sm" data-timeline-dot>{item.num}</div>
+                  <div class="sm:hidden">
+                    <Heading level={3} class="!text-lg !font-extrabold">{item.title}</Heading>
+                    <Text variant="feature-body-sm" class="mt-2 !font-semibold !leading-7">{item.description}</Text>
+                  </div>
+                  <div class="hidden sm:block sm:pl-10 lg:pl-14" aria-hidden="true"></div>
+                </>
+              ) : (
+                <>
+                  <div class="hidden sm:block sm:pr-10 sm:text-right lg:pr-14" aria-hidden="true"></div>
+                  <div class="timeline-dot relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-brand-accent bg-white text-[10px] font-extrabold text-brand-accent transition-all duration-500 sm:mx-auto sm:h-11 sm:w-11 sm:text-sm" data-timeline-dot>{item.num}</div>
+                  <div class="sm:pl-10 lg:pl-14">
+                    <Heading level={3} class="!text-lg !font-extrabold">{item.title}</Heading>
+                    <Text variant="feature-body-sm" class="mt-2 !font-semibold !leading-7">{item.description}</Text>
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<script>
+  // Why: Timeline line filling logic transferred 1:1 from the original
+  // klienta (index.astro, JS na liniach 677-697) i przeniesiona na data-*
+  // attributes so that it does not depend on id or color classes. Works on
+  // each [data-timeline-root] instance (PageBuilder + Studio).
+  // IntersectionObserver reacts when the visibility threshold is exceeded 75%
+  // element and then: the dot gets the "active" class and the line fills
+  // percentage by furthest activated element (never goes back).
+
+  function initTimeline(root: HTMLElement) {
+    const line = root.querySelector<HTMLElement>("[data-timeline-line]");
+    const items = Array.from(root.querySelectorAll<HTMLElement>("[data-timeline-item]"));
+    if (!line || items.length === 0) return;
+
+    let done = -1;
+    const observer = new IntersectionObserver(
+      (entries: IntersectionObserverEntry[]) => {
+        let maxSeen = done;
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          // Why: indexOf in the items collection, not dataset, because the original
+          // used the same pattern (Array.prototype.indexOf.call).
+          const idx = items.indexOf(entry.target as HTMLElement);
+          if (idx > maxSeen) maxSeen = idx;
+          const dot = entry.target.querySelector("[data-timeline-dot]");
+          if (dot) dot.classList.add("active");
+        });
+        if (maxSeen > done) {
+          done = maxSeen;
+          line.style.height = ((maxSeen + 1) / items.length) * 100 + "%";
+        }
+      },
+      { threshold: 0.75 },
+    );
+    items.forEach((el) => observer.observe(el));
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>("[data-timeline-root]").forEach((root) => {
+      if (root.classList.contains("is-initialized")) return;
+      root.classList.add("is-initialized");
+      initTimeline(root);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll, { once: true });
+  } else {
+    initAll();
+  }
+</script>
+
+<style>
+  /* Why: dot active state (brand-accent fill + white number)
+     and pulsating ring transferred 1:1 from the client's original (styles on lines
+     623-624). Client hard rgba(166,207,24,.5) converted to color-mix
+     from the brand-accent token so that the pulsation follows the active theme. */
+  .timeline-dot.active {
+    background: var(--color-brand-accent);
+    color: #ffffff;
+    border-color: var(--color-brand-accent);
+    animation: tl-pulse 1.5s ease-out forwards;
+  }
+
+  @keyframes tl-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-brand-accent) 50%, transparent); }
+    70% { box-shadow: 0 0 0 14px color-mix(in oklab, var(--color-brand-accent) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-dot.active { animation: none; }
+    .timeline-line-fill { transition-duration: 0.01ms; }
+  }
+</style>

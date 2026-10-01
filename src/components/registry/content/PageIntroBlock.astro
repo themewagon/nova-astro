@@ -1,0 +1,41 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+
+export interface Props {
+  pageHeading?: string;
+  heading?: string;
+  description?: string;
+  id?: string;
+  class?: string;
+}
+
+const {
+  pageHeading,
+  heading,
+  description,
+  id = "page-intro",
+  class: className = "",
+} = Astro.props as Props;
+
+const resolvedHeading = heading ?? pageHeading ?? "";
+---
+
+<Section id={id} tone="page" class:list={["min-h-[35vh]", className]}>
+  <Container>
+    <div class="max-w-3xl py-[clamp(3rem,10vw,7rem)]">
+      {resolvedHeading && (
+        <Heading tag="h1" variant="hero" class="text-balance">
+          {resolvedHeading}
+        </Heading>
+      )}
+      {description && (
+        <Text variant="lead" class="mt-6 max-w-2xl text-brand-dark/70">
+          {description}
+        </Text>
+      )}
+    </div>
+  </Container>
+</Section>

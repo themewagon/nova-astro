@@ -1,0 +1,38 @@
+{
+  "pl": {
+    "eyebrow": "Jak działamy",
+    "heading": "Od diagnozy do trwałej zmiany",
+    "description": "Wspieramy firmy w doskonaleniu procesów i organizacji pracy. Zaczynamy od analizy rzeczywistego stanu, a kończymy na praktycznych wdrożeniach, które przynoszą wymierne efekty.",
+    "description2": "Porządkujemy planowanie, standaryzujemy pracę i usprawniamy przepływ informacji. Działamy wspólnie z Twoim zespołem, żeby wiedza i dobre nawyki zostały w firmie na stałe.",
+    "cta": { "label": "Porozmawiajmy o Twojej firmie", "href": "/kontakt/" },
+    "stats": [
+      { "value": "100%", "label": "Zaangażowania w każdy projekt" },
+      { "value": "24/7", "label": "Wsparcie dla klienta" },
+      { "value": "30 dni", "label": "Do pierwszej diagnozy" }
+    ],
+    "benefits": [
+      { "icon": "magnifying-glass", "title": "Diagnoza procesów", "description": "Zaczynamy od zrozumienia rzeczywistego stanu i procesów, bez gotowych schematów." },
+      { "icon": "path", "title": "Mapowanie przepływów", "description": "Wizualizujemy przebieg pracy i wskazujemy miejsca, w których tracisz czas i pieniądze." },
+      { "icon": "users", "title": "Wspólne wdrożenie", "description": "Angażujemy Twój zespół w zmianę, żeby efekty zostały w firmie na stałe." },
+      { "icon": "chart-bar", "title": "Mierzalne rezultaty", "description": "Ustalamy wskaźniki na starcie i raportujemy postępy przez cały czas współpracy." }
+    ]
+  },
+  "en": {
+    "eyebrow": "How we work",
+    "heading": "From diagnosis to lasting change",
+    "description": "We help businesses improve processes and ways of working. We start with an analysis of the current state and finish with practical implementations that deliver measurable results.",
+    "description2": "We organise planning, standardise work and streamline the flow of information. We work together with your team so that knowledge and good habits stay in the company.",
+    "cta": { "label": "Let's talk about your company", "href": "/contact/" },
+    "stats": [
+      { "value": "100%", "label": "Commitment to every project" },
+      { "value": "24/7", "label": "Client support" },
+      { "value": "30 days", "label": "To the first diagnosis" }
+    ],
+    "benefits": [
+      { "icon": "magnifying-glass", "title": "Process diagnosis", "description": "We start by understanding the real state of your processes, with no ready-made templates." },
+      { "icon": "path", "title": "Flow mapping", "description": "We visualise how work moves and point out where you lose time and money." },
+      { "icon": "users", "title": "Joint implementation", "description": "We involve your team in the change so that results stay in the company." },
+      { "icon": "chart-bar", "title": "Measurable results", "description": "We set KPIs at the start and report progress throughout the engagement." }
+    ]
+  }
+}

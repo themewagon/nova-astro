@@ -1,0 +1,56 @@
+{
+  "title": "Pomysły zamieniamy w realne efekty",
+  "description": "Łączymy strategiczne myślenie, dopracowany design i nowoczesne technologie, aby tworzyć strony, które nie tylko wyglądają dobrze, ale przede wszystkim działają.",
+  "tagline": "Realizacje",
+  "variants": {
+    "bento": {
+      "title": "Pomysły zamieniamy w realne efekty",
+      "description": "Poznaj wybrane projekty przygotowane dla marek, które chcą komunikować swoją wartość jasno i profesjonalnie.",
+      "tagline": "Realizacje"
+    },
+    "carousel": {
+      "title": "Odkryj nasze projekty",
+      "description": "Przewijaj, przesuwaj lub użyj strzałek, aby przeglądać ostatnie realizacje.",
+      "tagline": "Galeria",
+      "ariaPrevProject": "Poprzedni projekt",
+      "ariaNextProject": "Następny projekt"
+    },
+    "categorized": {
+      "title": "Nasze portfolio",
+      "description": "Przeglądaj nasz katalog zrealizowanych projektów.",
+      "tagline": "Projekty"
+    },
+    "marquee": {
+      "title": "Odkryj nasze projekty",
+      "description": "Poznaj nasze najnowsze realizacje w płynącej prezentacji.",
+      "tagline": "Galeria"
+    },
+    "doubleMarquee": {
+      "title": "Odkryj nasze projekty",
+      "description": "Poznaj nasze najnowsze realizacje płynące w wielu kierunkach.",
+      "tagline": "Galeria"
+    },
+    "masonry": {
+      "title": "Nasze najnowsze realizacje",
+      "description": "Poznaj nasze ostatnie prace i zobacz, jak realizujemy pomysły z precyzją i dbałością o szczegóły.",
+      "tagline": "Portfolio"
+    }
+  },
+  "categories": ["Wszystkie", "Strony internetowe", "Marki", "Digital"],
+  "items": [
+    {
+      "title": "Marka premium z nową stroną",
+      "category": "Strony internetowe",
+      "img": "/assets/images/t001-nova/t001-nova-project-laptop.webp",
+      "span": "md:col-span-2 md:row-span-1",
+      "height": "h-[400px]"
+    },
+    {
+      "title": "Nowy wizerunek dla ambitnej marki",
+      "category": "Marki",
+      "img": "/assets/images/t001-nova/t001-nova-project-building.webp",
+      "span": "md:col-span-1 md:row-span-1",
+      "height": "h-[400px]"
+    }
+  ]
+}

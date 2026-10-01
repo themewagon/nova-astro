@@ -1,0 +1,247 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Section from '@components/ui/layout/Section.astro';
+import Container from '@components/ui/layout/Container.astro';
+import Card from '@components/ui/atoms/Card.astro';
+import Button from '@components/ui/atoms/Button.astro';
+import Heading from '@components/ui/atoms/Heading.astro';
+import Text from '@components/ui/atoms/Text.astro';
+import galleryCopy from '@data/dev/component-library/component-gallery.json';
+import type { DeveloperCatalogVariant } from './component-catalog';
+
+interface Props {
+  selected: DeveloperCatalogVariant;
+}
+
+const { selected } = Astro.props;
+const frameHref = `/dev/components/preview/${encodeURIComponent(selected.sectionId)}/${encodeURIComponent(selected.variantId)}/`;
+const thumbnailHref = `/dev/components/thumbnail/${encodeURIComponent(selected.sectionId)}/${encodeURIComponent(selected.variantId)}/`;
+const copyPrompt = galleryCopy.copyPromptText
+  .replace('{uid}', String(selected.uid))
+  .replace('{sectionId}', selected.sectionId)
+  .replace('{variantId}', selected.variantId)
+  .replace('{componentName}', selected.componentName);
+const selectedVariantLabel = selected.variantLabel || selected.variantId;
+---
+
+<Layout title={`${selected.sectionLabel} / ${selectedVariantLabel}`} noIndex={true} theme="default" bodyClass="component-preview-page" enableLenis={false}>
+  <Section tone="page" class="min-h-screen">
+    <Container class="py-8 sm:py-12 lg:py-16">
+      <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-2">
+          <Text variant="accent-label">{selected.groupLabel}</Text>
+          <Heading tag="h1" variant="section-heading-lg">{selected.sectionLabel} / {selectedVariantLabel}</Heading>
+          <Text variant="accent-label" class="text-brand-primary">#{selected.uid} · {selected.componentName}</Text>
+          <Text variant="body" class="text-brand-dark/60">{selected.hint || galleryCopy.fallbackHint}</Text>
+        </div>
+        <div class="flex flex-wrap gap-3 sm:justify-end">
+          <Button href="/dev/components/" variant="outline" size="md">{galleryCopy.backToLibraryLabel}</Button>
+          <Button href={thumbnailHref} variant="primary" size="md" target="_blank" rel="noreferrer">
+            {galleryCopy.openThumbnailLabel}
+          </Button>
+          <Button type="button" variant="outline" size="md" class="!px-3" aria-label={galleryCopy.copyPromptLabel} title={galleryCopy.copyPromptLabel} data-copy-prompt={copyPrompt} data-copy-prompt-label={galleryCopy.copyPromptLabel} data-copy-prompt-success={galleryCopy.copyPromptSuccessLabel}>
+            <i class="ph ph-copy text-base" aria-hidden="true"></i>
+            <span class="sr-only">{galleryCopy.copyPromptLabel}</span>
+          </Button>
+        </div>
+      </div>
+
+      <Card variant="surface" padding="none" radius="lg" elevation="soft" class="overflow-hidden">
+        <div class="flex flex-col gap-3 border-b border-brand-dark/10 px-4 py-4 text-xs text-brand-dark/50 sm:flex-row sm:items-center sm:justify-between">
+          <span>{galleryCopy.previewLabel}</span>
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <span>{selected.componentName}</span>
+            <div class="flex flex-wrap gap-2" role="group" aria-label={galleryCopy.deviceSwitcherLabel}>
+              <Button type="button" variant="outline" size="md" class="component-device-button is-active" data-device="desktop" aria-pressed="true">{galleryCopy.deviceDesktopLabel}</Button>
+              <Button type="button" variant="outline" size="md" class="component-device-button" data-device="laptop" aria-pressed="false">{galleryCopy.deviceLaptopLabel}</Button>
+              <Button type="button" variant="outline" size="md" class="component-device-button" data-device="tablet" aria-pressed="false">{galleryCopy.deviceTabletLabel}</Button>
+              <Button type="button" variant="outline" size="md" class="component-device-button" data-device="mobile" aria-pressed="false">{galleryCopy.deviceMobileLabel}</Button>
+            </div>
+          </div>
+        </div>
+        <div class="component-preview-stage min-w-0 overflow-auto bg-brand-dark/[0.03] p-3 sm:p-6">
+          <iframe
+            id="component-preview-frame"
+            src={frameHref}
+            title={`${selected.sectionLabel} ${selectedVariantLabel}`}
+            class="component-preview-frame"
+            data-device="desktop"
+            data-section={selected.sectionId}
+          ></iframe>
+        </div>
+      </Card>
+    </Container>
+  </Section>
+</Layout>
+
+<script is:inline>
+  const previewFrame = document.getElementById('component-preview-frame');
+  const previewStage = previewFrame?.closest('.component-preview-stage');
+  const previewMinimumHeights = { mobile: 844 };
+  let frameResizeObserver;
+
+  const getPreviewContentHeight = () => {
+    if (!(previewFrame instanceof HTMLIFrameElement)) return 0;
+    const frameDocument = previewFrame.contentDocument;
+    if (!frameDocument) return 0;
+
+    const main = frameDocument.querySelector('main');
+    const canvas = frameDocument.querySelector('.component-frame__canvas');
+    const body = frameDocument.body;
+    const heights = [
+      main?.scrollHeight || 0,
+      main?.getBoundingClientRect().height || 0,
+      canvas?.scrollHeight || 0,
+      canvas?.getBoundingClientRect().height || 0,
+      body?.getBoundingClientRect().height || 0,
+    ];
+
+    return Math.ceil(Math.max(...heights));
+  };
+
+  const syncPreviewHeight = () => {
+    if (!(previewFrame instanceof HTMLIFrameElement)) return;
+
+    const device = previewFrame.getAttribute('data-device') || 'desktop';
+    const minimumHeight = previewFrame.getAttribute('data-section') === 'navbar'
+      ? (previewMinimumHeights[device] || 0)
+      : 0;
+    const contentHeight = getPreviewContentHeight();
+    const nextHeight = Math.max(contentHeight, minimumHeight, 1);
+
+    previewFrame.style.height = `${nextHeight}px`;
+    if (previewStage instanceof HTMLElement) {
+      previewStage.toggleAttribute('data-preview-overflow', previewFrame.scrollHeight > previewStage.clientHeight);
+    }
+  };
+
+  const observePreviewFrame = () => {
+    if (!(previewFrame instanceof HTMLIFrameElement)) return;
+    frameResizeObserver?.disconnect();
+    const frameDocument = previewFrame.contentDocument;
+    if (!frameDocument) return;
+
+    frameResizeObserver = new ResizeObserver(syncPreviewHeight);
+    [frameDocument.body, frameDocument.querySelector('main'), frameDocument.querySelector('.component-frame__canvas')]
+      .filter(Boolean)
+      .forEach((element) => frameResizeObserver.observe(element));
+    syncPreviewHeight();
+  };
+
+  previewFrame?.addEventListener('load', observePreviewFrame);
+  if (previewFrame instanceof HTMLIFrameElement && previewFrame.contentDocument?.readyState === 'complete') {
+    observePreviewFrame();
+  }
+
+  const copyButton = document.querySelector('[data-copy-prompt]');
+  copyButton?.addEventListener('click', async () => {
+    const prompt = copyButton.getAttribute('data-copy-prompt');
+    if (!prompt) return;
+    await navigator.clipboard.writeText(prompt);
+    const icon = copyButton.querySelector('i');
+    const label = copyButton.querySelector('.sr-only');
+    const successLabel = copyButton.getAttribute('data-copy-prompt-success') || 'Skopiowano';
+    icon?.classList.remove('ph-copy');
+    icon?.classList.add('ph-check-circle');
+    copyButton.setAttribute('aria-label', successLabel);
+    copyButton.setAttribute('title', successLabel);
+    if (label) label.textContent = successLabel;
+    window.setTimeout(() => {
+      const defaultLabel = copyButton.getAttribute('data-copy-prompt-label') || 'Kopiuj dla AI';
+      icon?.classList.remove('ph-check-circle');
+      icon?.classList.add('ph-copy');
+      copyButton.setAttribute('aria-label', defaultLabel);
+      copyButton.setAttribute('title', defaultLabel);
+      if (label) label.textContent = defaultLabel;
+    }, 1400);
+  });
+  const deviceButtons = Array.from(document.querySelectorAll('.component-device-button[data-device]'));
+
+  deviceButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const device = button.getAttribute('data-device');
+      if (!previewFrame || !device) return;
+
+      previewFrame.setAttribute('data-device', device);
+      deviceButtons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle('is-active', isActive);
+        item.setAttribute('aria-pressed', String(isActive));
+      });
+      syncPreviewHeight();
+    });
+  });
+</script>
+
+<style is:global>
+  body.component-preview-page #floating-bar,
+  body.component-preview-page #cookie-consent,
+  body.component-preview-page #cookie-settings-launcher,
+  body.component-preview-page #vt-bar,
+  body.component-preview-page #fst {
+    display: none !important;
+  }
+
+  .component-preview-stage {
+    max-height: min(70dvh, 52rem);
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: color-mix(in srgb, var(--color-brand-dark) 28%, transparent) transparent;
+    scrollbar-width: thin;
+  }
+
+  .component-preview-stage::-webkit-scrollbar {
+    width: 0.65rem;
+    height: 0.65rem;
+  }
+
+  .component-preview-stage::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .component-preview-stage::-webkit-scrollbar-thumb {
+    border: 0.15rem solid transparent;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-brand-dark) 28%, transparent);
+    background-clip: padding-box;
+  }
+
+  .component-preview-frame {
+    display: block;
+    height: 900px;
+    width: 1440px;
+    max-width: 100%;
+    margin-inline: auto;
+    border: 0;
+    background: var(--color-surface);
+    box-shadow: var(--ui-elevation-soft);
+    transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1), height 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .component-preview-frame[data-device="laptop"] {
+    width: 1280px;
+    height: 800px;
+  }
+
+  .component-preview-frame[data-device="tablet"] {
+    width: 768px;
+    height: 800px;
+  }
+
+  .component-preview-frame[data-device="mobile"] {
+    width: 390px;
+    height: 844px;
+  }
+
+  .component-device-button.is-active {
+    border-color: var(--color-brand-dark);
+    background: var(--color-brand-dark);
+    color: var(--color-surface);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .component-preview-frame {
+      transition: none;
+    }
+  }
+</style>

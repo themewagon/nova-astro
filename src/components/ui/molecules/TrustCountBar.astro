@@ -1,0 +1,65 @@
+---
+import Text from "@components/ui/atoms/Text.astro";
+
+type TrustItem = { value: string; label: string };
+
+interface Props {
+  items?: TrustItem[];
+}
+
+const { items = [] } = Astro.props as Props;
+---
+
+<div class="trust-count-bar">
+  {items.map((item) => (
+    <div class="trust-count-bar__item">
+      <div class="trust-count-bar__value" data-count-up>{item.value}</div>
+      <Text variant="body" class="trust-count-bar__label">{item.label}</Text>
+    </div>
+  ))}
+</div>
+
+<style>
+  .trust-count-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--color-brand-primary) 14%, transparent);
+    border-radius: var(--ui-radius-lg);
+    background: color-mix(in oklab, var(--color-brand-primary) 14%, transparent);
+  }
+
+  @media (min-width: 48rem) {
+    .trust-count-bar {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .trust-count-bar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: clamp(1.5rem, 3vw, 2rem) 1rem;
+    background: var(--color-brand-dark-muted, var(--color-brand-dark));
+    text-align: center;
+  }
+
+  .trust-count-bar__value {
+    color: var(--color-brand-primary);
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .trust-count-bar__label {
+    max-width: 18ch;
+    color: rgb(255 255 255 / 0.68);
+    font-size: 0.875rem;
+  }
+</style>

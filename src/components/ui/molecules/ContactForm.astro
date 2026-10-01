@@ -1,0 +1,292 @@
+---
+// Why: ContactForm is a common contact form rendered by all
+// contact section variants. Separated into a molecule to avoid duplication
+// field logic, AJAX submit and feedback messages in each block.
+// The fields are defined by the client (props fields from contact.json), and the messages are read
+// z global/form-messages.json so form status text follows the product locale.
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Input from "@components/ui/atoms/Input.astro";
+import Textarea from "@components/ui/atoms/Textarea.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+import FormStatus from "@components/ui/patterns/FormStatus.astro";
+import formMessages from "@data/global/form-messages.json";
+
+type ContactField = {
+  name: string;
+  label: string;
+  type?: "text" | "email" | "tel" | "number" | "url" | "password" | "date" | "textarea" | "select" | "checkbox";
+  required?: boolean;
+  placeholder?: string;
+  rows?: number;
+  autoComplete?: string;
+  options?: { value: string; label: string }[];
+};
+
+interface Props {
+  formId: string;
+  fieldIdPrefix: string;
+  fields: ContactField[];
+  heading?: string;
+  subheading?: string;
+  buttonLabel?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  resetLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  privacyUrl?: string;
+  showHeader?: boolean;
+  includeRodoConsent?: boolean;
+  class?: string;
+}
+
+const {
+  formId = "cf-form",
+  fieldIdPrefix = "cf",
+  fields = [],
+  heading = "",
+  subheading,
+  buttonLabel: buttonLabelProp = "",
+  submitLabel: submitLabelProp = "",
+  submittingLabel: submittingLabelProp = "",
+  resetLabel: resetLabelProp = "",
+  successMessage: successMessageProp = "",
+  errorMessage: errorMessageProp = "",
+  privacyUrl,
+  showHeader = true,
+  includeRodoConsent = true,
+  class: className,
+} = Astro.props as Props;
+
+// Dlaczego: komunikaty dla JS-owego handlera formularza (form-handler.js) podajemy
+// as data-attributes on the form. The handler reads them from the dataset instead of hardcoding them.
+// Priority: JSON from form-messages.json, then props; no value = empty string
+// (JSON is the source of truth, so there are no language-specific JS fallbacks here).
+const submitLabel = formMessages.submitLabel || submitLabelProp || buttonLabelProp || "";
+const submittingLabel = formMessages.submittingLabel || submittingLabelProp || "";
+const resetLabel = formMessages.resetLabel || resetLabelProp || "";
+const successMessage = formMessages.successMessage || successMessageProp || "";
+const errorMessage = formMessages.errorMessage || errorMessageProp || "";
+const resetHover = formMessages.resetHover || "";
+const submitHover = formMessages.submitHover || "";
+const privacyNote = formMessages.privacyNote || "";
+const privacyLinkLabel = formMessages.privacyLinkLabel || "";
+const privacyHref = formMessages.privacyHref || privacyUrl || "";
+
+// Why: a privacy policy notice may contain a link phrase in two ways:
+// directly (as in JSON: "...in the privacy policy.") or as a placeholder
+// {label}. We break down the sentence according to the link label (case-insensitive, to
+// JSON could use a lowercase letter), and instead of {label} we substitute the link label.
+const privacyLinkPattern = new RegExp(privacyLinkLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+const [privacyPrefix = privacyNote, privacySuffix = ""] = privacyNote.split(privacyLinkPattern);
+
+// Why: division of fields - the first two go to a 2-column grid,
+// the rest (select, textarea, checkbox) takes up the full width.
+// When the consumer does not provide their own list, the default fields are used
+// z form-messages.json (defaultFields).
+const defaultFields = (formMessages.defaultFields ?? []) as ContactField[];
+const gridFields: ContactField[] = fields.length > 0 ? fields.slice(0, 2) : defaultFields.slice(0, 2);
+const restFields: ContactField[] = fields.length > 0 ? fields.slice(2) : defaultFields.slice(2);
+
+// Dlaczego: atom Input przyjmuje tylko typy tekstowe, a select/textarea/checkbox
+// are rendered separately (lower in the template). Helper narrows the union to Input types,
+// to avoid passing an invalid type to the type attribute.
+const toInputType = (field: ContactField): "text" | "email" | "tel" | "number" | "url" | "password" | "date" =>
+  field.type === "select" || field.type === "textarea" || field.type === "checkbox"
+    ? "text"
+    : (field.type || "text");
+---
+
+<!-- Why: the common form works on its own in any section,
+     bez wymuszania dodatkowego wrappera. -->
+<div class:list={["space-y-6", className]}>
+  {
+    showHeader && (
+      <div class="space-y-2">
+        <Heading tag="h2" variant="section-title" class="text-brand-dark">
+          {heading || formMessages.heading}
+        </Heading>
+        {
+          subheading && (
+            <Text variant="lead" class="text-brand-dark/70">
+              {subheading}
+            </Text>
+          )
+        }
+      </div>
+    )
+  }
+
+  <form
+    id={formId}
+    action="/send-form.php"
+    method="POST"
+    class="space-y-5"
+    data-contact-form
+    data-submit-label={submitLabel}
+    data-submitting-label={submittingLabel}
+    data-success-message={successMessage}
+    data-error-message={errorMessage}
+    data-form-msg-original={formMessages.submitLabel}
+    data-form-msg-loading={formMessages.submittingLabel}
+    data-form-msg-success-retry={formMessages.resetLabel}
+    data-form-msg-error-retry={formMessages.retryLabel}
+    data-form-msg-success={successMessage}
+    data-form-msg-error={errorMessage}
+    data-form-msg-loading-status={formMessages.loadingMessage}
+    data-form-msg-network-error={formMessages.networkError}
+    data-form-msg-invalid-response={formMessages.invalidResponse}
+  >
+    <div data-form-feedback-stack class="ui-form-feedback-stack space-y-3" aria-live="polite">
+      <div data-form-feedback="loading" hidden tabindex="-1">
+        <FormStatus type="loading" title={formMessages.loadingTitle} description={formMessages.loadingMessage} />
+      </div>
+      <div data-form-feedback="success" hidden tabindex="-1">
+        <FormStatus type="success" title={formMessages.successTitle} description={successMessage} />
+      </div>
+      <div data-form-feedback="error" hidden tabindex="-1">
+        <FormStatus type="error" title={formMessages.errorTitle} description={errorMessage} />
+      </div>
+    </div>
+
+    <!-- Reset button ("send another") - under the message, not in it.
+         data-form-feedback="reset" chroni go przed ukryciem przez CSS is-submitted
+         (ukrywa tylko :not([data-form-feedback])), a JS pokazuje go razem z sukcesem. -->
+    <div data-form-feedback="reset" hidden class="mt-4 text-center">
+      <button type="button" data-form-reset class="ui-button ui-button-primary ui-type-cta-label font-semibold text-sm sm:text-base h-12 px-8">
+        <span class="ui-button-text-wrap">
+          <span class="ui-button-text-default">{resetLabel}</span>
+          <span class="ui-button-text-hover">{resetHover}</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Pierwsze dwa pola w gridzie 2-kolumnowym -->
+    <div class="grid gap-5 sm:grid-cols-2" data-form-fields>
+      {gridFields.map((field) => (
+        <div>
+          <Text tag="label" variant="accent-label" class="ui-form-label" for={`${fieldIdPrefix}-${field.name}`}>
+            {field.label}
+          </Text>
+          <Input
+            id={`${fieldIdPrefix}-${field.name}`}
+            name={field.name}
+            type={toInputType(field)}
+            placeholder={field.placeholder || field.label}
+            required={field.required}
+            autocomplete={field.autoComplete}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- The rest of the fields in one column-->
+    <div class="space-y-5 mt-5" data-form-fields>
+      {restFields.map((field) => (
+        <div>
+          <Text tag="label" variant="accent-label" class="ui-form-label" for={`${fieldIdPrefix}-${field.name}`}>
+            {field.label}
+          </Text>
+          {
+            field.type === "textarea" ? (
+              <Textarea
+                id={`${fieldIdPrefix}-${field.name}`}
+                name={field.name}
+                placeholder={field.placeholder || field.label}
+                required={field.required}
+                rows={field.rows || 5}
+              />
+            ) : field.type === "select" && field.options ? (
+              <div class="relative">
+                <select
+                  id={`${fieldIdPrefix}-${field.name}`}
+                  name={field.name}
+                  required={field.required}
+                  class="ui-form-input w-full appearance-none pr-10"
+                >
+                  <option value="" disabled selected>
+                    {field.label}
+                  </option>
+                  {field.options.map((opt) => (
+                    <option value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <Icon name="caret-down" class="text-brand-dark/40" />
+                </div>
+              </div>
+            ) : field.type === "checkbox" ? (
+              <label class="ui-form-checkbox-container">
+                <input
+                  type="checkbox"
+                  id={`${fieldIdPrefix}-${field.name}`}
+                  name={field.name}
+                  required={field.required}
+                  class="ui-form-checkbox"
+                />
+                <span class="ui-form-checkbox-icon">
+                  <Icon name="check" class="w-4 h-4 text-white" />
+                </span>
+                <Text tag="span" variant="body" class="text-sm text-brand-dark/70">
+                  {field.label}
+                </Text>
+              </label>
+            ) : (
+              <Input
+                id={`${fieldIdPrefix}-${field.name}`}
+                name={field.name}
+                type={toInputType(field)}
+                placeholder={field.placeholder || field.label}
+                required={field.required}
+                autocomplete={field.autoComplete}
+              />
+            )
+          }
+        </div>
+      ))}
+    </div>
+
+    <!-- Honeypot: hidden from humans, only bots will fill it. form-handler.js supplements it if missing-->
+    <div style="display:none" aria-hidden="true">
+      <input type="text" name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    {
+      includeRodoConsent && (
+        /* Why: GDPR consent is optional at the molecule level because
+           older contact variants use an information note instead of a checkbox.*/
+        <label class="ui-form-checkbox-container">
+          <input type="checkbox" name="rodo" required class="ui-form-checkbox" />
+          <span class="ui-form-checkbox-icon">
+            <Icon name="check" class="w-4 h-4 text-white" />
+          </span>
+          <Text tag="span" variant="body" class="text-sm text-brand-dark/70">
+            {formMessages.rodoConsent}
+          </Text>
+        </label>
+      )
+    }
+
+    <!-- Send button with text replaced by hover (consistent with the rest of the buttons)-->
+    <div class="mt-5">
+      <button type="submit" class="ui-button ui-button-primary ui-type-cta-label font-semibold text-sm sm:text-base h-12 w-full px-0">
+        <span class="ui-button-text-wrap">
+          <span class="ui-button-text-default">{submitLabel}</span>
+          <span class="ui-button-text-hover">{submitHover}</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Information text about privacy policy-->
+    <Text variant="disclaimer" class="text-xs text-center text-brand-dark/50 mt-3">
+      {privacyPrefix.replace(/\{label\}/g, submitLabel)} <a href={privacyHref} class="underline hover:text-brand-primary">{privacyLinkLabel}</a>{privacySuffix}
+    </Text>
+  </form>
+</div>
+
+<style>
+  form.is-submitted > .ui-form-feedback-stack {
+    display: block;
+  }
+</style>

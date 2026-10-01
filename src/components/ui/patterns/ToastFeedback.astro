@@ -1,0 +1,64 @@
+---
+import Button from '@components/ui/atoms/Button.astro';
+import Card from '@components/ui/atoms/Card.astro';
+import Heading from '@components/ui/atoms/Heading.astro';
+import Icon from '@components/ui/atoms/Icon.astro';
+import Text from '@components/ui/atoms/Text.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  type?: 'success' | 'info' | 'warning' | 'error';
+  dismissible?: boolean;
+  closeLabel?: string;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  type = 'success',
+  dismissible = true,
+  closeLabel = 'Zamknij komunikat',
+  class: className,
+} = Astro.props;
+
+const tone = {
+  success: { icon: 'check-circle', iconClass: 'bg-[var(--color-success-container)] text-[var(--color-success)]', borderClass: 'border-[var(--color-success)]/30' },
+  info: { icon: 'info', iconClass: 'bg-[var(--color-info-container)] text-[var(--color-info)]', borderClass: 'border-[var(--color-info)]/30' },
+  warning: { icon: 'warning-circle', iconClass: 'bg-[var(--color-warning-container)] text-[var(--color-warning)]', borderClass: 'border-[var(--color-warning)]/30' },
+  error: { icon: 'x-circle', iconClass: 'bg-[var(--color-error-container)] text-[var(--color-error)]', borderClass: 'border-[var(--color-error)]/30' },
+}[type];
+---
+
+<Card
+  variant="surface"
+  padding="md"
+  radius="lg"
+  elevation="soft"
+  class:list={['flex w-full items-start gap-4', tone.borderClass, className]}
+  role={type === 'error' ? 'alert' : 'status'}
+  aria-live={type === 'error' ? 'assertive' : 'polite'}
+  data-toast-feedback
+>
+  <span class:list={['flex size-10 shrink-0 items-center justify-center rounded-md', tone.iconClass]} aria-hidden="true">
+    <Icon name={tone.icon} size="1.25rem" />
+  </span>
+  <div class="min-w-0 flex-1 space-y-1">
+    <Heading tag="h3" variant="feature-title">{title}</Heading>
+    {description && <Text variant="body" class="text-sm text-brand-dark/60">{description}</Text>}
+  </div>
+  {dismissible && (
+    <Button type="button" variant="ghost" size="icon" class="size-9 shrink-0" aria-label={closeLabel} data-toast-dismiss>
+      <Icon name="x" aria-hidden="true" />
+    </Button>
+  )}
+</Card>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-toast-dismiss]') : null;
+    const toast = target?.closest('[data-toast-feedback]');
+    toast?.setAttribute('hidden', 'true');
+  });
+</script>

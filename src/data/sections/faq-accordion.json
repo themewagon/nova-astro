@@ -1,0 +1,64 @@
+{
+  "pl": {
+    "title": "Najczęściej Zadawane Pytania",
+    "description": "Dowiedz się, jak dbamy o Twój komfort i bezpieczeństwo na każdym etapie inwestycji.",
+    "tagline": "FAQ",
+    "items": [
+      {
+        "q": "Czy muszę mieć gotowy projekt od architekta, żeby zacząć współpracę?",
+        "a": "Nie jest to warunek konieczny. Jeśli masz już gotowy projekt, przeanalizujemy go i zrobimy wycenę. Jeśli jeszcze go nie posiadasz, współpracujemy z projektantami wnętrz, z którymi pomożemy Ci stworzyć przemyślaną koncepcję od zera."
+      },
+      {
+        "q": "W jaki sposób kontroluję postęp prac, jeśli nie mam czasu przyjeżdżać na budowę?",
+        "a": "Zapewniamy dedykowanego opiekuna inwestycji oraz co tydzień wysyłamy raport zdjęciowy z podsumowaniem wykonanych etapów i planem na kolejny tydzień. Wszystko widzisz w swoim telefonie, bez konieczności ciągłych wizyt na budowie."
+      },
+      {
+        "q": "Co się stanie, jeśli w trakcie remontu pojawią się dodatkowe koszty?",
+        "a": "Działamy w oparciu o transparentny kosztorys i przejrzystą umowę. Wszelkie ewentualne zmiany lub prace dodatkowe są z Tobą omawiane i wyceniane przed ich wykonaniem. Płacisz etapami, wyłącznie za faktycznie odebrane prace."
+      },
+      {
+        "q": "Kto zamawia i dostarcza materiały budowlane oraz wykończeniowe?",
+        "a": "Przejmujemy na siebie pełną logistykę. Wskazujesz nam wybrane materiały (lub ustalamy je z architektem), a my organizujemy ich zakup, transport, wniesienie oraz bezpieczne magazynowanie na budowie."
+      },
+      {
+        "q": "Czy dbacie o czystość w budynku i relacje z sąsiadami?",
+        "a": "Zdecydowanie tak. Od pierwszego dnia zabezpieczamy ciągi komunikacyjne oraz drzwi. Prace głośne wykonujemy wyłącznie w wyznaczonych godzinach, a po zakończeniu danego etapu zostawiamy plac budowy oraz części wspólne w idealnym porządku."
+      },
+      {
+        "q": "Czy posiadacie ubezpieczenie OC i udzielacie gwarancji?",
+        "a": "Tak. Posiadamy pełne ubezpieczenie OC wykonawcy, które chroni Twoją nieruchomość oraz mienie sąsiadów na wypadek nieprzewidzianych zdarzeń. Po zakończeniu prac i oficjalnym odbiorze przekazujemy pełną gwarancję na wykonane usługi."
+      }
+    ]
+  },
+  "en": {
+    "title": "Frequently Asked Questions",
+    "description": "Find out how we take care of your comfort and safety at every stage of the investment.",
+    "tagline": "FAQ",
+    "items": [
+      {
+        "q": "Do I need a ready design from an architect to start cooperation?",
+        "a": "It is not a requirement. If you already have a design, we will analyze it and provide a quote. If not, we work with interior designers who will help you create a well-thought-out concept from scratch."
+      },
+      {
+        "q": "How do I control work progress if I don't have time to visit the site?",
+        "a": "We provide a dedicated project supervisor and send a weekly photo report with a summary of completed stages and a plan for the next week. You see everything on your phone without constant site visits."
+      },
+      {
+        "q": "What happens if additional costs arise during the renovation?",
+        "a": "We work on a transparent cost estimate and clear contract. Any possible changes or additional works are discussed and priced with you before they are carried out. You pay in stages, only for works actually completed."
+      },
+      {
+        "q": "Who orders and delivers building and finishing materials?",
+        "a": "We take over the full logistics. You indicate the chosen materials (or we agree them with the architect), and we organize their purchase, transport, delivery and safe storage on site."
+      },
+      {
+        "q": "Do you take care of cleanliness in the building and relations with neighbours?",
+        "a": "Definitely yes. From day one we protect communication routes and doors. Noisy works are carried out only during designated hours, and after each stage we leave the site and common areas in perfect order."
+      },
+      {
+        "q": "Do you have liability insurance and do you provide guarantees?",
+        "a": "Yes. We have full contractor liability insurance that protects your property and neighbours' assets in case of unforeseen events. After completion and official handover, we provide a full guarantee on the works performed."
+      }
+    ]
+  }
+}

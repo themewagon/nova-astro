@@ -1,0 +1,27 @@
+{
+  "tagline": "FAQ",
+  "title": "Najczęściej zadawane pytania",
+  "description": "Masz pytania dotyczące budowy domu drewnianego? Sprawdź odpowiedzi poniżej lub skontaktuj się z nami.",
+  "items": [
+    {
+      "q": "Czy wycena jest płatna?",
+      "a": "Nie, wycena jest całkowicie bezpłatna i bez zobowiązań. Wystarczy się z nami skontaktować, omówimy szczegóły i przygotujemy indywidualną ofertę."
+    },
+    {
+      "q": "Jak długo trwa budowa domu drewnianego?",
+      "a": "Czas realizacji zależy od metrażu i zakresu prac, zwykle wynosi od 3 do 6 miesięcy. Dokładny harmonogram ustalamy podczas wyceny."
+    },
+    {
+      "q": "Jakiego drewna używacie do budowy?",
+      "a": "Pracujemy wyłącznie z certyfikowanym drewnem konstrukcyjnym. Do domów używamy drewna klasy C24, a do pozostałych konstrukcji drewna BSH oraz KVH."
+    },
+    {
+      "q": "Czy udzielacie gwarancji na wykonane prace?",
+      "a": "Tak, każdą usługę obejmujemy pisemną gwarancją. Na materiały producenta obowiązuje dodatkowo gwarancja producenta."
+    },
+    {
+      "q": "W jakim zasięgu działacie?",
+      "a": "Budowę domów realizujemy do 100 km od naszej siedziby. Szczegóły dojazdu ustalamy indywidualnie."
+    }
+  ]
+}

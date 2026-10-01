@@ -1,0 +1,157 @@
+---
+// Port of a gallery block, generalized
+// for any gallery (not just a sauna). Why a separate block, not an extension
+// GalleryBlock: licznik i poziome miniatury to inna mechanika UI,
+// which cannot be attached to an existing block without the risk of regression.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import SectionHeader from "@components/ui/molecules/SectionHeader.astro";
+import galleryData from "@data/sections/gallery-crossfade.json";
+
+interface GalleryImage {
+  src: string;
+  thumb: string;
+  alt: string;
+}
+
+interface Props {
+  sectionId?: string;
+  tagline?: string;
+  title?: string;
+  description?: string;
+  images?: GalleryImage[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+}
+
+const props = Astro.props as Props;
+const { sectionId = "galeria-crossfade" } = props;
+const {
+  tagline = galleryData.tagline,
+  title = galleryData.title,
+  description = galleryData.description,
+  headingTag = "h2",
+} = props;
+
+// Why: images can come from props (PageBuilder) or from a data file, and the fallback is the
+// default paths from the repository.
+const allImages = props.images?.length ? props.images : (galleryData.images ?? []);
+
+// Why: preload the first 6 thumbnails, because they are visible immediately under the main
+// photo; the rest loads lazily when scrolled. This shortens the gallery's LCP.
+const firstThumbsPreload = allImages.slice(0, 6).map((i) => i.thumb);
+---
+
+<Section tone="page" id={sectionId}>
+  {firstThumbsPreload.map((href) => (
+    <link rel="preload" as="image" href={href} />
+  ))}
+  <Container>
+    <SectionHeader
+  tagline={tagline}
+  title={title}
+  description={description}
+  titleTag={headingTag}
+  align="center"
+  class="max-w-4xl"
+  />
+
+    <div class="mt-12">
+      {allImages.length > 0 ? (
+        <div>
+          {/* Main photo; data-lightbox opens a preview in an existing lightbox */}
+          <div class="relative overflow-hidden rounded-2xl bg-white border border-brand-dark/10 shadow-lg cursor-zoom-in" data-lightbox data-href={allImages[0].src}>
+            <div class="relative">
+              <div class="aspect-[16/10] lg:aspect-[20/9] overflow-hidden relative isolate" data-image-stage>
+                <img
+                  data-main-image
+                  src={allImages[0].src}
+                  width="1600"
+                  height="1000"
+                  alt={allImages[0].alt}
+                  class="absolute inset-0 h-full w-full object-cover"
+                  style="opacity: 1;"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+              </div>
+
+{/* Gradient at the bottom gives the contrast to the counter and dimms the edge of the frame */}
+              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+              {/* Licznik "01 / N"; padStart(2, "0") trzyma dwucyfrowy format */}
+              <div class="absolute right-4 top-4 flex items-center gap-1.5 rounded-md bg-black/55 px-3 py-1 text-[13px] font-medium tracking-wider text-white/90 backdrop-blur-sm">
+                <span data-main-index>01</span>
+                <span class="text-white/50">/</span>
+                <span data-total-count>{String(allImages.length).padStart(2, "0")}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Thumbnails; scrollbar-none hides the bar because the row is supposed to be a clean line */}
+          <div class="mt-4" data-thumb-track>
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+              {allImages.map((image, imageIndex) => (
+                <button
+                  type="button"
+                  data-thumb-button
+                  data-image-src={image.src}
+                  data-alt={image.alt}
+                  class={`relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer md:h-20 md:w-28 ${
+                    imageIndex === 0
+                      ? "border-brand-primary opacity-100"
+                      : "border-transparent opacity-60 hover:opacity-100"
+                  }`}
+                  aria-label={image.alt}
+                >
+                  <img
+                    src={image.thumb}
+                    alt=""
+                    width="320"
+                    height="200"
+                    class="h-full w-full object-cover"
+                    loading={imageIndex < 4 ? "eager" : "lazy"}
+                    decoding="async"
+                    fetchpriority={imageIndex < 4 ? "high" : "low"}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Previous/next navigation under thumbnails */}
+          {allImages.length > 1 ? (
+            <div class="mt-4 flex items-center justify-between px-1">
+              <button type="button" data-prev class="flex items-center gap-1.5 text-sm font-medium text-brand-dark/50 transition-all duration-300 hover:text-brand-primary cursor-pointer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <span class="hidden sm:inline">Poprzedni</span>
+              </button>
+              <span class="text-[11px] font-medium uppercase tracking-[0.18em] text-brand-dark/30">przeglądaj</span>
+              <button type="button" data-next class="flex items-center gap-1.5 text-sm font-medium text-brand-dark/50 transition-all duration-300 hover:text-brand-primary cursor-pointer">
+                <span class="hidden sm:inline">Następny</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <div class="rounded-2xl border border-brand-dark/10 bg-white p-10 text-center text-brand-dark/60">
+          Brak zdjęć do wyświetlenia.
+        </div>
+      )}
+    </div>
+  </Container>
+</Section>
+
+<style>
+  /* Why: utility scrollbar-none does not exist in the starter kit; we hide the strip
+     scrolling horizontal thumbnails to make the row look like a clean line */
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+</style>

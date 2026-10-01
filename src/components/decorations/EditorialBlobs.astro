@@ -1,0 +1,76 @@
+---
+/**
+ * EditorialBlobs - Organic SVG blobs with drift animation.
+ * Use any block in the `decorations` slot.
+ *
+ * @example
+ * <HeroEditorialBlock>
+ *   <EditorialBlobs slot="decorations" />
+ * </HeroEditorialBlock>
+ */
+---
+
+<div
+  data-editorial-blobs
+  class="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden md:block"
+  aria-hidden="true"
+>
+  <div class="relative size-full">
+    <svg class="absolute left-[4%] top-[18%] ed-blob-drift-slow opacity-[0.06]"
+      width="220" height="220" viewBox="0 0 200 200" fill="none">
+      <path d="M45.2,-58.3C57.9,-48.2,66.8,-33.1,71.4,-16.5C76,0.1,76.3,18.2,69.3,33.3C62.3,48.4,48,60.5,32.1,67.1C16.2,73.7,-1.3,74.8,-17.5,70.4C-33.7,66,-48.6,56.1,-59.3,42.3C-70,28.5,-76.5,10.8,-75.1,-6.3C-73.7,-23.4,-64.4,-40,-51.3,-50.1C-38.2,-60.2,-21.3,-63.8,-4.1,-65.2C13.1,-66.6,32.5,-68.4,45.2,-58.3Z" transform="translate(100 100)" fill="var(--color-brand-primary)"/>
+    </svg>
+    <svg class="absolute right-[8%] top-[24%] ed-blob-drift-medium opacity-[0.09] [-webkit-animation-delay:-3s] [animation-delay:-3s]"
+      width="140" height="140" viewBox="0 0 200 200" fill="none">
+      <path d="M43.7,-52.1C56.8,-42.8,67.3,-28.5,72.4,-12.1C77.5,4.3,77.2,22.8,69.5,37.6C61.8,52.4,46.7,63.5,30.2,69.8C13.7,76.1,-4.2,77.6,-20.4,73.2C-36.6,68.8,-51.1,58.5,-61.2,44.6C-71.3,30.7,-77,13.2,-76.8,-3.9C-76.6,-21,-70.5,-37.7,-59.1,-49.1C-47.7,-60.5,-30.9,-66.6,-14.6,-69.2C1.7,-71.8,30.6,-61.4,43.7,-52.1Z" transform="translate(100 100)" fill="var(--color-brand-accent)"/>
+    </svg>
+    <svg class="absolute left-[18%] top-[48%] ed-blob-drift-fast opacity-[0.07] [-webkit-animation-delay:-5s] [animation-delay:-5s]"
+      width="100" height="100" viewBox="0 0 200 200" fill="none">
+      <path d="M43.7,-52.1C56.8,-42.8,67.3,-28.5,72.4,-12.1C77.5,4.3,77.2,22.8,69.5,37.6C61.8,52.4,46.7,63.5,30.2,69.8C13.7,76.1,-4.2,77.6,-20.4,73.2C-36.6,68.8,-51.1,58.5,-61.2,44.6C-71.3,30.7,-77,13.2,-76.8,-3.9C-76.6,-21,-70.5,-37.7,-59.1,-49.1C-47.7,-60.5,-30.9,-66.6,-14.6,-69.2C1.7,-71.8,30.6,-61.4,43.7,-52.1Z" transform="translate(100 100)" fill="var(--color-brand-primary)"/>
+    </svg>
+    <svg class="absolute right-[22%] top-[52%] ed-blob-drift-slow opacity-[0.05] [-webkit-animation-delay:-7s] [animation-delay:-7s]"
+      width="60" height="60" viewBox="0 0 200 200" fill="none">
+      <circle cx="100" cy="100" r="80" fill="var(--color-brand-primary)"/>
+    </svg>
+    <svg class="absolute left-[38%] top-[14%] ed-blob-drift-medium opacity-[0.11] [-webkit-animation-delay:-1.5s] [animation-delay:-1.5s]"
+      width="50" height="50" viewBox="0 0 200 200" fill="none">
+      <path d="M45.2,-58.3C57.9,-48.2,66.8,-33.1,71.4,-16.5C76,0.1,76.3,18.2,69.3,33.3C62.3,48.4,48,60.5,32.1,67.1C16.2,73.7,-1.3,74.8,-17.5,70.4C-33.7,66,-48.6,56.1,-59.3,42.3C-70,28.5,-76.5,10.8,-75.1,-6.3C-73.7,-23.4,-64.4,-40,-51.3,-50.1C-38.2,-60.2,-21.3,-63.8,-4.1,-65.2C13.1,-66.6,32.5,-68.4,45.2,-58.3Z" transform="translate(100 100)" fill="var(--color-brand-accent)"/>
+    </svg>
+    <svg class="absolute right-[38%] top-[14%] ed-blob-drift-medium opacity-[0.11] [-webkit-animation-delay:-4s] [animation-delay:-4s]"
+      width="50" height="50" viewBox="0 0 200 200" fill="none">
+      <path d="M45.2,-58.3C57.9,-48.2,66.8,-33.1,71.4,-16.5C76,0.1,76.3,18.2,69.3,33.3C62.3,48.4,48,60.5,32.1,67.1C16.2,73.7,-1.3,74.8,-17.5,70.4C-33.7,66,-48.6,56.1,-59.3,42.3C-70,28.5,-76.5,10.8,-75.1,-6.3C-73.7,-23.4,-64.4,-40,-51.3,-50.1C-38.2,-60.2,-21.3,-63.8,-4.1,-65.2C13.1,-66.6,32.5,-68.4,45.2,-58.3Z" transform="translate(100 100)" fill="var(--color-brand-primary)"/>
+    </svg>
+  </div>
+</div>
+
+<style>
+  @keyframes ed-drift-slow {
+    0% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+    25% { transform: translateY(-28px) translateX(18px) scale(1.06) rotate(4deg); }
+    50% { transform: translateY(-12px) translateX(30px) scale(1.03) rotate(2deg); }
+    75% { transform: translateY(10px) translateX(8px) scale(0.97) rotate(-2deg); }
+    100% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+  }
+  @keyframes ed-drift-medium {
+    0% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+    33% { transform: translateY(-20px) translateX(-22px) scale(1.05) rotate(-3deg); }
+    66% { transform: translateY(12px) translateX(-10px) scale(0.96) rotate(2deg); }
+    100% { transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); }
+  }
+  @keyframes ed-drift-fast {
+    0% { transform: translateY(0px) translateX(0px) scale(1); }
+    40% { transform: translateY(-14px) translateX(14px) scale(1.07); }
+    70% { transform: translateY(6px) translateX(-8px) scale(0.95); }
+    100% { transform: translateY(0px) translateX(0px) scale(1); }
+  }
+
+  [data-editorial-blobs] .ed-blob-drift-slow { animation: ed-drift-slow 12s ease-in-out infinite; }
+  [data-editorial-blobs] .ed-blob-drift-medium { animation: ed-drift-medium 8s ease-in-out infinite; }
+  [data-editorial-blobs] .ed-blob-drift-fast { animation: ed-drift-fast 5.5s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-editorial-blobs] .ed-blob-drift-slow,
+    [data-editorial-blobs] .ed-blob-drift-medium,
+    [data-editorial-blobs] .ed-blob-drift-fast { animation: none; }
+  }
+</style>

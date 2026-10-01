@@ -1,0 +1,370 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Button from "@components/ui/atoms/Button.astro";
+import { formatInternalLink } from "@utils/url";
+import data from "@data/sections/hero-split.json";
+
+// Why: texts and media are in props (SSOT, Single Source of Truth) from
+// fallback to JSON (src/data/sections/hero-split.json). JSON holds content
+// pl/en, and PL is the default language for this copy of hero. Props from CMS overwrite JSON.
+
+type Cta = { label: string; href: string; hoverText?: string };
+
+type Stat = { value: string; label: string };
+
+type GoogleRating = { rating: number; count: number; label: string };
+
+export interface Props {
+  sectionId?: string;
+  /** Content language with JSON (pl default, en alternative).*/
+  lang?: "pl" | "en";
+  /** Eyebrow above the title, e.g. "Interior finishing".*/
+  label?: string;
+  title?: string;
+  description?: string;
+  primaryCTA?: Cta;
+  secondaryCTA?: Cta;
+  stats?: Stat[];
+  trustBar?: string[];
+  /** Visual variant of the trust bar: 'mid' under the description, 'split' under the CTA, 'pills' as pills.*/
+  trustBarVariant?: "split" | "mid" | "pills";
+  /** Main hero photo as background (decorative).*/
+  image?: string;
+  /** When 2+ photos are given, a slideshow with dots and a preload starts.*/
+  heroImages?: string[];
+  googleRating?: GoogleRating;
+  /** Dark theme switches text tokens to text-brand-light (hero in photo).*/
+  theme?: "light" | "dark";
+  /** Additional classes per section (e.g. with PageBuilder).*/
+  class?: string;
+}
+
+const {
+  sectionId = "hero-split",
+  lang = "pl",
+  label,
+  title,
+  description,
+  primaryCTA,
+  secondaryCTA,
+  stats,
+  trustBar,
+  trustBarVariant = "split",
+  image,
+  heroImages,
+  googleRating,
+  theme = "light",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: content per language, with fallback to pl when the language is unknown.
+const t = data[lang] ?? data.pl;
+
+// Why: "props || json" pattern, props take precedence over JSON data.
+const resolvedLabel = label || t.label;
+const resolvedTitle = title || t.title;
+const resolvedDescription = description || t.description;
+const primary = primaryCTA || t.primaryCTA;
+const secondary = secondaryCTA || t.secondaryCTA;
+const statsList = stats ?? t.stats ?? [];
+const trust = trustBar ?? t.trustBar ?? [];
+const rating = googleRating || t.googleRating;
+
+// Why: media lives outside the pl/en structure in JSON (no point in duplicating
+// paths per language). Slideshow starts only when there is more than 1 photo.
+const resolvedImage = image || data.image;
+const images = heroImages && heroImages.length > 0 ? heroImages : resolvedImage ? [resolvedImage] : [];
+
+// Dlaczego: mapa klas dla jasnego i ciemnego motywu. The client uses brand tokens,
+// so they remain 1:1, the starter-kit has identical tokens.
+const tm = theme === "dark"
+  ? {
+      text: "text-brand-light",
+      textMuted: "text-brand-light/70",
+      textSubtle: "text-brand-light/60",
+      icon: "text-brand-light",
+      statValue: "text-brand-light",
+      statLabel: "text-brand-light/60",
+      divider: "text-brand-light/20",
+    }
+  : {
+      text: "text-brand-dark",
+      textMuted: "text-brand-dark/70",
+      textSubtle: "text-brand-dark/60",
+      icon: "text-brand-dark",
+      statValue: "text-brand-dark",
+      statLabel: "text-brand-dark/60",
+      divider: "text-brand-dark/20",
+    };
+---
+
+<!-- Why: Fullscreen hero with background image. The section starts immediately below
+     header (pt-0 pb-0), and the text lies on the hero-image-overlay gradient,
+     which exists in the global CSS of the starter kit. The hero-dock class is not
+     needed because the height is calculated from var(--site-header-height).-->
+<Section id={sectionId} tone="base" class:list={["relative overflow-hidden rounded-t-[1.5rem] pt-0 pb-0", className]}>
+  <div class="relative flex min-h-[70vh] lg:min-h-[calc(100dvh-var(--site-header-height))] items-center overflow-hidden rounded-t-[1.5rem]">
+    <div class="absolute inset-0 overflow-hidden rounded-t-[1.5rem]">
+      {images.length > 0 && (
+        <img
+          id="hero-slideshow"
+          src={images[0]}
+          width="1600"
+          height="900"
+          alt=""
+          aria-hidden="true"
+          class="absolute inset-0 size-full object-cover"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          data-hero-images={images.join(",")}
+        />
+      )}
+      <div class:list={["absolute inset-0", theme === "dark" ? "hero-image-overlay-dark" : "hero-image-overlay"]} />
+      {images.length > 1 && (
+        /* Why: slideshow navigation dots only show up when present
+           more than one photo. A click switches the slide (logic in the script).*/
+        <div id="hero-dots" class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
+          {images.map((_, i) => (
+            <button
+              type="button"
+              data-hero-dot={i}
+              style="min-height:0;min-width:0"
+              class={`rounded-full transition-all duration-500 cursor-pointer ${i === 0 ? "bg-white w-2.5 h-2.5" : "bg-white/50 hover:bg-white/70 w-2 h-2"}`}
+              aria-label={`Zdjęcie ${i + 1}`}
+            ></button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Why: ui-container replaces the hero-text-offset and client classes
+         hero-text-content which does not exist in the starter-kit. It gives identical results
+         grid alignment and limiting content width.-->
+    <div class="relative z-10 w-full">
+      <div class="ui-container">
+        <div class="flex flex-col items-center gap-1 pt-[calc(var(--site-header-height,5.75rem)+1.5rem)] pb-10 text-center md:items-start md:pb-16 md:text-left lg:pt-[calc(var(--site-header-height,5.75rem)+2rem)]">
+          <span class="block text-[10px] uppercase tracking-[0.25em] text-brand-primary">
+            {resolvedLabel}
+          </span>
+
+          {rating && (
+            /* Dlaczego: Google rating jako social proof, gwiazdki to inline SVG
+               (bez nowych ikon w phosphor-min.css). Rating opcjonalny. */
+            <div class="mb-4 inline-flex items-center gap-2 lg:mb-5 lg:gap-3">
+              <svg class="size-5 shrink-0 lg:size-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              <div class="flex items-center gap-0.5 lg:gap-1">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <svg class="size-3 lg:size-4" viewBox="0 0 24 24" fill="#F59E0B" aria-hidden="true">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                ))}
+              </div>
+              <span class={"text-sm font-bold lg:text-base " + tm.text}>{rating.rating.toFixed(1)}</span>
+              <span class={"hidden text-xs font-medium sm:inline lg:text-sm " + tm.textMuted}>({rating.count}+ {rating.label})</span>
+            </div>
+          )}
+
+          <Heading tag="h1" variant="hero" class={"mb-6 max-w-2xl " + tm.text}>
+            {resolvedTitle.replace(/\n/g, " ")}
+          </Heading>
+
+          <Text variant="lead" class={"mb-6 max-w-lg " + tm.textMuted}>
+            {resolvedDescription}
+          </Text>
+
+          {trustBarVariant === "mid" && trust.length > 0 && (
+            /* Why: the 'mid' variant shows trust bar items as a list
+               below the description, with a success marker in front of each item.*/
+            <ul class="mb-6 flex list-none flex-col items-start gap-2">
+              {trust.map((item) => (
+                <li class={"inline-flex items-center gap-1.5 text-xs font-medium tracking-wide " + tm.textMuted}>
+                  <svg class="size-3.5 shrink-0 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div class="mb-6 flex flex-wrap justify-center gap-4 md:justify-start">
+            <!-- Why: #contact and #realization anchors pass through
+                 formatInternalLink so that the link is consistent with the rest of the starter kit.
+                 Button.astro formatuje link ponownie, ale formatowanie jest
+                 idempotent for anchors, so there is no double effect.-->
+            <Button href={formatInternalLink(primary.href)} variant="primary" class="hero-primary-cta" hoverText={primary.hoverText}>{primary.label}</Button>
+            <Button href={formatInternalLink(secondary.href)} variant="outline" class={theme === "dark" ? "!border-white/30 !text-white hover:!border-brand-accent/60" : ""} hoverText={secondary.hoverText}>{secondary.label}</Button>
+          </div>
+
+          {trustBarVariant === "split" && trust.length > 0 && (
+            /* Why: The 'split' variant (default) is a horizontal trust bar
+               under the buttons, items separated by a dot •.*/
+            <ul class="mb-6 flex list-none flex-wrap items-center justify-center gap-x-3 gap-y-1 lg:mb-10 lg:gap-x-5 md:justify-start">
+              {trust.map((item, i) => (
+                <li class={"inline-flex items-center gap-1 text-[11px] font-medium tracking-wide lg:gap-1.5 lg:text-xs " + tm.textMuted}>
+                  <svg class="size-3 shrink-0 text-success/70 lg:size-3.5 lg:text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {item}
+                  {i < trust.length - 1 && <span class={"ml-2 hidden md:inline lg:ml-3 " + tm.divider}>•</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {trustBarVariant === "pills" && trust.length > 0 && (
+            /* Why: The 'pills' variant renders items as pills
+               with a delicate background and border.*/
+            <ul class="mb-10 flex list-none flex-wrap justify-center gap-2 md:justify-start">
+              {trust.map((item) => (
+                <li class={"inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium " + (theme === "dark" ? "border border-white/20 bg-white/10" : "border border-brand-dark/10 bg-brand-dark/5") + " " + tm.textSubtle}>
+                  <svg class="size-3 shrink-0 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {statsList.length > 0 && (
+            /* Dlaczego: statystyki widoczne tylko na lg+, bo na mobile hero
+               it's already thick with content. Each block has an icon (inline SVG),
+               value and label, separators are vertical bars |.*/
+            <div class="hero-stats mb-10 hidden flex-wrap items-center justify-center gap-x-6 gap-y-3 lg:flex md:justify-start">
+              {statsList.map((stat, i) => (
+                <div class="hero-stat flex items-center gap-3">
+                  {i === 0 && (
+                    <svg class={"size-9 shrink-0 " + tm.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <path d="M9 12.7498L11.25 14.9998L15 9.74985M12 2.71411C9.8495 4.75073 6.94563 5.99986 3.75 5.99986C3.69922 5.99986 3.64852 5.99955 3.59789 5.99892C3.2099 7.17903 3 8.43995 3 9.74991C3 15.3414 6.82432 20.0397 12 21.3719C17.1757 20.0397 21 15.3414 21 9.74991C21 8.43995 20.7901 7.17903 20.4021 5.99892C20.3515 5.99955 20.3008 5.99986 20.25 5.99986C17.0544 5.99986 14.1505 4.75073 12 2.71411Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  )}
+                  {i === 1 && (
+                    <svg class={"size-9 shrink-0 " + tm.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <path d="M16.5003 18.75H7.50026M16.5003 18.75C18.1571 18.75 19.5003 20.0931 19.5003 21.75H4.50026C4.50026 20.0931 5.8434 18.75 7.50026 18.75M16.5003 18.75V15.375C16.5003 14.7537 15.9966 14.25 15.3753 14.25H14.5036M7.50026 18.75V15.375C7.50026 14.7537 8.00394 14.25 8.62526 14.25H9.49689M14.5036 14.25H9.49689M14.5036 14.25C13.9563 13.3038 13.6097 12.227 13.5222 11.0777M9.49689 14.25C10.0442 13.3038 10.3908 12.227 10.4783 11.0777M5.25026 4.23636C4.26796 4.3792 3.29561 4.55275 2.33423 4.75601C2.78454 7.42349 4.99518 9.49282 7.72991 9.72775M5.25026 4.23636V4.5C5.25026 6.60778 6.21636 8.48992 7.72991 9.72775M5.25026 4.23636V2.72089C7.45568 2.41051 9.70922 2.25 12.0003 2.25C14.2913 2.25 16.5448 2.41051 18.7503 2.72089V4.23636M7.72991 9.72775C8.51748 10.3719 9.45329 10.8415 10.4783 11.0777M18.7503 4.23636V4.5C18.7503 6.60778 17.7842 8.48992 16.2706 9.72775M18.7503 4.23636C19.7326 4.3792 20.7049 4.55275 21.6663 4.75601C21.216 7.42349 19.0053 9.49282 16.2706 9.72775M16.2706 9.72775C15.483 10.3719 14.5472 10.8415 13.5222 11.0777M13.5222 11.0777C13.0331 11.1904 12.5236 11.25 12.0003 11.25C11.4769 11.25 10.9675 11.1904 10.4783 11.0777" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  )}
+                  {i === 2 && (
+                    <svg class={"size-9 shrink-0 " + tm.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                    </svg>
+                  )}
+                  <div class="flex flex-col gap-1">
+                    <span class={"hero-stat-value font-heading text-2xl font-bold leading-none " + tm.statValue}>{stat.value}</span>
+                    {stat.label.split("\n").map((word) => (
+                      <span class={"hero-stat-label text-xs uppercase tracking-[0.15em] leading-tight " + tm.statLabel}>{word}</span>
+                    ))}
+                  </div>
+                  {i < statsList.length - 1 && (
+                    <span class={tm.divider + " ml-1 text-2xl font-light"}>|</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Why: hover przycisku primary w klienckim hero: wypelnienie przesuwa
+     changes to a light color and the text becomes dark. These rules are local to
+     this block (scoped by Astro), so they don't mess up other buttons.*/
+  .hero-primary-cta::after {
+    background: var(--color-brand-light);
+  }
+  .hero-primary-cta:hover {
+    color: var(--color-brand-dark);
+  }
+
+  /* Why: slow zoom of background photo, restarted when changing slide.*/
+  @keyframes hero-zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.06); }
+  }
+  #hero-slideshow.hero-zoom {
+    animation: hero-zoom 6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  }
+
+</style>
+
+<script>
+  let heroSlideshowAbort: AbortController | null = null;
+
+  function setupHeroSlideshows(): void {
+    heroSlideshowAbort?.abort();
+    heroSlideshowAbort = new AbortController();
+    const { signal } = heroSlideshowAbort;
+
+    document.querySelectorAll<HTMLImageElement>("[data-hero-images]").forEach((img) => {
+      const list = (img.dataset.heroImages ?? "").split(",").filter(Boolean);
+      img.classList.add("hero-zoom");
+      if (list.length < 2) return;
+
+      let idx = Math.max(0, list.indexOf(img.currentSrc || img.src));
+      const dots = img.parentElement?.querySelector<HTMLElement>("#hero-dots") ?? null;
+      const preloaded = new Set<string>();
+
+      function preload(src: string): Promise<void> {
+        if (!src || preloaded.has(src)) return Promise.resolve();
+        preloaded.add(src);
+
+        return new Promise<void>((resolve) => {
+          const preloader = new Image();
+          preloader.decoding = "async";
+          preloader.fetchPriority = "high";
+          preloader.onload = () => resolve();
+          preloader.onerror = () => resolve();
+          preloader.src = src;
+
+          if (typeof preloader.decode === "function") {
+            preloader.decode().then(() => resolve()).catch(() => resolve());
+          }
+        });
+      }
+
+      function goTo(nextIndex: number): void {
+        const nextSrc = list[nextIndex];
+        if (signal.aborted || !nextSrc || nextIndex === idx) return;
+
+        idx = nextIndex;
+        img.classList.remove("hero-zoom");
+        void img.offsetWidth;
+        void preload(nextSrc).then(() => {
+          if (!signal.aborted) img.src = nextSrc;
+        });
+        img.classList.add("hero-zoom");
+
+        dots?.querySelectorAll<HTMLElement>("[data-hero-dot]").forEach((dot) => {
+          const dotIndex = Number(dot.dataset.heroDot);
+          dot.className = `rounded-full transition-all duration-500 cursor-pointer ${dotIndex === idx ? "bg-white w-2.5 h-2.5" : "bg-white/50 hover:bg-white/70 w-2 h-2"}`;
+          dot.style.minHeight = "0";
+          dot.style.minWidth = "0";
+        });
+      }
+
+      list.slice(1).forEach((src) => void preload(src));
+      img.addEventListener("animationend", () => goTo((idx + 1) % list.length), { signal });
+      dots?.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const dot = target.closest<HTMLElement>("[data-hero-dot]");
+        if (dot) goTo(Number(dot.dataset.heroDot));
+      }, { signal });
+    });
+  }
+
+  document.addEventListener("astro:page-load", setupHeroSlideshows);
+  setupHeroSlideshows();
+</script>

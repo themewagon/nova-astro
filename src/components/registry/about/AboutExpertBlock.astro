@@ -1,0 +1,111 @@
+---
+// Why: AboutExpertBlock is a visual copy of the "ABOUT US" section (split: portrait +
+// bio with checklist + LinkedIn) and the "TEAM" section (Lean method tags) from the
+// reference project. Shared tokens (border-outline, bg-brand-cream)
+// were replaced with GLOBAL brand tokens of starter-kit, and content entrance was taken over by
+// global motion. Client personal data ("Piotr Kowalczyk",
+// LinkedIn link) was replaced with generic PL/EN content in JSON.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import jsonData from "@data/sections/about-expert.json";
+
+interface Props {
+  /** Full section data; when missing, block reads fallback from JSON. */
+  data?: typeof jsonData;
+  /** Content language from JSON: "pl" (default) or "en". */
+  locale?: "pl" | "en";
+  /** Section anchor id (defaults to "o-nas"). */
+  sectionId?: string;
+  /** Section heading tag: 'h2' by default, 'h1' when block is first section without hero (SEO). */
+  headingTag?: string;
+  /** Additional classes for the section (e.g. from PageBuilder). */
+  class?: string;
+}
+
+const {
+  data,
+  locale = "pl",
+  sectionId = "o-nas",
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: "props.data || jsonData[locale]" pattern (as in ServicesMediaCardsBlock),
+// so the block works standalone with section data, and PageBuilder or CMS can
+// override content. When data comes from outside, we select its language
+// variant (pl/en), as JSON does.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+
+// Why: media live outside the en/pl structure (no need to duplicate paths
+// per language), so we resolve them separately with JSON fallback.
+const imageSrc = data?.imageSrc ?? jsonData.imageSrc;
+const imageAlt = data?.imageAlt ?? jsonData.imageAlt;
+
+const checks = t.checks ?? [];
+const tags = t.tags ?? [];
+---
+
+<Section id={sectionId} tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    {/* Why: split card 0.92fr/1.08fr (portrait/bio) exactly as in original,
+        mobile-first: on mobile portrait stacks above content. */}
+    <div class="relative grid overflow-hidden rounded-md border border-brand-dark/10 bg-white shadow-soft lg:grid-cols-[0.92fr_1.08fr]">
+      {/* Why: corner decoration (L-shape) from original, visible only on
+          desktop; client outline color replaced with brand-dark at low alpha. */}
+      <div class="lc-line-deco pointer-events-none absolute right-8 top-8 hidden h-24 w-24 lg:block" aria-hidden="true"></div>
+
+      {/* Why: portrait as div background (as in client), so image can
+          be cropped via bg-[center_42%] without breaking proportions. role="img"
+          + aria-label replace missing alt for screen readers. */}
+      <div
+        class="min-h-[380px] bg-cover bg-[center_42%] lg:min-h-[430px]"
+        style={`background-image: url('${imageSrc}')`}
+        role="img"
+        aria-label={imageAlt}
+      ></div>
+
+      <div class="p-8 sm:p-12 lg:p-16">
+        <Text variant="accent-label" tag="p" class="!text-[0.76rem] !font-extrabold !tracking-[0.26em] !text-brand-primary">{t.eyebrow}</Text>
+        <Heading tag={headingTag} variant="section-heading-lg" class="mt-5 !font-extrabold">{t.name}</Heading>
+        <Text variant="lead" tag="p" class="mt-2 !text-sm !font-extrabold !text-brand-primary">{t.role}</Text>
+        <Text variant="body" class="mt-7 max-w-xl !font-semibold leading-8 text-brand-dark/70">{t.bio}</Text>
+
+        {/* Why: checklist from original, ✓ mark in accent color
+            (client token kept 1:1). */}
+        {checks.length > 0 && (
+          <ul class="mt-8 space-y-4">
+            {checks.map((check) => (
+              <li class="flex gap-3">
+                <span class="text-brand-accent" aria-hidden="true">✓</span>
+                <Text tag="span" variant="feature-body-sm" class="!font-bold">{check}</Text>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Why: Lean method tags from "TEAM" section (o-nas.astro) as chips;
+            client var(--color-primary-container) replaced with bg-brand-primary/10. */}
+        {tags.length > 0 && (
+          <div class="mt-6 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span class="rounded-sm bg-brand-primary/10 px-3 py-1 text-xs font-bold text-brand-primary">{tag}</span>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  /* Why: L-shape decoration from original (vertical line with horizontal
+     curl), client outline color replaced with brand-dark at low alpha. */
+  .lc-line-deco {
+    background:
+      linear-gradient(color-mix(in oklab, var(--color-brand-dark) 18%, transparent), color-mix(in oklab, var(--color-brand-dark) 18%, transparent)) left 18px top 0 / 1px 54px no-repeat,
+      linear-gradient(color-mix(in oklab, var(--color-brand-dark) 18%, transparent), color-mix(in oklab, var(--color-brand-dark) 18%, transparent)) left 18px top 54px / 62px 1px no-repeat;
+  }
+</style>

@@ -1,0 +1,7 @@
+{
+  "errors": {
+    "invalidEmail": "Podaj poprawny adres e-mail.",
+    "noConsent": "Zaznacz zgodę na przetwarzanie danych."
+  },
+  "successMessage": "Dziękujemy za zapis do newslettera!"
+}

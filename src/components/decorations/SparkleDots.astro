@@ -1,0 +1,87 @@
+---
+interface Props {
+  count?: 12 | 24 | 48;
+  variant?: 'dots' | 'sparkles';
+  color?: string;
+  opacity?: string;
+  class?: string;
+}
+
+const {
+  count = 24,
+  variant = 'dots',
+  color = 'var(--color-brand-primary)',
+  opacity = '0.05',
+  class: className,
+} = Astro.props;
+
+const positions = Array.from({ length: count }, () => ({
+  top: `${Math.random() * 100}%`,
+  left: `${Math.random() * 100}%`,
+  size: variant === 'sparkles'
+    ? 2 + Math.random() * 4
+    : 3 + Math.random() * 5,
+  delay: `${Math.random() * -8}s`,
+  duration: 3 + Math.random() * 4,
+}));
+---
+
+<div
+  class:list={['pointer-events-none absolute inset-0 z-0 overflow-hidden select-none', className]}
+  aria-hidden="true"
+>
+  {
+    variant === 'sparkles'
+      ? positions.map((pos) => (
+          <svg
+            class="sparkle-dot"
+            style={{
+              position: 'absolute',
+              top: pos.top,
+              left: pos.left,
+              width: `${pos.size}px`,
+              height: `${pos.size}px`,
+              opacity: opacity,
+              animationDelay: pos.delay,
+              animationDuration: `${pos.duration}s`,
+            }}
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path d="M10 0 L10 20 M0 10 L20 10 M3.5 3.5 L16.5 16.5 M16.5 3.5 L3.5 16.5" stroke={color} stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        ))
+      : positions.map((pos) => (
+          <div
+            class="sparkle-dot"
+            style={{
+              position: 'absolute',
+              top: pos.top,
+              left: pos.left,
+              width: `${pos.size}px`,
+              height: `${pos.size}px`,
+              borderRadius: '50%',
+              backgroundColor: color,
+              opacity: opacity,
+              animationDelay: pos.delay,
+              animationDuration: `${pos.duration}s`,
+            }}
+          />
+        ))
+  }
+</div>
+
+<style>
+  .sparkle-dot {
+    animation: sparkle-pulse var(--duration, 4s) ease-in-out infinite;
+  }
+
+  @keyframes sparkle-pulse {
+    0%, 100% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkle-dot { animation: none !important; }
+  }
+</style>

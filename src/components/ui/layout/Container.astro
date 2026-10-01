@@ -1,0 +1,11 @@
+---
+type Props = {
+	class?: string;
+};
+
+const { class: className = '' } = Astro.props as Props;
+---
+
+<div class={`ui-container ${className}`.trim()}>
+	<slot />
+</div>

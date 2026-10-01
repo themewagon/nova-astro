@@ -1,0 +1,12 @@
+{
+  "embedTitle": "Kalendarz rezerwacji",
+  "noEmbedMessage": "Kalendarz nie jest jeszcze skonfigurowany.",
+  "errorMessage": "Nie udało się załadować kalendarza.",
+  "openInNewTabLabel": "Otwórz w nowej karcie",
+  "openCalendarLabel": "Otwórz kalendarz",
+  "errorHint": "Sprawdź połączenie z internetem.",
+  "privacyNote": "Rezerwując wizytę akceptujesz naszą politykę prywatności.",
+  "setupHint": "Wklej link embed kalendarza w ustawieniach strony.",
+  "consentMessage": "Kalendarz zostanie załadowany po zgodzie na usługę zewnętrzną.",
+  "cookieSettingsLabel": "Ustawienia cookies"
+}

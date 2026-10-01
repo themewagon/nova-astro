@@ -1,0 +1,70 @@
+---
+// Dlaczego: HeroStatsBlock to kopia wizualna sekcji HERO + STATS ze strony
+// referencyjnej strony o-nas.astro (accent-label, h1 z clamp, lead oraz
+// statistics bar with dividing lines). One section: hero on top, stats
+// underneath. Client color tokens replaced with global tokens, and content
+// are general (zero customer data, no numbers 20+/50+ and no Lean Management phrases).
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import jsonData from "@data/sections/hero-stats.json";
+
+type Stat = {
+  value: string;
+  label: string;
+};
+
+type LocaleData = (typeof jsonData)["pl"];
+
+export interface Props {
+  /** Block content. They overwrite the JSON section when passed in (e.g. from PageBuilder).*/
+  data?: LocaleData;
+  /** Content language with JSON. PL is the default language, EN is the English equivalent.*/
+  locale?: "pl" | "en";
+}
+
+const { data, locale = "pl" } = Astro.props as Props;
+
+// Why: "props || json" pattern keeps the block configurable from both sources.
+// ran on its own from section data, and PageBuilder or CMS could
+// overwrite content with props. Fallback to pl protects against bad places.
+const t = data || jsonData[locale] || jsonData.pl;
+---
+
+<Section tone="page" class="pb-20 pt-24 md:pb-28 md:pt-32">
+  {/* Why: hero centered (mx-auto max-w-4xl) exactly as in the original
+      klienta; padding pionowy daje oddech od navbaru i dolnej sekcji. */}
+  <Container>
+    <div class="mx-auto max-w-4xl text-center">
+      <Text variant="accent-label" tag="p" class="font-extrabold tracking-[0.26em] text-brand-primary">
+        {t.eyebrow}
+      </Text>
+      {/* Why: clamp() instead of a constant rem value (as in the client) to
+          the title scaled smoothly from 2rem on mobile to 3.5rem on desktop.*/}
+      <Heading level={1} tag="h1" class="mt-5 font-extrabold text-[clamp(2rem,5vw,3.5rem)] leading-[1.08]">
+        {t.heading}
+      </Heading>
+      <Text variant="lead" class="mx-auto mt-6 max-w-2xl font-semibold leading-8">
+        {t.description}
+      </Text>
+    </div>
+  </Container>
+
+  {/* Why: stats as grid with dividing lines: horizontal on mobile
+      (divide-y), pionowe na desktopie (sm:divide-x). Jedna kolumna na
+      mobile, three on sm+. divide-brand-dark/10 replaces the client one
+      divide-outline/50. */}
+  <Container>
+    <div class="grid divide-y divide-brand-dark/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+      {t.stats.map((stat) => (
+        <div class="px-8 py-10 text-center">
+          <Text tag="p" class="text-3xl font-extrabold text-brand-primary">{stat.value}</Text>
+          {/* Dlaczego: text-brand-dark/70 zamiast klienckiego
+              text-on-surface-variant (token swap map).*/}
+          <Text tag="p" class="mt-1 text-sm font-bold text-brand-dark/70">{stat.label}</Text>
+        </div>
+      ))}
+    </div>
+  </Container>
+</Section>

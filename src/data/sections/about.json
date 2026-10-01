@@ -1,0 +1,10 @@
+{
+  "title": "Dlaczego my?",
+  "description": "Od 15 lat pomagamy klientom w regionie. Nasza firma to zespół doświadczonych specjalistów, którzy podchodzą do każdego projektu indywidualnie. Stawiamy na jakość, terminowość i przejrzystość kosztów.",
+  "highlights": [
+    { "icon": "check-circle", "text": "Bezpłatna wycena i konsultacja" },
+    { "icon": "shield", "text": "Gwarancja na wszystkie usługi" },
+    { "icon": "clock", "text": "Terminowość i dotrzymywanie obietnic" },
+    { "icon": "star", "text": "Ponad 500 zadowolonych klientów" }
+  ]
+}

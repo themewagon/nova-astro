@@ -1,0 +1,61 @@
+---
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import Icon from "@components/ui/atoms/Icon.astro";
+
+// Why: FeaturesBlock is reusable - the same component for different sections (services,
+// features, benefits). The data structure is universal: icon + title + description. The
+// client can use this block multiple times on a page with different data.
+type FeatureItem = {
+  icon: string;
+  title: string;
+  description: string;
+};
+
+export interface Props {
+  sectionId?: string;
+  title?: string;
+  subtitle?: string;
+  items?: FeatureItem[];
+  /** Section heading tag: 'h2' by default, 'h1' when the block is the first section without hero (SEO). */
+  headingTag?: string;
+}
+
+const { sectionId = "uslugi", title = "", subtitle = "", items = [], headingTag = "h2" } = Astro.props as Props;
+---
+
+<Section id={sectionId} tone="page">
+  <Container>
+    <!-- Why: no explicit data-motion = global auto-reveal with motion.js.
+         JS divides the content itself: header (h2, lead separately), grid into cards
+         one by one. Zero motion markup in the component. -->
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <Heading tag={headingTag} variant="section-title" class="text-brand-dark">
+        {title}
+      </Heading>
+      <Text variant="lead" class="text-brand-dark/70">
+        {subtitle}
+      </Text>
+    </div>
+
+    <!-- Why: responsive grid - 1 column for mobile, 2 for sm, 3 for lg.
+         The same component looks good on every device. -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item) => (
+        <div class="ui-card-interactive group rounded-2xl p-6 border border-brand-dark/10 bg-white shadow-sm">
+          <div class="flex size-12 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary mb-4 transition-all duration-500 group-hover:bg-brand-primary group-hover:text-white group-hover:scale-110 group-hover:-rotate-3">
+            <Icon name={item.icon} class="text-xl" />
+          </div>
+          <Heading tag="h3" variant="feature-title" class="text-brand-dark mb-2">
+            {item.title}
+          </Heading>
+          <Text variant="body" class="text-brand-dark/70">
+            {item.description}
+          </Text>
+        </div>
+      ))}
+    </div>
+  </Container>
+</Section>

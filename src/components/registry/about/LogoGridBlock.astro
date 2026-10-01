@@ -1,0 +1,68 @@
+---
+// Why: LogoGridBlock is a visual copy of the "LOGOS" section from the
+// reference about page. Unlike the MarqueeBlock carousel and
+// TrustBarBlock it is a STATIC logo grid (2 / 3 / 5 columns).
+// Client token border-outline/70 was replaced with global border-brand-dark/10,
+// and content entrance was taken over by global motion system.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import jsonData from "@data/sections/logo-grid.json";
+
+export interface Props {
+  /** Full section data; when missing, block reads fallback from JSON. */
+  data?: typeof jsonData;
+  /** Content language from JSON: "pl" (default) or "en". */
+  locale?: "pl" | "en";
+  /** Section heading tag: 'h2' by default, 'h1' when block is first section without hero (SEO). */
+  headingTag?: string;
+  /** Additional classes for the section. */
+  class?: string;
+}
+
+const {
+  data,
+  locale = "pl",
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: "props.data || jsonData[locale]" pattern (as in ServicesMediaCardsBlock),
+// so the block works standalone with section data, and PageBuilder or CMS can
+// override content. When data comes from outside, we select its language
+// variant (pl/en) as JSON does.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+const items = t.items ?? [];
+---
+
+<Section tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    {/* Why: centered heading, exactly as in client original
+        (h2 + lead in max-w-4xl block). */}
+    <div class="mx-auto max-w-4xl text-center">
+      <Heading tag={headingTag} variant="section-title" class="text-center text-brand-dark">{t.heading}</Heading>
+      <Text variant="lead" class="mx-auto mt-4 max-w-2xl">{t.description}</Text>
+    </div>
+
+    {/* Why: static grid 2 columns on mobile, 3 on md, 5 on lg.
+        items-center aligns logos of different heights in one line. */}
+    <div class="mt-14 grid grid-cols-2 items-center gap-x-8 gap-y-12 md:grid-cols-3 lg:grid-cols-5">
+      {items.map((item) => (
+        <div class="flex items-center justify-center">
+          {/* Why: muted logos (opacity + grayscale) with full
+              color only on hover, as in client original. */}
+          <img
+            src={item.src}
+            alt={item.alt}
+            class="max-h-12 w-auto object-contain opacity-40 grayscale transition-all duration-300 hover:opacity-80 hover:grayscale-0"
+            loading="lazy"
+            decoding="async"
+            width="160"
+            height="48"
+          />
+        </div>
+      ))}
+    </div>
+  </Container>
+</Section>

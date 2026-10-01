@@ -1,0 +1,13 @@
+{
+  "tagline": "Nasze realizacje",
+  "title": "Galeria",
+  "description": "Wybrane realizacje z naszego portfolio. Kliknij miniaturkę, aby przełączyć zdjęcie główne, a w nim powiększyć kadr.",
+  "images": [
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 1" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 2" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 3" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 4" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 5" },
+    { "src": "/assets/placeholders/image-landscape.svg", "thumb": "/assets/placeholders/image-landscape.svg", "alt": "Zdjęcie 6" }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "pl": {
+    "eyebrow": "Obszary wsparcia",
+    "heading": "Jak możemy pomóc",
+    "description": "Każda organizacja ma inne wyzwania. Sprawdź, który obszar dotyczy Twojej firmy.",
+    "items": [
+      {
+        "title": "Audyt procesów",
+        "description": "Przeglądamy kluczowe procesy i wskaźniki, żeby znaleźć miejsca strat i wyznaczyć konkretne cele poprawy.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder zdjęcia panoramicznego karty usługi"
+        },
+        "ctaLabel": "Porozmawiajmy o tym",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": true
+      },
+      {
+        "title": "Szkolenia zespołu",
+        "description": "Praktyczne warsztaty, po których zespół samodzielnie usprawnia codzienną pracę. Bez teorii, tylko narzędzia do natychmiastowego użycia.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder zdjęcia panoramicznego karty usługi"
+        },
+        "ctaLabel": "Porozmawiajmy o tym",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": false
+      },
+      {
+        "title": "Wdrożenia zmian",
+        "description": "Od analizy obecnego stanu, przez projekty zmian, po wdrożenie z zespołami. Zmiana zostaje w firmie.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder zdjęcia panoramicznego karty usługi"
+        },
+        "ctaLabel": "Porozmawiajmy o tym",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": true
+      },
+      {
+        "title": "Doradztwo",
+        "description": "Wsparcie ekspertów w podejmowaniu decyzji operacyjnych, bez budowania własnego działu.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder zdjęcia panoramicznego karty usługi"
+        },
+        "ctaLabel": "Porozmawiajmy o tym",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": false
+      },
+      {
+        "title": "Outsourcing",
+        "description": "Dostęp do wiedzy eksperckiej w formie outsourcingu, dopasowany do aktualnych potrzeb firmy.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder zdjęcia panoramicznego karty usługi"
+        },
+        "ctaLabel": "Porozmawiajmy o tym",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": true
+      },
+      {
+        "title": "Logistyka",
+        "description": "Projektujemy lub modernizujemy procesy magazynowe i logistyczne dopasowane do specyfiki branży.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder zdjęcia panoramicznego karty usługi"
+        },
+        "ctaLabel": "Porozmawiajmy o tym",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": false
+      }
+    ]
+  },
+  "en": {
+    "eyebrow": "Areas of support",
+    "heading": "How we can help",
+    "description": "Every organization faces different challenges. Check which area applies to your business.",
+    "items": [
+      {
+        "title": "Process audits",
+        "description": "We review key processes and metrics to find sources of waste and set concrete improvement goals.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder landscape image for service card"
+        },
+        "ctaLabel": "Let's talk about it",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": true
+      },
+      {
+        "title": "Team training",
+        "description": "Hands-on workshops after which your team improves daily work on its own. No theory, just tools ready to use.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder landscape image for service card"
+        },
+        "ctaLabel": "Let's talk about it",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": false
+      },
+      {
+        "title": "Change implementation",
+        "description": "From analyzing the current state, through change projects, to implementation with teams. The change stays in the company.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder landscape image for service card"
+        },
+        "ctaLabel": "Let's talk about it",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": true
+      },
+      {
+        "title": "Consulting",
+        "description": "Expert support in operational decisions, without building your own department.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder landscape image for service card"
+        },
+        "ctaLabel": "Let's talk about it",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": false
+      },
+      {
+        "title": "Outsourcing",
+        "description": "Access to expert knowledge as outsourcing, matched to the current needs of your company.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder landscape image for service card"
+        },
+        "ctaLabel": "Let's talk about it",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": true
+      },
+      {
+        "title": "Logistics",
+        "description": "We design or modernize warehousing and logistics processes tailored to your industry.",
+        "image": {
+          "src": "/assets/placeholders/image-landscape.svg",
+          "alt": "Placeholder landscape image for service card"
+        },
+        "ctaLabel": "Let's talk about it",
+        "ctaHref": "/#kontakt",
+        "imageOnTop": false
+      }
+    ]
+  }
+}

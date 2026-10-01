@@ -1,0 +1,36 @@
+{
+  "background": {
+    "src": "/assets/placeholders/image-landscape.svg",
+    "alt": "Placeholder zdjęcia panoramicznego w tle sekcji"
+  },
+  "brands": [
+    { "name": "firma-1.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 1" },
+    { "name": "firma-2.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 2" },
+    { "name": "firma-3.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 3" },
+    { "name": "firma-4.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 4" },
+    { "name": "firma-5.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 5" },
+    { "name": "firma-6.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 6" },
+    { "name": "firma-7.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 7" },
+    { "name": "firma-8.png", "src": "/assets/placeholders/logo-placeholder.svg", "alt": "Logo firmy 8" }
+  ],
+  "pl": {
+    "eyebrow": "Dla średnich i dużych zakładów produkcyjnych",
+    "heading": "Przestoje, straty, gaszenie pożarów?",
+    "headingAccent": "Czas to zmienić.",
+    "lead": "Pomagamy firmom produkcyjnym znaleźć źródła strat i wdrożyć zmiany, które działają na co dzień, nie tylko na papierze.",
+    "ctaPrimary": { "label": "Umów 30-minutową rozmowę", "href": "/#kontakt" },
+    "ctaSecondary": { "label": "Zobacz, jak pracujemy", "href": "/#proces" },
+    "footnote": ["Ponad 20 lat w produkcji", "projekty od diagnozy po wdrożenie"],
+    "trustCount": "Zaufało nam 8 firm"
+  },
+  "en": {
+    "eyebrow": "For medium and large manufacturing plants",
+    "heading": "Downtime, waste, constant firefighting?",
+    "headingAccent": "Time to change that.",
+    "lead": "We help manufacturing companies find the sources of waste and implement changes that work day in, day out, not just on paper.",
+    "ctaPrimary": { "label": "Book a 30-minute call", "href": "/#kontakt" },
+    "ctaSecondary": { "label": "See how we work", "href": "/#proces" },
+    "footnote": ["Over 20 years in manufacturing", "projects from diagnosis to rollout"],
+    "trustCount": "Trusted by 8 companies"
+  }
+}

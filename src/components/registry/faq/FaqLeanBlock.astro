@@ -1,0 +1,90 @@
+---
+// Dlaczego: FaqLeanBlock zachowuje ustalony układ sekcji FAQ
+// (accordion details/summary z plusem obracanym o 45 stopni po otwarciu).
+// Klienckie tokeny zamieniono na globalne tokeny brand starter-kita,
+// and the client content was replaced with generic PL/EN data.
+import Section from "@components/ui/layout/Section.astro";
+import Container from "@components/ui/layout/Container.astro";
+import Heading from "@components/ui/atoms/Heading.astro";
+import Text from "@components/ui/atoms/Text.astro";
+import jsonData from "@data/sections/faq-lean.json";
+
+interface Props {
+  /** Full section details; when missing, the block reads the fallback from the JSON.*/
+  data?: typeof jsonData;
+  /** JSON content language: "pl" (default) or "en".*/
+  locale?: "pl" | "en";
+  /** Section anchor id (default "faq").*/
+  id?: string;
+  /** Section header tag: 'h2' by default, 'h1' when the block is the first section of a page without hero (SEO).*/
+  headingTag?: string;
+  /** Additional classes per section (e.g. with PageBuilder).*/
+  class?: string;
+}
+
+const {
+  data,
+  locale = "pl",
+  id = "faq",
+  headingTag = "h2",
+  class: className = "",
+} = Astro.props as Props;
+
+// Why: "props.data || jsonData[locale]" pattern to make the block work
+// alone with the section data, and PageBuilder or CMS may have overwritten the content.
+const t = (data ? data[locale] : jsonData[locale]) || jsonData.pl;
+const items = t.items ?? [];
+---
+
+<Section id={id} tone="page" class:list={["border-t border-brand-dark/10", className]}>
+  <Container>
+    <!-- Why: header centered as in the original, with accent label
+         and a large section header (section-heading-lg).-->
+    <div class="mx-auto max-w-4xl text-center">
+      <Text variant="accent-label" tag="p" class="!font-extrabold !tracking-[0.24em] !text-brand-primary">{t.eyebrow}</Text>
+      <Heading tag={headingTag} variant="section-heading-lg" class="mt-5 !font-extrabold">{t.heading}</Heading>
+    </div>
+
+    <!-- Dlaczego: accordion <details> jak w oryginale: rounded-md (nie
+         rounded-xl), plus the "+" rotated by group-open:rotate-45, and the content
+         expanded smoothly by .lc-faq-content (grid rows 0fr -> 1fr).-->
+    <div class="mx-auto mt-12 max-w-3xl space-y-4" data-accordion>
+      {items.map((item) => (
+        <details class="group rounded-md border border-brand-dark/10 bg-white shadow-soft open:ring-2 open:ring-brand-primary/10">
+          <summary class="flex cursor-pointer items-center justify-between px-6 py-5 text-brand-dark">
+            <Text tag="span" variant="body" class="!font-extrabold !text-sm">{item.question}</Text>
+            <span class="shrink-0 text-brand-dark !text-xl !font-bold transition group-open:rotate-45">+</span>
+          </summary>
+          <div class="lc-faq-content">
+            <div class="border-t border-brand-dark/10 px-6 pb-5 pt-3">
+              <Text variant="feature-body-sm" class="!font-semibold leading-7">{item.answer}</Text>
+            </div>
+          </div>
+        </details>
+      ))}
+    </div>
+  </Container>
+</Section>
+
+<style>
+  /* Why: smooth content development FAQ uses the shared template treatment
+     klienta (grid-template-rows 0fr -> 1fr), bo Tailwind nie ma gotowych klas
+     for height animation.*/
+  .lc-faq-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lc-faq-content > div {
+    overflow: hidden;
+  }
+  details[open] .lc-faq-content {
+    grid-template-rows: 1fr;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lc-faq-content {
+      transition: none;
+    }
+  }
+</style>

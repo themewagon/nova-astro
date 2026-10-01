@@ -1,0 +1,24 @@
+{
+  "image": "/assets/placeholders/image-landscape.svg",
+  "imageFallback": "Zdjęcie wkrótce",
+  "images": [
+    "/assets/placeholders/image-square.svg",
+    "/assets/placeholders/image-square.svg",
+    "/assets/placeholders/image-square.svg",
+    "/assets/placeholders/image-square.svg"
+  ],
+  "pl": {
+    "title": "O naszej firmie",
+    "description": "Kompleksowe wykończenie wnętrz to coś więcej niż lista prac. To spokój klienta, przewidywalny budżet i efekt, który cieszy przez lata.\n\nŁączymy rzemieślniczą precyzję z nowoczesną koordynacją inwestycji. Jeden opiekun projektu, jasne raporty postępów i pełna odpowiedzialność za każdy etap prac.\n\nDzięki temu remont nie jest loterią. Terminy się zgadzają, koszty są kontrolowane, a Ty możesz skupić się na tym, co naprawdę ważne.",
+    "quote": "Najbardziej uporządkowany remont w Twoim życiu",
+    "signature": "Twoja Firma",
+    "role": "Kompleksowe wykończenia wnętrz"
+  },
+  "en": {
+    "title": "About our company",
+    "description": "Complete interior fit-out is more than a list of tasks. It is peace of mind for the client, a predictable budget and a result that lasts for years.\n\nWe combine craftsmanship with modern project coordination. One project manager, clear progress reports and full responsibility for every stage of the works.\n\nThat is why renovation is not a lottery. Deadlines are met, costs are under control and you can focus on what really matters.",
+    "quote": "The most organized renovation of your life",
+    "signature": "Your Company",
+    "role": "Complete interior fit-outs"
+  }
+}

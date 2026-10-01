@@ -1,0 +1,78 @@
+{
+  "groups": [
+    { "id": "ui", "label": "UI" },
+    { "id": "patterns", "label": "Patterns" }
+  ],
+  "items": [
+    {
+      "id": "ui-search-field",
+      "label": "Search Field",
+      "groupId": "ui",
+      "catalogType": "ui",
+      "variantId": "default",
+      "componentName": "SearchField",
+      "previewId": "search-field",
+      "hint": "Pole wyszukiwania z ikoną, stanem focus i tekstem pomocniczym."
+    },
+    {
+      "id": "ui-select-dropdown",
+      "label": "Select Dropdown",
+      "groupId": "ui",
+      "catalogType": "ui",
+      "variantId": "default",
+      "componentName": "SelectDropdown",
+      "previewId": "select-dropdown",
+      "hint": "Wybór jednej opcji z otwartym menu i stanem zaznaczenia."
+    },
+    {
+      "id": "ui-filter-tabs",
+      "label": "Filter Tabs",
+      "groupId": "ui",
+      "catalogType": "ui",
+      "variantId": "default",
+      "componentName": "FilterTabs",
+      "previewId": "filter-tabs",
+      "hint": "Filtry kategorii i zakładki przygotowane pod mobile."
+    },
+    {
+      "id": "pattern-toast",
+      "label": "Toast Feedback",
+      "groupId": "patterns",
+      "catalogType": "pattern",
+      "variantId": "default",
+      "componentName": "ToastFeedback",
+      "previewId": "toast-feedback",
+      "hint": "Komunikat potwierdzający akcję użytkownika."
+    },
+    {
+      "id": "pattern-form-field",
+      "label": "Form Field Error",
+      "groupId": "patterns",
+      "catalogType": "pattern",
+      "variantId": "default",
+      "componentName": "FormField",
+      "previewId": "form-field-error",
+      "hint": "Pole formularza z etykietą, błędem i czytelnym stanem walidacji."
+    },
+    {
+      "id": "pattern-form-statuses",
+      "label": "Form Statuses",
+      "groupId": "patterns",
+      "catalogType": "pattern",
+      "variantId": "default",
+      "componentName": "FormStatus",
+      "previewId": "form-statuses",
+      "hint": "Inline feedback formularza dla ładowania, sukcesu i błędu."
+    },
+    {
+      "id": "pattern-mobile-drawer",
+      "label": "Mobile Drawer",
+      "groupId": "patterns",
+      "catalogType": "pattern",
+      "variantId": "default",
+      "componentName": "MobileDrawer",
+      "previewId": "mobile-drawer",
+      "hint": "Układ mobilnego menu z hierarchią linków i głównym CTA."
+    }
+  ]
+}

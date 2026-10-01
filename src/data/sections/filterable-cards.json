@@ -1,0 +1,180 @@
+{
+  "pl": {
+    "heading": "Obszary współpracy",
+    "description": "Każda firma mierzy się z innymi wyzwaniami. Sprawdź, który obszar najlepiej pasuje do Twoich potrzeb.",
+    "categories": [
+      { "id": "implementacje", "label": "Wdrożenia" },
+      { "id": "szkolenia", "label": "Szkolenia" },
+      { "id": "audyty", "label": "Audyty" }
+    ],
+    "items": [
+      {
+        "title": "Audyt procesów",
+        "subtitle": "Audyt i monitoring",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "AP",
+        "badge": "Audyty",
+        "bonus": "Raport z rekomendacjami",
+        "rate": "",
+        "features": ["Audyt efektywności", "Analiza wskaźników", "Identyfikacja strat", "Plan działań"],
+        "description": "Przeprowadzamy audyty procesów i analizę kluczowych wskaźników. Sprawdzamy, czy zmiany działają zgodnie z planem i wskazujemy kolejne kroki.",
+        "cta": { "label": "Umów audyt", "href": "/kontakt/" },
+        "category": "audyty"
+      },
+      {
+        "title": "Szkolenia zespołów",
+        "subtitle": "Wiedza w praktyce",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "SZ",
+        "badge": "Szkolenia",
+        "bonus": "Certyfikat ukończenia",
+        "rate": "",
+        "features": ["VSM", "Kaizen", "5S", "SMED"],
+        "description": "Praktyczne szkolenia rozwijające kompetencje zespołów w zakresie usprawniania procesów. Uczymy tak, aby pracownicy samodzielnie doskonalili codzienną pracę.",
+        "cta": { "label": "Sprawdź szkolenia", "href": "/#szkolenia" },
+        "category": "szkolenia"
+      },
+      {
+        "title": "Wdrożenie zmian",
+        "subtitle": "Projekty optymalizacyjne",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "WZ",
+        "badge": "Wdrożenia",
+        "bonus": "Monitoring efektów",
+        "rate": "nawet 30%",
+        "features": ["Diagnoza procesów", "Mapowanie przepływu", "Wdrożenie usprawnień", "Monitoring KPI"],
+        "description": "Realizujemy projekty usprawniające procesy od analizy po wdrożenie i monitoring. Efekt: mniej przestojów, niższe koszty, lepsza terminowość.",
+        "cta": { "label": "Dowiedz się więcej", "href": "/#wdrozenia" },
+        "category": "implementacje"
+      },
+      {
+        "title": "Projektowanie procesów",
+        "subtitle": "Produkcja, magazyn, logistyka",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "PP",
+        "badge": "Wdrożenia",
+        "bonus": "Dopasowane do branży",
+        "rate": "",
+        "features": ["Procesy produkcyjne", "Logistyka i magazyn", "Kontrola jakości", "Przepływ materiałów"],
+        "description": "Projektujemy od podstaw lub modernizujemy procesy produkcji, magazynowania, logistyki i kontroli jakości. Rozwiązania dopasowane do specyfiki branży.",
+        "cta": { "label": "Dowiedz się więcej", "href": "/#wdrozenia" },
+        "category": "implementacje"
+      },
+      {
+        "title": "Wsparcie eksperckie",
+        "subtitle": "Outsourcing wiedzy",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "WE",
+        "badge": "Audyty",
+        "bonus": "Dostęp do ekspertów",
+        "rate": "",
+        "features": ["Analiza procesów", "Optymalizacja", "Wsparcie wdrożeniowe", "Elastyczny model"],
+        "description": "Wsparcie ekspertów w analizie i optymalizacji procesów, na stałe lub w ramach konkretnych projektów. Elastyczny model współpracy dopasowany do zespołu.",
+        "cta": { "label": "Sprawdź ofertę", "href": "/#audyty" },
+        "category": "audyty"
+      },
+      {
+        "title": "Warsztaty na hali",
+        "subtitle": "Szkolenia praktyczne",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "WH",
+        "badge": "Szkolenia",
+        "bonus": "Ćwiczenia na żywo",
+        "rate": "",
+        "features": ["5S w praktyce", "Kaizen w zespole", "Praca w grupach", "Plan działania"],
+        "description": "Warsztaty prowadzone bezpośrednio na hali produkcyjnej. Uczestnicy od razu wdrażają zdobytą wiedzę na realnych procesach.",
+        "cta": { "label": "Zarezerwuj termin", "href": "/#szkolenia" },
+        "category": "szkolenia"
+      }
+    ]
+  },
+  "en": {
+    "heading": "Areas of support",
+    "description": "Every company faces different challenges. Check which area of support fits your needs best.",
+    "categories": [
+      { "id": "implementacje", "label": "Implementations" },
+      { "id": "szkolenia", "label": "Training" },
+      { "id": "audyty", "label": "Audits" }
+    ],
+    "items": [
+      {
+        "title": "Process audit",
+        "subtitle": "Audit and monitoring",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "PA",
+        "badge": "Audits",
+        "bonus": "Report with recommendations",
+        "rate": "",
+        "features": ["Efficiency audit", "KPI analysis", "Loss identification", "Action plan"],
+        "description": "We audit processes and analyze key metrics. We verify that changes work as planned and suggest the next steps.",
+        "cta": { "label": "Book an audit", "href": "/kontakt/" },
+        "category": "audyty"
+      },
+      {
+        "title": "Team training",
+        "subtitle": "Knowledge in practice",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "TT",
+        "badge": "Training",
+        "bonus": "Completion certificate",
+        "rate": "",
+        "features": ["VSM", "Kaizen", "5S", "SMED"],
+        "description": "Hands-on training that builds process improvement skills in your teams. We teach so that employees improve daily work on their own.",
+        "cta": { "label": "Browse training", "href": "/#szkolenia" },
+        "category": "szkolenia"
+      },
+      {
+        "title": "Change implementation",
+        "subtitle": "Optimization projects",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "CI",
+        "badge": "Implementations",
+        "bonus": "Results monitoring",
+        "rate": "up to 30%",
+        "features": ["Process diagnosis", "Flow mapping", "Change rollout", "KPI monitoring"],
+        "description": "We deliver improvement projects from analysis through rollout to monitoring. Result: fewer downtimes, lower costs, better on-time delivery.",
+        "cta": { "label": "Learn more", "href": "/#wdrozenia" },
+        "category": "implementacje"
+      },
+      {
+        "title": "Process design",
+        "subtitle": "Production, warehouse, logistics",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "PD",
+        "badge": "Implementations",
+        "bonus": "Tailored to your industry",
+        "rate": "",
+        "features": ["Production processes", "Logistics and warehouse", "Quality control", "Material flow"],
+        "description": "We design or modernize production, warehousing, logistics and quality control processes. Solutions tailored to your industry.",
+        "cta": { "label": "Learn more", "href": "/#wdrozenia" },
+        "category": "implementacje"
+      },
+      {
+        "title": "Expert support",
+        "subtitle": "Knowledge outsourcing",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "ES",
+        "badge": "Audits",
+        "bonus": "Access to experts",
+        "rate": "",
+        "features": ["Process analysis", "Optimization", "Rollout support", "Flexible model"],
+        "description": "Expert support in analyzing and optimizing processes, on an ongoing basis or within specific projects. A flexible model that fits your team.",
+        "cta": { "label": "See the offer", "href": "/#audyty" },
+        "category": "audyty"
+      },
+      {
+        "title": "Workshops on the floor",
+        "subtitle": "Practical training",
+        "image": "/assets/placeholders/image-landscape.svg",
+        "initials": "WF",
+        "badge": "Training",
+        "bonus": "Live exercises",
+        "rate": "",
+        "features": ["5S in practice", "Kaizen in a team", "Group work", "Action plan"],
+        "description": "Workshops run directly on the production floor. Participants immediately apply the knowledge to real processes.",
+        "cta": { "label": "Book a session", "href": "/#szkolenia" },
+        "category": "szkolenia"
+      }
+    ]
+  }
+}

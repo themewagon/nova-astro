@@ -1,0 +1,91 @@
+---
+/**
+ * Embedded Google map + optional external crawling link (SEO/UX).
+ */
+// Why: default external link label read from contact.json (map.externalLabel),
+// to make the text editable in the CMS. The consumer can overwrite it with the externalLabel prop.
+import contactData from "@data/sections/contact.json";
+
+interface Props {
+	embedUrl: string;
+	iframeTitle: string;
+	externalUrl?: string;
+	externalLabel?: string;
+	consentMessage?: string;
+	cookieSettingsLabel?: string;
+	class?: string;
+	wrapperClass?: string;
+}
+
+const {
+	embedUrl,
+	iframeTitle,
+	externalUrl,
+	externalLabel = contactData.map?.externalLabel || "",
+	consentMessage = contactData.map?.consentMessage || "",
+	cookieSettingsLabel = contactData.map?.cookieSettingsLabel || "",
+	class: className = "",
+	wrapperClass = "",
+} = Astro.props as Props;
+---
+
+<!-- Why: the map is one visual unit, therefore a card with a link
+     we render together, not the heavy iframe and its elements separately.-->
+<div class:list={["flex flex-col overflow-hidden rounded-3xl border border-brand-dark/10 bg-brand-dark/5", wrapperClass]}>
+	<div class:list={["relative aspect-[16/10] w-full min-h-[12rem]", className]} data-map-root data-map-src={embedUrl}>
+		<iframe
+			data-map-iframe
+			title={iframeTitle}
+			class="absolute inset-0 h-full w-full border-0"
+			loading="lazy"
+			referrerpolicy="no-referrer-when-downgrade"
+			allowfullscreen
+		/>
+		<div data-map-consent class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-brand-dark/[0.04] px-6 text-center">
+			<p class="max-w-sm text-sm text-brand-dark/70">{consentMessage}</p>
+			<button data-map-settings type="button" class="font-semibold text-brand-primary underline underline-offset-2">{cookieSettingsLabel}</button>
+		</div>
+	</div>
+	{
+		externalUrl && (
+			<div class="border-t border-brand-dark/10 px-4 py-3 md:px-5">
+				<a
+					href={externalUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-sm font-semibold text-brand-primary underline-offset-2 hover:underline"
+				>
+					{externalLabel}
+				</a>
+			</div>
+		)
+	}
+</div>
+
+<script>
+	function setupMapConsent() {
+		document.querySelectorAll("[data-map-root]:not([data-map-inited])").forEach((root) => {
+			root.setAttribute("data-map-inited", "");
+			const iframe = root.querySelector("[data-map-iframe]");
+			const consent = root.querySelector("[data-map-consent]");
+			const settings = root.querySelector("[data-map-settings]");
+			if (!(iframe instanceof HTMLIFrameElement) || !(consent instanceof HTMLElement)) return;
+
+			const loadMap = () => {
+				if (iframe.src) return;
+				iframe.src = root.getAttribute("data-map-src") || "";
+				consent.classList.add("hidden");
+			};
+			const status = () => {
+				try { return window.localStorage.getItem("cookie-consent-status"); } catch { return null; }
+			};
+			if (!window.WebScaleCookies || status() === "accepted") loadMap();
+			else settings?.addEventListener("click", () => window.WebScaleCookies?.openSettings());
+			window.addEventListener("cookie-consent-accepted", loadMap);
+		});
+	}
+
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupMapConsent, { once: true });
+	else setupMapConsent();
+	window.addEventListener("astro:page-load", setupMapConsent);
+</script>
